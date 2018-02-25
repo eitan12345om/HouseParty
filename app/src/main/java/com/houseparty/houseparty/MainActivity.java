@@ -29,8 +29,10 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private List<String> list;
     private ListAdapter adapter;
-    private MediaPlayer mediaPlayer;
     private String playlist_name = "";
+    private String title = "HouseParty";
+    private static String selected_list;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +43,14 @@ public class MainActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.show();
-        actionBar.setTitle("Playlist Menu");
+        actionBar.setTitle(title);
 
         listView = (ListView) findViewById(R.id.listView);
 
-        list = new ArrayList<>();
+        list = new ArrayList<String>();
 
-        Field[] fields = R.raw.class.getFields();
-        for(int i = 0; i < fields.length; i++){
-            list.add(fields[i].getName());
+        for(int i = 0; i < 20; i++){
+            list.add("Playlist_" + i);
         }
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selected_list = list.get(i);
                 Intent intent = new Intent(getBaseContext(), SongActivity.class);
                 startActivity(intent);
             }
@@ -77,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void dialogueBox(View v) {
+    public void dialogueBox_Playlist(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter Playlist Name:");
 
@@ -99,6 +100,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 playlist_name = input.getText().toString();
+                if (playlist_name.isEmpty()) {
+                    dialog.cancel();
+                } else {
+                    selected_list = playlist_name;
+                    Intent intent = new Intent(getBaseContext(), SongActivity.class);
+                    startActivity(intent);
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -109,5 +117,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         builder.show();
+    }
+
+    public static String selection() {
+        return selected_list;
     }
 }
