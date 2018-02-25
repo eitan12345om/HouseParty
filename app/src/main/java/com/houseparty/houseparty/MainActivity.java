@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     selected_list = playlist_name;
                     Intent intent = new Intent(getBaseContext(), SongActivity.class);
+                    list.add(playlist_name);
                     startActivity(intent);
                 }
             }
