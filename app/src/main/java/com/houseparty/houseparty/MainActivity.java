@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.listView);
 
-        list = new ArrayList<String>();
+        list = new ArrayList<>();
 
         for(int i = 0; i < 20; i++){
             list.add("Playlist_" + i);

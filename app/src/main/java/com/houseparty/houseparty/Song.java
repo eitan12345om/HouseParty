@@ -1,7 +1,7 @@
 package com.houseparty.houseparty;
 
 /**
- * Created by jacksonkurtz on 2/23/18.
+ * @author jacksonkurtz created on 2/23/18.
  */
 
 public class Song {
