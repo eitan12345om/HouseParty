@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "193675694628",
-    "firebase_url": "https://houseparty-4335d.firebaseio.com",
-    "project_id": "houseparty-4335d",
-    "storage_bucket": "houseparty-4335d.appspot.com"
+    "project_number": "2032081460",
+    "firebase_url": "https://houseparty-517ac.firebaseio.com",
+    "project_id": "houseparty-517ac",
+    "storage_bucket": "houseparty-517ac.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:193675694628:android:e3d91a66b86f881b",
+        "mobilesdk_app_id": "1:2032081460:android:e3d91a66b86f881b",
         "android_client_info": {
           "package_name": "com.houseparty.houseparty"
         }
       },
       "oauth_client": [
         {
-          "client_id": "193675694628-qi9hke0bj14js7g8mfofsf8ipt34fgub.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.houseparty.houseparty",
-            "certificate_hash": "61db160fe2df2acd6b4ddbf6d9ad40b04d75892b"
-          }
-        },
-        {
-          "client_id": "193675694628-b12e4npdbjl757jjmb8dosam3kleas3t.apps.googleusercontent.com",
+          "client_id": "2032081460-qim6sbagg97q0jjfbb270570l06s5525.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBnwiSqBYzBstqlNy9OCNrmpvxVYYm7Z9k"
+          "current_key": "AIzaSyAcsTbYEj3mLq7R-ZuHR-o-jkt7BeWily0"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "193675694628-b12e4npdbjl757jjmb8dosam3kleas3t.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
