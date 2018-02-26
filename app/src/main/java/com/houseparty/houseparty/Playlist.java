@@ -1,8 +1,5 @@
-package com.example.jacksonkurtz.housepartytest;
+package com.houseparty.houseparty;
 
-/**
- * Created by jacksonkurtz on 2/23/18.
- */
 import java.util.ArrayList;
 
 public class Playlist {
@@ -12,12 +9,12 @@ public class Playlist {
     public Playlist() {
     }
 
-    public Playlist( String name ){
+    public Playlist(String name){
         this.name = name;
-        this.songs = new ArrayList<Song>();
+        this.songs = new ArrayList<>();
     }
 
-    public void addSong( Song song ){
+    public void addSong(Song song){
         this.songs.add(song);
     }
 
