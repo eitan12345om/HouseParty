@@ -20,6 +20,13 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +40,21 @@ public class MainActivity extends AppCompatActivity {
     private String title = "HouseParty";
     private static String selected_list;
 
+    private FirebaseDatabase pFirebaseDatabase;
+    private DatabaseReference pPlaylistDatabaseReference;
+    private ChildEventListener pChildEventListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        pFirebaseDatabase = FirebaseDatabase.getInstance();
+        pPlaylistDatabaseReference = pFirebaseDatabase.getReference().child("playlists");
+        //pPlaylistDatabaseReference.keepSynced(true);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -49,12 +66,59 @@ public class MainActivity extends AppCompatActivity {
 
         list = new ArrayList<String>();
 
-        for(int i = 0; i < 20; i++){
-            list.add("Playlist_" + i);
-        }
+        //for(int i = 0; i < 20; i++){
+        //    list.add("Playlist_" + i);
+        //}
+        /*
+         pPlaylistDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Playlist pList = dataSnapshot.getValue(Playlist.class);
+                list.add(pList.getName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+        System.out.println("adding listener...");
+        pChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                System.out.println("on child added method run...");
+                System.out.println("Size of list is: " + list.size());
+                Playlist pList = dataSnapshot.getValue(Playlist.class);
+                System.out.print("Add to list: " + pList.getName() );
+                list.add(pList.getName());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        pPlaylistDatabaseReference.addChildEventListener(pChildEventListener);
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
+
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -64,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
     }
 
     @Override
@@ -104,8 +170,10 @@ public class MainActivity extends AppCompatActivity {
                     dialog.cancel();
                 } else {
                     selected_list = playlist_name;
+                    Playlist plist = new Playlist( playlist_name );
+                    pPlaylistDatabaseReference.push().setValue(plist);
                     Intent intent = new Intent(getBaseContext(), SongActivity.class);
-                    list.add(playlist_name);
+                    //list.add(playlist_name);
                     startActivity(intent);
                 }
             }
