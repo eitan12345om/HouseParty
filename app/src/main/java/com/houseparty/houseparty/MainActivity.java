@@ -17,6 +17,10 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +33,29 @@ public class MainActivity extends AppCompatActivity {
     private String title = "HouseParty";
     private static String selected_list;
 
+    // Required constants for Spotify API connection.
+    private static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
+    private static final String REDIRECT_URI = "houseparty-android://callback";
+
+    // Used to verify if Spotify results come from correct activity.
+    private static final int REQUEST_CODE = 777;
+
+    void authenticateUser() {
+
+        // ---------USER AUTHENTICATION----------
+
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
+                AuthenticationResponse.Type.TOKEN,
+                REDIRECT_URI);
+        builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public",
+                "playlist-modify-private", "playlist-read-collaborative", "user-library-read",
+                "user-library-modify", "user-read-playback-state", "user-modify-playback-state",
+                "user-read-currently-playing"});
+        AuthenticationRequest request = builder.build();
+
+        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        authenticateUser();
+
     }
 
     @Override
