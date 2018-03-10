@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
     private List<String> list;
-    private ListAdapter adapter;
+    private ArrayAdapter adapter;
+    private ActionBar actionBar;
     private String playlist_name = "";
     private String title = "HouseParty";
     private static String selected_list;
@@ -58,13 +59,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.show();
+        actionBar = getSupportActionBar();
+
         actionBar.setTitle(title);
 
         listView = (ListView) findViewById(R.id.listView);
 
         list = new ArrayList<String>();
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+        System.out.print( "set adapter" );
+        listView.setAdapter(adapter);
+        actionBar.show();
 
         //for(int i = 0; i < 20; i++){
         //    list.add("Playlist_" + i);
@@ -91,11 +97,12 @@ public class MainActivity extends AppCompatActivity {
                 Playlist pList = dataSnapshot.getValue(Playlist.class);
                 System.out.print("Add to list: " + pList.getName() );
                 list.add(pList.getName());
+                adapter.notifyDataSetChanged();
+
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
             }
 
             @Override
@@ -114,10 +121,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         pPlaylistDatabaseReference.addChildEventListener(pChildEventListener);
-
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
-        listView.setAdapter(adapter);
-
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -154,12 +157,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void dialogueBox_Playlist(View v) {
+        System.out.flush();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter Playlist Name:");
 
         final EditText input = new EditText(this);
 
         input.setInputType(InputType.TYPE_CLASS_TEXT);
+
         builder.setView(input);
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
