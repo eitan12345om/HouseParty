@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,8 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private String playlist_name = "";
     private String title = "HouseParty";
+    private static Hashtable<String,String> idTable;
+    //private static String selected_list;
     private static String selected_list;
-
     private FirebaseDatabase pFirebaseDatabase;
     private DatabaseReference pPlaylistDatabaseReference;
     private ChildEventListener pChildEventListener;
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         pFirebaseDatabase = FirebaseDatabase.getInstance();
         pPlaylistDatabaseReference = pFirebaseDatabase.getReference().child("playlists");
         //pPlaylistDatabaseReference.keepSynced(true);
-
+        idTable = new Hashtable<String, String>();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -92,13 +96,17 @@ public class MainActivity extends AppCompatActivity {
         pChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                System.out.println("on child added method run...");
-                System.out.println("Size of list is: " + list.size());
-                Playlist pList = dataSnapshot.getValue(Playlist.class);
-                System.out.print("Add to list: " + pList.getName() );
-                list.add(pList.getName());
-                adapter.notifyDataSetChanged();
+                //System.out.println("Size of list is: " + list.size());
+                //Playlist pList= dataSnapshot.getValue(Playlist.class);
 
+                Log.d( "MainActivity", dataSnapshot.getValue().toString() );
+                Log.d( "MainActivity", ((Boolean)(dataSnapshot.getValue() instanceof HashMap)).toString() );
+
+                HashMap<String,String> h = (HashMap)dataSnapshot.getValue();
+                idTable.put(h.get("name"), dataSnapshot.getKey());
+                //System.out.println("Add to list: " + name);
+                list.add(h.get("name"));
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -174,12 +182,14 @@ public class MainActivity extends AppCompatActivity {
                 if (playlist_name.isEmpty()) {
                     dialog.cancel();
                 } else {
+
                     selected_list = playlist_name;
-                    Playlist plist = new Playlist( playlist_name );
+                    Playlist plist = new Playlist( selected_list );
                     pPlaylistDatabaseReference.push().setValue(plist);
-                    Intent intent = new Intent(getBaseContext(), SongActivity.class);
                     //list.add(playlist_name);
+                    Intent intent = new Intent(getBaseContext(), SongActivity.class);
                     startActivity(intent);
+
                 }
             }
         });
@@ -196,4 +206,5 @@ public class MainActivity extends AppCompatActivity {
     public static String selection() {
         return selected_list;
     }
+    public static Hashtable getIdTable() { return idTable; }
 }

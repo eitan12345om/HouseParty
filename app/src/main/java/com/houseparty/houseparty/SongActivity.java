@@ -15,23 +15,39 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 public class SongActivity extends AppCompatActivity {
 
     private ListView listView;
     private List<String> list;
-    private ListAdapter adapter;
+    private ArrayAdapter adapter;
     private MediaPlayer mediaPlayer;
     private String title = "HouseParty - ";
     private static String song_name;
+
+    private FirebaseDatabase sFirebaseDatabase;
+    private DatabaseReference songDatabaseReference;
+    private ChildEventListener sChildEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
+
+        sFirebaseDatabase = FirebaseDatabase.getInstance();
+        Hashtable<String,String> t = MainActivity.getIdTable();
+        String id = t.get(MainActivity.selection());
+        songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child( id ).child("songs");
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.show();
@@ -40,11 +56,11 @@ public class SongActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listView);
 
         list = new ArrayList<>();
-
+        /*
         Field[] fields = R.raw.class.getFields();
         for(int i = 0; i < fields.length; i++){
             list.add(fields[i].getName());
-        }
+        }*/
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
@@ -61,6 +77,38 @@ public class SongActivity extends AppCompatActivity {
                 mediaPlayer.start();
             }
         });
+
+        sChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                System.out.println("Size of list is: " + list.size());
+                Song sList = dataSnapshot.getValue(Song.class);
+                list.add(sList.getTitle());
+                adapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        songDatabaseReference.addChildEventListener(sChildEventListener);
+
     }
 
     public void dialogueBox_Song(View v) {
@@ -78,7 +126,11 @@ public class SongActivity extends AppCompatActivity {
                 song_name = input.getText().toString();
                 if (song_name.isEmpty()) {
                     dialog.cancel();
-                } else {
+                }
+                else {
+                    Song song = new Song(song_name);
+                    songDatabaseReference.push().setValue(song);
+                    //list.add(song_name);
                     //Intent intent = new Intent(getBaseContext(), SongActivity.class);
                     //startActivity(intent);
                 }

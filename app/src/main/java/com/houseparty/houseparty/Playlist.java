@@ -28,4 +28,9 @@ public class Playlist {
     public ArrayList<Song> getSongs(){
         return this.songs;
     }
+
+    @Override
+    public String toString(){
+        return this.name + songs.get(0).getTitle();
+    }
 }

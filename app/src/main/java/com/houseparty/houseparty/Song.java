@@ -13,11 +13,25 @@ public class Song {
     public Song() {
     }
 
+    public Song(String title) {
+        this.title = title;
+    }
+
     public Song( String title, String artist, String uri, String api) {
         this.title = title;
         this.artist = artist;
         this.uri = uri;
         this.api = api;
+    }
+
+    public String getTitle(){
+        return this.title;
+    }
+    public String getArtist(){
+        return this.artist;
+    }
+    public String getName(){
+        return this.title + " - " + this.artist;
     }
 
 }
