@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,11 +21,29 @@ import android.widget.ListView;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.spotify.sdk.android.player.Config;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayerEvent;
+import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.SpotifyPlayer;
+
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.TracksPager;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     private ListView listView;
     private List<String> list;
@@ -34,28 +53,17 @@ public class MainActivity extends AppCompatActivity {
     private static String selected_list;
 
     // Required constants for Spotify API connection.
-    private static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
-    private static final String REDIRECT_URI = "houseparty-android://callback";
+    static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
+    static final String REDIRECT_URI = "houseparty-android://callback";
 
     // Used to verify if Spotify results come from correct activity.
-    private static final int REQUEST_CODE = 777;
+    static final int REQUEST_CODE = 777;
 
-    void authenticateUser() {
+    // Access token to be retrieved for the current Spotify connection session.
+//    private String accessToken;
 
-        // ---------USER AUTHENTICATION----------
-
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
-                AuthenticationResponse.Type.TOKEN,
-                REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public",
-                "playlist-modify-private", "playlist-read-collaborative", "user-library-read",
-                "user-library-modify", "user-read-playback-state", "user-modify-playback-state",
-                "user-read-currently-playing"});
-        AuthenticationRequest request = builder.build();
-
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-
-    }
+    // Object through which we access the Spotify Web API Wrapper.
+//    private SpotifyService spotify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
 
         list = new ArrayList<>();
 
+//        authenticateUser();
+
         for(int i = 0; i < 20; i++){
             list.add("Playlist_" + i);
         }
@@ -83,12 +93,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selected_list = list.get(i);
-                Intent intent = new Intent(getBaseContext(), SongActivity.class);
+                Intent intent = new Intent(MainActivity.this, SongActivity.class);
+                intent.putExtra("CLIENT_ID", CLIENT_ID);
+                intent.putExtra("REDIRECT_URI", REDIRECT_URI);
+                intent.putExtra("REQUEST_CODE", REQUEST_CODE);
+//                intent.putExtra("accessToken", accessToken);
                 startActivity(intent);
             }
         });
-
-        authenticateUser();
 
     }
 
@@ -148,4 +160,65 @@ public class MainActivity extends AppCompatActivity {
     public static String selection() {
         return selected_list;
     }
+
+//    void authenticateUser() {
+//
+//        // ---------USER AUTHENTICATION----------
+//
+//        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
+//                AuthenticationResponse.Type.TOKEN,
+//                REDIRECT_URI);
+//        builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public",
+//                "playlist-modify-private", "playlist-read-collaborative", "user-library-read",
+//                "user-library-modify", "user-read-playback-state", "user-modify-playback-state",
+//                "user-read-currently-playing"});
+//        AuthenticationRequest request = builder.build();
+//
+//        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+//
+//    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+//        // Check if result comes from the correct activity
+//        if (requestCode == REQUEST_CODE) {
+//            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+//            if (response.getType() == AuthenticationResponse.Type.TOKEN) {
+//                accessToken = response.getAccessToken();
+//            }
+//        }
+    }
+
+    @Override
+    public void onLoggedIn() {
+
+        Log.d("MainActivity", "User logged in");
+
+//        SpotifyApi wrapper = new SpotifyApi();
+//        wrapper.setAccessToken(accessToken);
+//
+//        spotify = wrapper.getService();
+
+    }
+
+    @Override
+    public void onLoggedOut() {}
+
+    @Override
+    public void onLoginFailed(Error error) {}
+
+    @Override
+    public void onTemporaryError() {}
+
+    @Override
+    public void onConnectionMessage(String s) {}
+
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {}
+
+    @Override
+    public void onPlaybackError(Error error) {}
+
 }
