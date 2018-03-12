@@ -9,25 +9,25 @@ public class Playlist {
     public Playlist() {
     }
 
-    public Playlist(String name){
+    public Playlist(String name) {
         this.name = name;
         this.songs = new ArrayList<>();
     }
 
-    public void addSong(Song song){
+    public void addSong(Song song) {
         this.songs.add(song);
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public ArrayList<Song> getSongs(){
+    public ArrayList<Song> getSongs() {
         return this.songs;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.name + songs.get(0).getTitle();
     }
 }
