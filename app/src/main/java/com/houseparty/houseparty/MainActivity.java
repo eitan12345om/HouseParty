@@ -3,10 +3,7 @@ package com.houseparty.houseparty;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -26,15 +22,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.PlayerEvent;
+import com.spotify.sdk.android.player.SpotifyPlayer;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     private ListView listView;
     private List<String> list;
@@ -42,13 +41,19 @@ public class MainActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private String playlist_name = "";
     private String title = "HouseParty";
-    private static Hashtable<String,String> idTable;
+    private static Hashtable<String, String> idTable;
     //private static String selected_list;
     private static String selected_list;
     private FirebaseDatabase pFirebaseDatabase;
     private DatabaseReference pPlaylistDatabaseReference;
     private ChildEventListener pChildEventListener;
 
+    // Required constants for Spotify API connection.
+    static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
+    static final String REDIRECT_URI = "houseparty-android://callback";
+
+    // Used to verify if Spotify results come from correct activity.
+    static final int REQUEST_CODE = 777;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,40 +74,22 @@ public class MainActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.listView);
 
+        list = new ArrayList<>();
+
+        for (int i = 0; i < 20; i++) {
+            list.add("Playlist_" + i);
+        }
         list = new ArrayList<String>();
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
-        System.out.print( "set adapter" );
         listView.setAdapter(adapter);
         actionBar.show();
 
-        //for(int i = 0; i < 20; i++){
-        //    list.add("Playlist_" + i);
-        //}
-        /*
-         pPlaylistDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Playlist pList = dataSnapshot.getValue(Playlist.class);
-                list.add(pList.getName());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-        System.out.println("adding listener...");
         pChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //System.out.println("Size of list is: " + list.size());
-                //Playlist pList= dataSnapshot.getValue(Playlist.class);
 
-                Log.d( "MainActivity", dataSnapshot.getValue().toString() );
-                Log.d( "MainActivity", ((Boolean)(dataSnapshot.getValue() instanceof HashMap)).toString() );
-
-                HashMap<String,String> h = (HashMap)dataSnapshot.getValue();
+                HashMap<String, String> h = (HashMap) dataSnapshot.getValue();
                 idTable.put(h.get("name"), dataSnapshot.getKey());
                 //System.out.println("Add to list: " + name);
                 list.add(h.get("name"));
@@ -135,12 +122,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selected_list = list.get(i);
-                Intent intent = new Intent(getBaseContext(), SongActivity.class);
+                Intent intent = new Intent(MainActivity.this, SongActivity.class);
+                intent.putExtra("CLIENT_ID", CLIENT_ID);
+                intent.putExtra("REDIRECT_URI", REDIRECT_URI);
+                intent.putExtra("REQUEST_CODE", REQUEST_CODE);
                 startActivity(intent);
             }
         });
-
-
     }
 
     @Override
@@ -182,14 +170,11 @@ public class MainActivity extends AppCompatActivity {
                 if (playlist_name.isEmpty()) {
                     dialog.cancel();
                 } else {
-
                     selected_list = playlist_name;
-                    Playlist plist = new Playlist( selected_list );
+                    Playlist plist = new Playlist(selected_list);
                     pPlaylistDatabaseReference.push().setValue(plist);
-                    //list.add(playlist_name);
                     Intent intent = new Intent(getBaseContext(), SongActivity.class);
                     startActivity(intent);
-
                 }
             }
         });
@@ -206,5 +191,42 @@ public class MainActivity extends AppCompatActivity {
     public static String selection() {
         return selected_list;
     }
-    public static Hashtable getIdTable() { return idTable; }
+
+    public static Hashtable getIdTable() {
+        return idTable;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+    }
+
+    @Override
+    public void onLoggedIn() {
+        Log.d("MainActivity", "User logged in");
+    }
+
+    @Override
+    public void onLoggedOut() {
+    }
+
+    @Override
+    public void onLoginFailed(Error error) {
+    }
+
+    @Override
+    public void onTemporaryError() {
+    }
+
+    @Override
+    public void onConnectionMessage(String s) {
+    }
+
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+    }
+
+    @Override
+    public void onPlaybackError(Error error) {
+    }
 }
