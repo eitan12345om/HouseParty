@@ -64,6 +64,8 @@ public class SongActivity extends AppCompatActivity implements
     private String accessToken;
     private SpotifyPlayer spotifyPlayer;
     private SpotifyService spotify;
+    private String songUri;
+    private static Hashtable<String, String> uriTable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,19 +76,33 @@ public class SongActivity extends AppCompatActivity implements
         Hashtable<String, String> t = MainActivity.getIdTable();
         String id = t.get(MainActivity.selection());
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
+        uriTable = new Hashtable<String, String>();
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.show();
         actionBar.setTitle(title + MainActivity.selection());
 
+
+        //https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
         Bundle extras = getIntent().getExtras();
+        if( getIntent().getStringExtra("CLIENT_ID") != null
+                && getIntent().getStringExtra("REDIRECT_URI") != null
+                && getIntent().getIntExtra("REQUEST_CODE", 0) != 0) {
+            CLIENT_ID = extras.getString("CLIENT_ID");
+            Log.d("SongActivity", "CLIENT_ID = " + CLIENT_ID);
+            REDIRECT_URI = extras.getString("REDIRECT_URI");
+            Log.d("SongActivity", "REDIRECT_URI = " + REDIRECT_URI);
+            REQUEST_CODE = extras.getInt("REQUEST_CODE");
+            Log.d("SongActivity", "REQUEST_CODE = " + REQUEST_CODE);
+        }
+        /*
         CLIENT_ID = extras.getString("CLIENT_ID");
         Log.d("SongActivity", "CLIENT_ID = " + CLIENT_ID);
         REDIRECT_URI = extras.getString("REDIRECT_URI");
         Log.d("SongActivity", "REDIRECT_URI = " + REDIRECT_URI);
         REQUEST_CODE = extras.getInt("REQUEST_CODE");
         Log.d("SongActivity", "REQUEST_CODE = " + REQUEST_CODE);
-
+        */
         listView = (ListView) findViewById(R.id.listView);
 
         list = new ArrayList<>();
@@ -97,7 +113,7 @@ public class SongActivity extends AppCompatActivity implements
         for (Field f : fields)
             list.add(f.getName());
         */
-        list.add("Headlines");
+        //list.add("Headlines");
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
@@ -105,14 +121,15 @@ public class SongActivity extends AppCompatActivity implements
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                authenticateUser();
                 if (mediaPlayer != null)
                     mediaPlayer.release();
-                if (list.get(i).equals("Headlines"))
-                    authenticateUser();
                 else {
-                    int resID = getResources().getIdentifier(list.get(i), "raw", getPackageName());
-                    mediaPlayer = MediaPlayer.create(SongActivity.this, resID);
-                    mediaPlayer.start();
+                    //int resID = getResources().getIdentifier(list.get(i), "raw", getPackageName());
+                    //mediaPlayer = MediaPlayer.create(SongActivity.this, resID);
+                    //mediaPlayer.start();
+                    String uri = uriTable.get( list.get(i));
+                    spotifyPlayer.playUri(null, uri, 0, 0);
                 }
             }
         });
@@ -122,6 +139,7 @@ public class SongActivity extends AppCompatActivity implements
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 System.out.println("Size of list is: " + list.size());
                 Song sList = dataSnapshot.getValue(Song.class);
+                uriTable.put( sList.getTitle(), sList.getUri());
                 list.add(sList.getTitle());
                 adapter.notifyDataSetChanged();
 
@@ -166,7 +184,12 @@ public class SongActivity extends AppCompatActivity implements
                 if (song_name.isEmpty()) {
                     dialog.cancel();
                 } else {
-                    Song song = new Song(song_name);
+                    String uri = "no uri";
+                    uri = spotifySearchForTrack(song_name);
+                    while( uri.equals("no uri")) {
+                    }
+                    Log.i("MAINACTIVITY", "this is the uri: " + uri);
+                    Song song = new Song(song_name, uri);
                     songDatabaseReference.push().setValue(song);
                     //list.add(song_name);
                     //Intent intent = new Intent(getBaseContext(), SongActivity.class);
@@ -193,13 +216,13 @@ public class SongActivity extends AppCompatActivity implements
         options.put("market", "US");
         options.put("limit", 20);
 
-        final String[] songUri = {""};
+        //String[] songUri = {""};
         spotify.searchTracks(query, options, new Callback<TracksPager>() {
             @Override
             public void success(TracksPager tracksPager, Response response) {
                 List<Track> searchResults = tracksPager.tracks.items;
-                songUri[0] = searchResults.get(0).uri;
-                Log.d("FetchSongTask", "1st song uri = " + songUri[0]);
+                songUri = searchResults.get(0).uri;
+                Log.d("FetchSongTask", "1st song uri = " + songUri);
             }
 
             @Override
@@ -208,7 +231,7 @@ public class SongActivity extends AppCompatActivity implements
             }
         });
 
-        return songUri[0];
+        return songUri;
     }
 
     void authenticateUser() {
@@ -263,7 +286,7 @@ public class SongActivity extends AppCompatActivity implements
         wrapper.setAccessToken(accessToken);
         spotify = wrapper.getService();
         final String songUri = spotifySearchForTrack("Headlines");
-        spotifyPlayer.playUri(null, songUri, 0, 0);
+        //spotifyPlayer.playUri(null, songUri, 0, 0);
     }
 
     @Override
