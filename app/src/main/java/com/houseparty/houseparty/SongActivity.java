@@ -66,8 +66,11 @@ public class SongActivity extends AppCompatActivity implements
     private String accessToken;
     private SpotifyPlayer spotifyPlayer;
     private SpotifyService spotify;
-    private String songUri;
     private static Hashtable<String, String> uriTable;
+
+    private interface AsyncCallback {
+        void onSuccess(String uri);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,17 +191,14 @@ public class SongActivity extends AppCompatActivity implements
                 if (song_name.isEmpty()) {
                     dialog.cancel();
                 } else {
-                    String uri = null;
-                    uri = spotifySearchForTrack(song_name);
-//                    while( uri == null) {}
-                    try { TimeUnit.SECONDS.sleep(3); }
-                    catch (InterruptedException e) { e.printStackTrace(); }
-                    Log.i("MAINACTIVITY", "this is the uri: " + uri);
-                    Song song = new Song(song_name, uri);
-                    songDatabaseReference.push().setValue(song);
-                    //list.add(song_name);
-                    //Intent intent = new Intent(getBaseContext(), SongActivity.class);
-                    //startActivity(intent);
+                    spotifySearchForTrack(song_name, new AsyncCallback() {
+                        @Override
+                        public void onSuccess(String uri) {
+                            Log.i("SongActivity", "this is the uri: " + uri);
+                            Song song = new Song(song_name, uri);
+                            songDatabaseReference.push().setValue(song);
+                        }
+                    });
                 }
             }
         });
@@ -212,7 +212,7 @@ public class SongActivity extends AppCompatActivity implements
         builder.show();
     }
 
-    String spotifySearchForTrack(String query) {
+    void spotifySearchForTrack(String query, final AsyncCallback callback) {
 
         query = query.replaceAll(" ", "+");
 
@@ -221,13 +221,13 @@ public class SongActivity extends AppCompatActivity implements
         options.put("market", "US");
         options.put("limit", 20);
 
-        //String[] songUri = {""};
         spotify.searchTracks(query, options, new Callback<TracksPager>() {
             @Override
             public void success(TracksPager tracksPager, Response response) {
                 List<Track> searchResults = tracksPager.tracks.items;
-                songUri = searchResults.get(0).uri;
+                String songUri = searchResults.get(0).uri;
                 Log.d("FetchSongTask", "1st song uri = " + songUri);
+                callback.onSuccess(songUri);
             }
 
             @Override
@@ -236,7 +236,6 @@ public class SongActivity extends AppCompatActivity implements
             }
         });
 
-        return songUri;
     }
 
     void authenticateUser() {
@@ -290,8 +289,6 @@ public class SongActivity extends AppCompatActivity implements
         SpotifyApi wrapper = new SpotifyApi();
         wrapper.setAccessToken(accessToken);
         spotify = wrapper.getService();
-        //final String songUri = spotifySearchForTrack("Headlines");
-        //spotifyPlayer.playUri(null, songUri, 0, 0);
     }
 
     @Override
