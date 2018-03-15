@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -177,6 +179,8 @@ public class SongActivity extends AppCompatActivity implements
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
+        authenticateUser();
+
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -184,10 +188,11 @@ public class SongActivity extends AppCompatActivity implements
                 if (song_name.isEmpty()) {
                     dialog.cancel();
                 } else {
-                    String uri = "no uri";
+                    String uri = null;
                     uri = spotifySearchForTrack(song_name);
-                    while( uri.equals("no uri")) {
-                    }
+//                    while( uri == null) {}
+                    try { TimeUnit.SECONDS.sleep(3); }
+                    catch (InterruptedException e) { e.printStackTrace(); }
                     Log.i("MAINACTIVITY", "this is the uri: " + uri);
                     Song song = new Song(song_name, uri);
                     songDatabaseReference.push().setValue(song);
@@ -285,7 +290,7 @@ public class SongActivity extends AppCompatActivity implements
         SpotifyApi wrapper = new SpotifyApi();
         wrapper.setAccessToken(accessToken);
         spotify = wrapper.getService();
-        final String songUri = spotifySearchForTrack("Headlines");
+        //final String songUri = spotifySearchForTrack("Headlines");
         //spotifyPlayer.playUri(null, songUri, 0, 0);
     }
 
