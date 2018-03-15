@@ -5,12 +5,14 @@ import java.util.ArrayList;
 public class Playlist {
     private String name;
     private ArrayList<Song> songs;
+    private String passcode;
 
     public Playlist() {
     }
 
-    public Playlist(String name) {
+    public Playlist(String name, String passcode) {
         this.name = name;
+        this.passcode = passcode;
         this.songs = new ArrayList<>();
     }
 
@@ -20,6 +22,10 @@ public class Playlist {
 
     public String getName() {
         return this.name;
+    }
+
+    public String getPasscode() {
+        return this.passcode;
     }
 
     public ArrayList<Song> getSongs() {

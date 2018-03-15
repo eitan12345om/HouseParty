@@ -9,12 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -40,13 +42,19 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayAdapter adapter;
     private ActionBar actionBar;
     private String playlist_name = "";
+    private String code = "";
+
     private String title = "HouseParty";
     private static Hashtable<String, String> idTable;
+    private HashMap<String, String> dataTable;
     //private static String selected_list;
     private static String selected_list;
+    private static String passcode;
     private FirebaseDatabase pFirebaseDatabase;
     private DatabaseReference pPlaylistDatabaseReference;
     private ChildEventListener pChildEventListener;
+
+    private DatabaseReference passcodeDatabaseReference;
 
     // Required constants for Spotify API connection.
     static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
@@ -89,10 +97,10 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                HashMap<String, String> h = (HashMap) dataSnapshot.getValue();
-                idTable.put(h.get("name"), dataSnapshot.getKey());
+                dataTable = (HashMap) dataSnapshot.getValue();
+                idTable.put(dataTable.get("name"), dataSnapshot.getKey());
                 //System.out.println("Add to list: " + name);
-                list.add(h.get("name"));
+                list.add(dataTable.get("name"));
                 adapter.notifyDataSetChanged();
             }
 
@@ -122,11 +130,12 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selected_list = list.get(i);
-                Intent intent = new Intent(MainActivity.this, SongActivity.class);
-                intent.putExtra("CLIENT_ID", CLIENT_ID);
-                intent.putExtra("REDIRECT_URI", REDIRECT_URI);
-                intent.putExtra("REQUEST_CODE", REQUEST_CODE);
-                startActivity(intent);
+                String id = idTable.get(selected_list);
+                Log.d( "ID FROM HASH", id);
+                dialogueBox_Passcode(view, dataTable.get("passcode"));
+                //passcodeDatabaseReference = pFirebaseDatabase.getReference().child("playlists").child(id);
+                //Log.d( "ELEMENT FROM DATABASE", dataTable.get("passcode"));
+
             }
         });
     }
@@ -152,26 +161,78 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void dialogueBox_Playlist(View v) {
-        System.out.flush();
+    public void dialogueBox_Passcode(View v, final String valid_code){
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Enter Playlist Name:");
+        builder.setTitle("Enter passcode:");
+        final EditText inputPasscode = new EditText(this);
+        inputPasscode.setHint("XXXX");
+        layout.addView(inputPasscode);
+        inputPasscode.setInputType(InputType.TYPE_CLASS_TEXT);
 
-        final EditText input = new EditText(this);
-
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        builder.setView(input);
+        builder.setView(layout);
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                playlist_name = input.getText().toString();
-                if (playlist_name.isEmpty()) {
+                String entered_code = inputPasscode.getText().toString();
+                if ( !entered_code.equals(valid_code) ) {
+                    dialog.cancel();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, SongActivity.class);
+                    intent.putExtra("CLIENT_ID", CLIENT_ID);
+                    intent.putExtra("REDIRECT_URI", REDIRECT_URI);
+                    intent.putExtra("REQUEST_CODE", REQUEST_CODE);
+                    startActivity(intent);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    public void dialogueBox_Playlist(View v) {
+        LinearLayout layout  = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter Playlist Name:");
+
+        final EditText inputTitle = new EditText(this);
+        inputTitle.setHint("Title");
+        layout.addView(inputTitle);
+        final EditText inputPasscode = new EditText(this);
+        inputPasscode.setHint("Passcode (XXXX)");
+        layout.addView(inputPasscode);
+
+
+        inputTitle.setInputType(InputType.TYPE_CLASS_TEXT);
+        inputPasscode.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                playlist_name = inputTitle.getText().toString();
+                code = inputPasscode.getText().toString();
+                Log.d( "NONNUMBERCHECK", Boolean.toString( code.matches("\\d+") ));
+                if (playlist_name.isEmpty() ||
+                        !code.matches("\\d+")
+                                || code.length() != 4 ) {
                     dialog.cancel();
                 } else {
                     selected_list = playlist_name;
-                    Playlist plist = new Playlist(selected_list);
+                    passcode = code;
+                    Playlist plist = new Playlist(selected_list, passcode);
+                    Log.d( "PLAYLIST", plist.getPasscode() );
                     pPlaylistDatabaseReference.push().setValue(plist);
                     Intent intent = new Intent(getBaseContext(), SongActivity.class);
                     startActivity(intent);
