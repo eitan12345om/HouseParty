@@ -99,6 +99,7 @@ public class SongActivity extends AppCompatActivity implements
             Log.d("SongActivity", "REDIRECT_URI = " + REDIRECT_URI);
             REQUEST_CODE = extras.getInt("REQUEST_CODE");
             Log.d("SongActivity", "REQUEST_CODE = " + REQUEST_CODE);
+            authenticateUser();
         }
         /*
         CLIENT_ID = extras.getString("CLIENT_ID");
@@ -134,6 +135,7 @@ public class SongActivity extends AppCompatActivity implements
                     //mediaPlayer = MediaPlayer.create(SongActivity.this, resID);
                     //mediaPlayer.start();
                     String uri = uriTable.get( list.get(i));
+                    Log.d("GETURI: ", uri + "END of URI");
                     spotifyPlayer.playUri(null, uri, 0, 0);
                 }
             }
