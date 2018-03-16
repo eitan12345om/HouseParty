@@ -223,21 +223,35 @@ public class SongActivity extends AppCompatActivity implements
         //options.put("Authorization", accessToken);
         options.put("market", "US");
         options.put("limit", 20);
+        try {
+            spotify.searchTracks(query, options, new Callback<TracksPager>() {
+                @Override
+                public void success(TracksPager tracksPager, Response response) {
+                    String songUri = "";
+                    try {
 
-        spotify.searchTracks(query, options, new Callback<TracksPager>() {
-            @Override
-            public void success(TracksPager tracksPager, Response response) {
-                List<Track> searchResults = tracksPager.tracks.items;
-                String songUri = searchResults.get(0).uri;
-                Log.d("FetchSongTask", "1st song uri = " + songUri);
-                callback.onSuccess(songUri);
-            }
 
-            @Override
-            public void failure(RetrofitError error) {
-                error.printStackTrace();
-            }
-        });
+                        List<Track> searchResults = tracksPager.tracks.items;
+                        songUri = searchResults.get(0).uri;
+                    }
+                    catch(Exception e)
+                    {
+                        Log.d( "SearchTracksInner: ", "No results");
+                    }
+                    Log.d("FetchSongTask", "1st song uri = " + songUri);
+                    callback.onSuccess(songUri);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    error.printStackTrace();
+                }
+            });
+
+        }
+        catch( IndexOutOfBoundsException e) {
+            Log.d( "SEARCHTRACKS", "No results");
+        }
 
     }
 

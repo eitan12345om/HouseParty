@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements
                 selected_list = list.get(i);
                 String id = idTable.get(selected_list);
                 Log.d( "ID FROM HASH", id);
-                dialogueBox_Passcode(view, dataTable.get("passcode"));
+                dialogueBox_Passcode(view, dataTable.get("passcode") );
                 //passcodeDatabaseReference = pFirebaseDatabase.getReference().child("playlists").child(id);
                 //Log.d( "ELEMENT FROM DATABASE", dataTable.get("passcode"));
 
