@@ -248,6 +248,9 @@ public class MainActivity extends AppCompatActivity implements
                     Log.d( "PLAYLIST", plist.getPasscode() );
                     pPlaylistDatabaseReference.push().setValue(plist);
                     Intent intent = new Intent(getBaseContext(), SongActivity.class);
+                    intent.putExtra("CLIENT_ID", CLIENT_ID);
+                    intent.putExtra("REDIRECT_URI", REDIRECT_URI);
+                    intent.putExtra("REQUEST_CODE", REQUEST_CODE);
                     startActivity(intent);
                 }
             }

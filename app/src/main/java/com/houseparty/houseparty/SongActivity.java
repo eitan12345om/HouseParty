@@ -90,6 +90,7 @@ public class SongActivity extends AppCompatActivity implements
 
         //https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
         Bundle extras = getIntent().getExtras();
+
         if( getIntent().getStringExtra("CLIENT_ID") != null
                 && getIntent().getStringExtra("REDIRECT_URI") != null
                 && getIntent().getIntExtra("REQUEST_CODE", 0) != 0) {
@@ -108,6 +109,8 @@ public class SongActivity extends AppCompatActivity implements
         Log.d("SongActivity", "REDIRECT_URI = " + REDIRECT_URI);
         REQUEST_CODE = extras.getInt("REQUEST_CODE");
         Log.d("SongActivity", "REQUEST_CODE = " + REQUEST_CODE);
+
+        authenticateUser();
         */
         listView = (ListView) findViewById(R.id.listView);
 
@@ -183,8 +186,6 @@ public class SongActivity extends AppCompatActivity implements
 
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
-
-        authenticateUser();
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
