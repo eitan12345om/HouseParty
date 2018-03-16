@@ -161,6 +161,17 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+    public void dialogueBox_InvalidPasscode(View v ) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Invalid passcode");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
     public void dialogueBox_Passcode(View v, final String valid_code){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -172,12 +183,14 @@ public class MainActivity extends AppCompatActivity implements
         inputPasscode.setInputType(InputType.TYPE_CLASS_TEXT);
 
         builder.setView(layout);
+        final View thisView = v;
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String entered_code = inputPasscode.getText().toString();
                 if ( !entered_code.equals(valid_code) ) {
+                    dialogueBox_InvalidPasscode(thisView);
                     dialog.cancel();
                 } else {
                     Intent intent = new Intent(MainActivity.this, SongActivity.class);
