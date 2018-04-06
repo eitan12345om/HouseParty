@@ -35,33 +35,25 @@ public class LoginActivity extends AppCompatActivity {
         if (username == null || password == null) {
             return false;
         }
-        return username.equals("jkurtz678@gmail.com") && password.equals("1234");
+
+        if (password.length() < 5 || password.length() > 16) {
+            return false;
+        }
+
+        Pattern badChars = Pattern.compile("[~#*+%{}<>]");
+        Pattern goodChars = Pattern.compile("[@.]");
+        Matcher badMatcher = badChars.matcher(username);
+        Matcher goodMatcher = goodChars.matcher(username);
+        if (badMatcher.find() || !goodMatcher.find())
+            return false;
+
+        return username.equals("jkurtz678@gmail.com") && password.equals("12345");
     }
 
     public boolean authenticateLogin(String username, String password) {
         if (username == null || password == null) {
             return false;
         }
-        // TODO: Change so that other statements are reachable
-//        return username.equals("jkurtz678@gmail.com") && password.equals("1234");
-        
-        if (username.equals("matt@gmail.com")) {
-            return false;
-        }
-        if (password.length() < 5 || password.length() > 16)
-            return false;
-
         return username.equals("jkurtz678@gmail.com") && password.equals("1234");
-
-        if( password.length() < 5 || password.length() > 16)
-            return false;
-        Pattern badChars = Pattern.compile("[~#*+%{}<>]");
-        Pattern goodChars = Pattern.compile("[@.]");
-        Matcher badMatcher = badChars.matcher(username);
-        Matcher goodMatcher = goodChars.matcher(username);
-        if( badMatcher.find() || !goodMatcher.find() )
-            return false;
-        
-        return username.equals( "jkurtz678@gmail.com" ) && password.equals(  "12345" );
     }
 }
