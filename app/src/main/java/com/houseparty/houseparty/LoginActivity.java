@@ -25,6 +25,11 @@ public class LoginActivity extends AppCompatActivity {
     public Boolean register( String username, String password ){
         if( username == null || password == null )
             return false;
+        if( username == "matt@gmail.com")
+            return false;
+        if( password.length() < 5 || password.length() > 16)
+            return false;
+        
         return username.equals( "jkurtz678@gmail.com" ) && password.equals(  "1234" );
     }
 }
