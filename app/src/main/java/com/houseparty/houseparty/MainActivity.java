@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -81,12 +80,6 @@ public class MainActivity extends AppCompatActivity implements
         actionBar.setTitle(title);
 
         listView = (ListView) findViewById(R.id.listView);
-
-        list = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++) {
-            list.add("Playlist_" + i);
-        }
         list = new ArrayList<String>();
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
@@ -131,8 +124,8 @@ public class MainActivity extends AppCompatActivity implements
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selected_list = list.get(i);
                 String id = idTable.get(selected_list);
-                Log.d( "ID FROM HASH", id);
-                dialogueBox_Passcode(view, dataTable.get("passcode") );
+                Log.d("ID FROM HASH", id);
+                dialogueBox_Passcode(view, dataTable.get("passcode"));
                 //passcodeDatabaseReference = pFirebaseDatabase.getReference().child("playlists").child(id);
                 //Log.d( "ELEMENT FROM DATABASE", dataTable.get("passcode"));
 
@@ -161,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void dialogueBox_InvalidPasscode(View v ) {
+    public void dialogueBox_InvalidPasscode(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Invalid passcode");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -172,7 +165,8 @@ public class MainActivity extends AppCompatActivity implements
         });
         builder.show();
     }
-    public void dialogueBox_Passcode(View v, final String valid_code){
+
+    public void dialogueBox_Passcode(View v, final String valid_code) {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -189,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String entered_code = inputPasscode.getText().toString();
-                if ( !entered_code.equals(valid_code) ) {
+                if (!entered_code.equals(valid_code)) {
                     dialogueBox_InvalidPasscode(thisView);
                     dialog.cancel();
                 } else {
@@ -212,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void dialogueBox_Playlist(View v) {
-        LinearLayout layout  = new LinearLayout(this);
+        LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -236,16 +230,16 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(DialogInterface dialog, int which) {
                 playlist_name = inputTitle.getText().toString();
                 code = inputPasscode.getText().toString();
-                Log.d( "NONNUMBERCHECK", Boolean.toString( code.matches("\\d+") ));
+                Log.d("NONNUMBERCHECK", Boolean.toString(code.matches("\\d+")));
                 if (playlist_name.isEmpty() ||
                         !code.matches("\\d+")
-                                || code.length() != 4 ) {
+                        || code.length() != 4) {
                     dialog.cancel();
                 } else {
                     selected_list = playlist_name;
                     passcode = code;
                     Playlist plist = new Playlist(selected_list, passcode);
-                    Log.d( "PLAYLIST", plist.getPasscode() );
+                    Log.d("PLAYLIST", plist.getPasscode());
                     pPlaylistDatabaseReference.push().setValue(plist);
                     Intent intent = new Intent(getBaseContext(), SongActivity.class);
                     intent.putExtra("CLIENT_ID", CLIENT_ID);

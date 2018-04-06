@@ -21,4 +21,15 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
+    public boolean register(String username, String password) {
+        if (username == null || password == null) {
+            return false;
+        }
+        return username.equals("jkurtz678@gmail.com") && password.equals("1234");
+    }
+
+    public boolean authenticate_login(String username, String password) {
+
+    }
 }
