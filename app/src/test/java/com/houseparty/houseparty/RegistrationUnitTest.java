@@ -1,11 +1,9 @@
 package com.houseparty.houseparty;
 
-import android.util.Log;
-
-import org.junit.After;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by jacksonkurtz on 4/4/18.
@@ -28,15 +26,18 @@ public class RegistrationUnitTest {
         assertFalse( activity.register("invalidusername@gmail.com", "1234") );
     }*/
     @Test
-    public void register_correctUsername() throws Exception {
+    public void register_correctInputs() throws Exception {
         assertTrue( activity.register("jkurtz678@gmail.com", "12345") );
     }
 
     @Test
+    public void register_existingUsername() throws Exception {
+        assertFalse(activity.register("matt@gmail.com", "12345"));
+    }
+    @Test
     public void register_nullUsername() throws Exception {
         assertFalse( activity.register( null, "12345"));
     }
-
     @Test
     public void register_nullPassword() throws Exception {
         assertFalse( activity.register( "jkurtz678@gmail.com", null));
@@ -45,13 +46,19 @@ public class RegistrationUnitTest {
     public void register_badEmail() throws Exception {
         assertFalse( activity.register( "jkurtz678", "12345"));
     }
+
+    // longer than 4, shorter than 16
     @Test
-    public void register_shortPassword() throws Exception {
-        assertFalse( activity.register( "jkurtz678@gmail.com", "1234"));
+    public void register_badPasswordLength() throws Exception {
+        assertTrue(activity.register("jkurtz678@gmail.com", "12345"));
+        assertFalse(activity.register("jkurtz678@gmail.com", "123"));
+        assertFalse(activity.register("jkurtz678@gmail.com", "123423123134235111"));
+
     }
+
     @Test
     public void register_invalidCharacters() throws Exception {
-        assertFalse( activity.register( "jackson kurtz@gmail.com", "12345"));
+        assertFalse(activity.register("jac##  kson kurtz@gmail.com", "12345"));
 
     }
 }

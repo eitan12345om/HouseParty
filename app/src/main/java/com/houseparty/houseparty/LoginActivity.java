@@ -40,5 +40,13 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         }
         return username.equals("jkurtz678@gmail.com") && password.equals("1234");
+
+        if (username.equals("matt@gmail.com")) {
+            return false;
+        }
+        if (password.length() < 5 || password.length() > 16)
+            return false;
+
+        return username.equals("jkurtz678@gmail.com") && password.equals("1234");
     }
 }
