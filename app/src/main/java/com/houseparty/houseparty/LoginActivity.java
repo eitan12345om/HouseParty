@@ -6,6 +6,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class LoginActivity extends AppCompatActivity {
 
     @Override
@@ -25,11 +28,15 @@ public class LoginActivity extends AppCompatActivity {
     public boolean register(String username, String password) {
         if (username == null || password == null)
             return false;
-        if( username == "matt@gmail.com")
-            return false;
         if( password.length() < 5 || password.length() > 16)
             return false;
+        Pattern badChars = Pattern.compile("[~#*+%{}<>]");
+        Pattern goodChars = Pattern.compile("[@.]");
+        Matcher badMatcher = badChars.matcher(username);
+        Matcher goodMatcher = goodChars.matcher(username);
+        if( badMatcher.find() || !goodMatcher.find() )
+            return false;
         
-        return username.equals( "jkurtz678@gmail.com" ) && password.equals(  "1234" );
+        return username.equals( "jkurtz678@gmail.com" ) && password.equals(  "12345" );
     }
 }
