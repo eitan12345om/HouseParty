@@ -12,19 +12,7 @@ import static org.junit.Assert.assertTrue;
 public class RegistrationUnitTest {
 
     private LoginActivity activity = new LoginActivity();
-/*
-    public void setUp() throws Exception {
-        activity = new LoginActivity();
-        //Log.d( "SpotifyUnitTest", "test");
-        System.out.println( "test");
-    }
-*/
 
-    /*
-    @Test
-    public void authenticate_isIncorrect() throws Exception {
-        assertFalse( activity.register("invalidusername@gmail.com", "1234") );
-    }*/
     @Test
     public void register_correctInputs() throws Exception {
         assertTrue( activity.register("jkurtz678@gmail.com", "12345") );
@@ -50,10 +38,9 @@ public class RegistrationUnitTest {
     // longer than 4, shorter than 16
     @Test
     public void register_badPasswordLength() throws Exception {
-        assertTrue(activity.register("jkurtz678@gmail.com", "12345"));
-        assertFalse(activity.register("jkurtz678@gmail.com", "123"));
-        assertFalse(activity.register("jkurtz678@gmail.com", "123423123134235111"));
-
+        assertTrue( activity.register( "jkurtz678@gmail.com", "12345"));
+        assertFalse( activity.register( "jkurtz678@gmail.com", "123"));
+        assertFalse( activity.register( "jkurtz678@gmail.com", "123423123134235111"));
     }
 
     @Test
