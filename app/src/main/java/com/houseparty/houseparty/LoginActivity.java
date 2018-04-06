@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -18,8 +19,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void playlistPage(View v) {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        EditText username = (EditText) findViewById(R.id.editText);
+        EditText password = (EditText) findViewById(R.id.editText2);
+        if (authenticateLogin(username.getText().toString(), password.getText().toString())) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public boolean register(String username, String password) {
@@ -29,7 +35,10 @@ public class LoginActivity extends AppCompatActivity {
         return username.equals("jkurtz678@gmail.com") && password.equals("1234");
     }
 
-    public boolean authenticate_login(String username, String password) {
-
+    public boolean authenticateLogin(String username, String password) {
+        if (username == null || password == null) {
+            return false;
+        }
+        return username.equals("jkurtz678@gmail.com") && password.equals("1234");
     }
 }
