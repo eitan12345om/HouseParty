@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Nathan Boyd
- */
+ *//*
 public class SpotifySearchTest {
     @Test
     private SongActivity activity = new SongActivity();
@@ -19,4 +19,4 @@ public class SpotifySearchTest {
         assertEquals("spotify:track:2WfaOiMkCvy7F5fcp2zZ8L", activity.spotifySearchForTrack("take on me a ha"));
 
     }
-}
+}*/
