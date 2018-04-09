@@ -2,6 +2,7 @@ package com.houseparty.houseparty;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -20,31 +21,32 @@ public class RegistrationLoginIntegrationTest {
 
     @Test
     public void createAndLoginUser_isCorrect() throws Exception {
-        assertTrue( activity.createUserAndLogin("jkurtz678@gmail.com", "12345") );
+        assertTrue(activity.createUserAndLogin("jkurtz678@gmail.com", "12345"));
     }
+
     @Test
     public void createAndLoginUser_incorrectPassword() throws Exception {
-        assertFalse( activity.createUserAndLogin("jkurtz678@gmail.com", "12346") );
+        assertFalse(activity.createUserAndLogin("jkurtz678@gmail.com", "12346"));
     }
 
     @Test
     public void createAndLoginUser_nullLogin() throws Exception {
-        assertFalse( activity.createUserAndLogin(null, "12345") );
+        assertFalse(activity.createUserAndLogin(null, "12345"));
     }
 
     @Test
     public void createAndLoginUser_nullPassword() throws Exception {
-        assertFalse( activity.createUserAndLogin("jkurtz678@gmail.com", null) );
+        assertFalse(activity.createUserAndLogin("jkurtz678@gmail.com", null));
     }
 
     @Test
     public void createAndLoginUser_invalidEmail() throws Exception {
-        assertFalse( activity.createUserAndLogin("jkurtz678", null) );
+        assertFalse(activity.createUserAndLogin("jkurtz678", null));
     }
 
     @Test
     public void createAndLoginUser_badPasswordLength() throws Exception {
-        assertFalse( activity.createUserAndLogin( "jkurtz678@gmail.com", "123"));
+        assertFalse(activity.createUserAndLogin("jkurtz678@gmail.com", "123"));
     }
 
 }
