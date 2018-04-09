@@ -213,7 +213,7 @@ public class SongActivity extends AppCompatActivity implements
         builder.show();
     }
 
-    void spotifySearchForTrack(String query, final AsyncCallback callback) {
+    boolean spotifySearchForTrack(String query, final AsyncCallback callback) {
 
         query = query.replaceAll(" ", "+");
 
@@ -248,9 +248,11 @@ public class SongActivity extends AppCompatActivity implements
             Log.d("SEARCHTRACKS", "No results");
         }
 
+        return true;
+
     }
 
-    void authenticateUser() {
+    boolean authenticateUser() {
         // ---------USER AUTHENTICATION----------
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
@@ -263,6 +265,8 @@ public class SongActivity extends AppCompatActivity implements
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(SongActivity.this, REQUEST_CODE, request);
+
+        return true;
 
     }
 
@@ -292,6 +296,47 @@ public class SongActivity extends AppCompatActivity implements
                     }
                 });
             }
+        }
+    }
+
+    boolean testSearchForTrack() {
+        try {
+            spotifySearchForTrack("Headlines", new AsyncCallback() {
+                @Override
+                public void onSuccess(String uri) {
+                    Log.d("SearchTest", "Received uri = " + uri);
+                }
+            });
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    boolean testOnLoggedIn() {
+        try {
+            onLoggedIn();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    boolean testOnLoggedOut() {
+        try {
+            onLoggedOut();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    boolean testOnDestroy() {
+        try {
+            onDestroy();
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
