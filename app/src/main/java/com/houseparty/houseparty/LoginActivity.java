@@ -6,12 +6,23 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import java.util.ArrayList;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private ArrayList<UserLogin> logins = new ArrayList<UserLogin>();
+
+    private class UserLogin {
+        private String email;
+        private String password;
+        public UserLogin(String email, String password) {
+            this.email = email;
+            this.password = password;
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +42,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    public boolean createUserAndLogin( String username, String password) {
+        return register( username, password ) && authenticateLogin( username, password );
+    }
+
     public boolean register(String username, String password) {
         if (username == null || password == null) {
             return false;
@@ -47,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         if (badMatcher.find() || !goodMatcher.find())
             return false;
 
+        logins.add( new UserLogin(username, password) );
         return username.equals("jkurtz678@gmail.com") && password.equals("12345");
     }
 
@@ -54,6 +70,11 @@ public class LoginActivity extends AppCompatActivity {
         if (username == null || password == null) {
             return false;
         }
-        return username.equals("jkurtz678@gmail.com") && password.equals("1234");
+        for( UserLogin login : logins) {
+            if( login.email.equals( username ) && login.password.equals( password) )
+                return true;
+        }
+        return false;
+        //return username.equals("jkurtz678@gmail.com") && password.equals("1234");
     }
 }
