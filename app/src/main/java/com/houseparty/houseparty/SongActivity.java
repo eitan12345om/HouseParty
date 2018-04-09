@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
-import android.util.TimeUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -36,7 +35,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -91,7 +89,7 @@ public class SongActivity extends AppCompatActivity implements
         //https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
         Bundle extras = getIntent().getExtras();
 
-        if( getIntent().getStringExtra("CLIENT_ID") != null
+        if (getIntent().getStringExtra("CLIENT_ID") != null
                 && getIntent().getStringExtra("REDIRECT_URI") != null
                 && getIntent().getIntExtra("REQUEST_CODE", 0) != 0) {
             CLIENT_ID = extras.getString("CLIENT_ID");
@@ -137,7 +135,7 @@ public class SongActivity extends AppCompatActivity implements
                     //int resID = getResources().getIdentifier(list.get(i), "raw", getPackageName());
                     //mediaPlayer = MediaPlayer.create(SongActivity.this, resID);
                     //mediaPlayer.start();
-                    String uri = uriTable.get( list.get(i));
+                    String uri = uriTable.get(list.get(i));
                     Log.d("GETURI: ", uri + "END of URI");
                     spotifyPlayer.playUri(null, uri, 0, 0);
                 }
@@ -149,7 +147,7 @@ public class SongActivity extends AppCompatActivity implements
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 System.out.println("Size of list is: " + list.size());
                 Song sList = dataSnapshot.getValue(Song.class);
-                uriTable.put( sList.getTitle(), sList.getUri());
+                uriTable.put(sList.getTitle(), sList.getUri());
                 list.add(sList.getTitle());
                 adapter.notifyDataSetChanged();
 
@@ -233,10 +231,8 @@ public class SongActivity extends AppCompatActivity implements
 
                         List<Track> searchResults = tracksPager.tracks.items;
                         songUri = searchResults.get(0).uri;
-                    }
-                    catch(Exception e)
-                    {
-                        Log.d( "SearchTracksInner: ", "No results");
+                    } catch (Exception e) {
+                        Log.d("SearchTracksInner: ", "No results");
                     }
                     Log.d("FetchSongTask", "1st song uri = " + songUri);
                     callback.onSuccess(songUri);
@@ -248,9 +244,8 @@ public class SongActivity extends AppCompatActivity implements
                 }
             });
 
-        }
-        catch( IndexOutOfBoundsException e) {
-            Log.d( "SEARCHTRACKS", "No results");
+        } catch (IndexOutOfBoundsException e) {
+            Log.d("SEARCHTRACKS", "No results");
         }
 
     }
