@@ -15,32 +15,35 @@ public class RegistrationUnitTest {
 
     @Test
     public void register_correctInputs() throws Exception {
-        assertTrue( activity.register("jkurtz678@gmail.com", "12345") );
+        assertTrue(activity.register("jkurtz678@gmail.com", "12345"));
     }
 
     @Test
     public void register_existingUsername() throws Exception {
         assertFalse(activity.register("matt@gmail.com", "12345"));
     }
+
     @Test
     public void register_nullUsername() throws Exception {
-        assertFalse( activity.register( null, "12345"));
+        assertFalse(activity.register(null, "12345"));
     }
+
     @Test
     public void register_nullPassword() throws Exception {
-        assertFalse( activity.register( "jkurtz678@gmail.com", null));
+        assertFalse(activity.register("jkurtz678@gmail.com", null));
     }
+
     @Test
     public void register_badEmail() throws Exception {
-        assertFalse( activity.register( "jkurtz678", "12345"));
+        assertFalse(activity.register("jkurtz678", "12345"));
     }
 
     // longer than 4, shorter than 16
     @Test
     public void register_badPasswordLength() throws Exception {
-        assertTrue( activity.register( "jkurtz678@gmail.com", "12345"));
-        assertFalse( activity.register( "jkurtz678@gmail.com", "123"));
-        assertFalse( activity.register( "jkurtz678@gmail.com", "123423123134235111"));
+        assertTrue(activity.register("jkurtz678@gmail.com", "12345"));
+        assertFalse(activity.register("jkurtz678@gmail.com", "123"));
+        assertFalse(activity.register("jkurtz678@gmail.com", "123423123134235111"));
     }
 
     @Test
