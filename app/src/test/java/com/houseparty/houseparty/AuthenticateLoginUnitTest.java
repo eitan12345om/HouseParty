@@ -1,5 +1,6 @@
 package com.houseparty.houseparty;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertFalse;
@@ -7,6 +8,11 @@ import static junit.framework.Assert.assertTrue;
 
 public class AuthenticateLoginUnitTest {
     private LoginActivity activity = new LoginActivity();
+
+    @Before
+    public void setup() {
+        activity.register("jkurtz678@gmail.com", "1234");
+    }
 
     @Test
     public void testBothNull() {
