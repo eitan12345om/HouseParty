@@ -10,20 +10,15 @@ public class Song {
     private String uri;
     private String api;
 
-    //public Song(String title) {
-    //    this.title = title;
-    //}
-
-    public Song(String title, String uri ) {
+    public Song(String title, String uri) {
         this.title = title;
         this.uri = uri;
-    }
-    public Song() {
     }
 
     public String getTitle() {
         return this.title;
     }
+
     public String getUri() {
         return this.uri;
     }
@@ -32,8 +27,8 @@ public class Song {
         return this.artist;
     }
 
-    //public String getName() {
-    //    return this.title + " - " + this.artist;
-    //}
-
+    @Override
+    public String toString() {
+        return this.title;
+    }
 }

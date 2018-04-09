@@ -34,6 +34,6 @@ public class Playlist {
 
     @Override
     public String toString() {
-        return this.name + songs.get(0).getTitle();
+        return this.name + songs.get(0).toString();
     }
 }
