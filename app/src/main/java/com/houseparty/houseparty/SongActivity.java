@@ -58,9 +58,9 @@ public class SongActivity extends AppCompatActivity implements
     private DatabaseReference songDatabaseReference;
     private ChildEventListener sChildEventListener;
 
-    private String CLIENT_ID;
-    private String REDIRECT_URI;
-    private int REQUEST_CODE;
+    private final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
+    private final String REDIRECT_URI = "houseparty-android://callback";
+    private final int REQUEST_CODE = 777;
     private String accessToken;
     private SpotifyPlayer spotifyPlayer;
     private SpotifyService spotify;
@@ -85,31 +85,9 @@ public class SongActivity extends AppCompatActivity implements
         actionBar.show();
         actionBar.setTitle(title + MainActivity.selection());
 
-
-        //https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
+        // https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
         Bundle extras = getIntent().getExtras();
 
-        if (getIntent().getStringExtra("CLIENT_ID") != null
-                && getIntent().getStringExtra("REDIRECT_URI") != null
-                && getIntent().getIntExtra("REQUEST_CODE", 0) != 0) {
-            CLIENT_ID = extras.getString("CLIENT_ID");
-            Log.d("SongActivity", "CLIENT_ID = " + CLIENT_ID);
-            REDIRECT_URI = extras.getString("REDIRECT_URI");
-            Log.d("SongActivity", "REDIRECT_URI = " + REDIRECT_URI);
-            REQUEST_CODE = extras.getInt("REQUEST_CODE");
-            Log.d("SongActivity", "REQUEST_CODE = " + REQUEST_CODE);
-            authenticateUser();
-        }
-        /*
-        CLIENT_ID = extras.getString("CLIENT_ID");
-        Log.d("SongActivity", "CLIENT_ID = " + CLIENT_ID);
-        REDIRECT_URI = extras.getString("REDIRECT_URI");
-        Log.d("SongActivity", "REDIRECT_URI = " + REDIRECT_URI);
-        REQUEST_CODE = extras.getInt("REQUEST_CODE");
-        Log.d("SongActivity", "REQUEST_CODE = " + REQUEST_CODE);
-
-        authenticateUser();
-        */
         listView = (ListView) findViewById(R.id.listView);
 
         list = new ArrayList<>();

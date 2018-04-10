@@ -1,11 +1,18 @@
 package com.houseparty.houseparty;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 public class SongActivityUnitTest {
 
     private SongActivity sa = new SongActivity();
+
+    @Before
+    public void setup() {
+        sa.authenticateUser();
+    }
 
     @Test
     public void testUserAuthentication() throws Exception { assertTrue(sa.authenticateUser()); }
