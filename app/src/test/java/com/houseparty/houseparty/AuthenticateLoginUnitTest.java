@@ -7,11 +7,17 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 public class AuthenticateLoginUnitTest {
-    private LoginActivity activity = new LoginActivity();
+    private LoginActivity activity;
 
     @Before
     public void setup() {
-        activity.register("jkurtz678@gmail.com", "1234");
+        activity = new LoginActivity();
+        activity.register("jkurtz678@gmail.com", "12345");
+    }
+
+    @Test
+    public void testCorrect() {
+        assertTrue(activity.authenticateLogin("jkurtz678@gmail.com", "12345"));
     }
 
     @Test
@@ -54,8 +60,5 @@ public class AuthenticateLoginUnitTest {
         assertFalse(activity.authenticateLogin("invalid@gmail.com", "1234"));
     }
 
-    @Test
-    public void testCorrect() {
-        assertTrue(activity.authenticateLogin("jkurtz678@gmail.com", "1234"));
-    }
+
 }
