@@ -10,10 +10,10 @@ public abstract class Song {
     protected String uri;
     protected String api;
 
-//    public Song(String title, String uri) {
-//        this.title = title;
-//        this.uri = uri;
-//    }
+    public Song(String title, String uri) {
+        this.title = title;
+        this.uri = uri;
+    }
 
     public String getTitle() {
         return this.title;
