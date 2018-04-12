@@ -4,16 +4,16 @@ package com.houseparty.houseparty;
  * Created by jacksonkurtz on 2/23/18.
  */
 
-public class Song {
-    private String title;
-    private String artist;
-    private String uri;
-    private String api;
+public abstract class Song {
+    protected String title;
+    protected String artist;
+    protected String uri;
+    protected String api;
 
-    public Song(String title, String uri) {
-        this.title = title;
-        this.uri = uri;
-    }
+//    public Song(String title, String uri) {
+//        this.title = title;
+//        this.uri = uri;
+//    }
 
     public String getTitle() {
         return this.title;
@@ -31,4 +31,6 @@ public class Song {
     public String toString() {
         return this.title;
     }
+
+    public abstract int playSong();
 }
