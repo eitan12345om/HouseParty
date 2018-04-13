@@ -32,6 +32,8 @@ public class LoginActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
+
+        createUserAndLogin("username", "password");
     }
 
     public void playlistPage(View v) {
@@ -65,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
             return false;
 
         logins.add(new UserLogin(username, password));
-        return username.equals("jkurtz678@gmail.com") && password.equals("12345");
+        return username.equals("username") && password.equals("password");
     }
 
     public boolean authenticateLogin(String username, String password) {
