@@ -18,27 +18,17 @@ import retrofit.client.Response;
  */
 
 
-
 public class SongFactory {
-
+    private Song song;
 
     private interface AsyncCallback {
         void onSuccess(String uri);
     }
 
-    public SongFactory()
-    {
-
-    }
-
-    private Song song;
-
-    public Song createSong(final String title, SpotifyService spotify, String api)
-    {
+    public Song createSong(final String title, SpotifyService spotify, String api) {
         String songUri = "";
 
-        if ("spotify" .equals(api))
-        {
+        if ("spotify".equals(api)) {
 
             spotifySearchForTrack(title, new AsyncCallback() {
                 @Override
@@ -48,25 +38,21 @@ public class SongFactory {
                 }
             }, spotify);
         }
-        if ("soundcloud" .equals( api))
-        {
+        if ("soundcloud".equals(api)) {
             String uri = "";
             song = new SoundCloudSong(title, uri);
         }
-        if ("tidal" .equals( api))
-        {
+        if ("tidal".equals(api)) {
             String uri = "";
             song = new TidalSong(title, uri);
         }
-        if ("googleplay" .equals( api))
-        {
+        if ("googleplay".equals(api)) {
             String uri = "";
             song = new GooglePlaySong(title, uri);
         }
-        
+
         return song;
     }
-
 
 
     boolean spotifySearchForTrack(String query, final AsyncCallback callback, SpotifyService spotify) {
@@ -108,6 +94,4 @@ public class SongFactory {
         return true;
 
     }
-
-
 }
