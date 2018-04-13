@@ -55,12 +55,23 @@ public class MainActivity extends AppCompatActivity implements
 
     private DatabaseReference passcodeDatabaseReference;
 
+    private static MainActivity instance;
+
     // Required constants for Spotify API connection.
     static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
     static final String REDIRECT_URI = "houseparty-android://callback";
 
     // Used to verify if Spotify results come from correct activity.
     static final int REQUEST_CODE = 777;
+
+    private MainActivity() {}
+
+    public static MainActivity getMainInstance(){
+        if( instance == null) {
+            instance = new MainActivity();
+        }
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
