@@ -19,10 +19,25 @@ import retrofit.client.Response;
 
 
 public class SongFactory {
+
+    private static SongFactory instance;
+
     private Song song;
 
     private interface AsyncCallback {
         void onSuccess(String uri);
+    }
+
+    private SongFactory(){}
+
+    public static SongFactory getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new SongFactory();
+        }
+        return instance;
+
     }
 
     public Song createSong(final String title, SpotifyService spotify, String api) {
