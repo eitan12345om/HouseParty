@@ -6,8 +6,7 @@ package com.houseparty.houseparty;
 
 public class SoundCloudSong extends Song {
     public SoundCloudSong(String title, String uri) {
-        this.title = title;
-        this.uri = uri;
+        super(title, uri);
     }
 
     /* TODO */

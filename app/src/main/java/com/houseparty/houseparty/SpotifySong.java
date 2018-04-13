@@ -5,8 +5,7 @@ package com.houseparty.houseparty;
  */
 public class SpotifySong extends Song {
     public SpotifySong(String title, String uri) {
-        this.title = title;
-        this.uri = uri;
+        super(title, uri);
     }
 
     /* TODO */
