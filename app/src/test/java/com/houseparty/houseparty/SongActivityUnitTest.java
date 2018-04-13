@@ -15,18 +15,28 @@ public class SongActivityUnitTest {
     }
 
     @Test
-    public void testUserAuthentication() throws Exception { assertTrue(sa.authenticateUser()); }
+    public void testUserAuthentication() throws Exception {
+        assertTrue(sa.authenticateUser());
+    }
 
     @Test
-    public void testLoggedIn() throws Exception { assertTrue(sa.testOnLoggedIn()); }
+    public void testLoggedIn() throws Exception {
+        assertTrue(sa.testOnLoggedIn());
+    }
 
     @Test
-    public void testLoggedOut() throws Exception { assertTrue(sa.testOnLoggedOut()); }
+    public void testLoggedOut() throws Exception {
+        assertTrue(sa.testOnLoggedOut());
+    }
 
     @Test
-    public void testOnDestroy() throws Exception { assertTrue(sa.testOnDestroy()); }
+    public void testOnDestroy() throws Exception {
+        assertTrue(sa.testOnDestroy());
+    }
 
     @Test
-    public void testSpotifySearch() throws Exception { assertTrue(sa.testSearchForTrack()); }
+    public void testSpotifySearch() throws Exception {
+        assertTrue(sa.testSearchForTrack());
+    }
 
 }

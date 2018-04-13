@@ -67,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
             return false;
 
         logins.add(new UserLogin(username, password));
-        return username.equals("username") && password.equals("password");
+        return username.equals("jkurtz678@gmail.com") && password.equals("12345");
     }
 
     public boolean authenticateLogin(String username, String password) {

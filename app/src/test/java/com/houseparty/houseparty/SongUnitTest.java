@@ -9,13 +9,13 @@ public class SongUnitTest {
 
     @Test
     public void test_toString() throws Exception {
-        song = new Song("Thriller", "fake_uri");
+        song = new SpotifySong("Thriller", "fake_uri");
         assertTrue(song.toString().equals("Thriller"));
     }
 
     @Test
     public void test_toString2() throws Exception {
-        song = new Song("Beat It", "fake_uri");
+        song = new SpotifySong("Beat It", "fake_uri");
         assertTrue(song.toString().equals("Beat It"));
     }
 }
