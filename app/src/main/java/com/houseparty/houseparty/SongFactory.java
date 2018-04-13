@@ -13,6 +13,11 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+/**
+ * @author Nathan Boyd april 12 2018
+ */
+
+
 
 public class SongFactory {
 
@@ -20,8 +25,6 @@ public class SongFactory {
     private interface AsyncCallback {
         void onSuccess(String uri);
     }
-    //private SpotifyService spotify;
-
 
     public SongFactory()
     {
@@ -33,9 +36,7 @@ public class SongFactory {
     public Song createSong(final String title, SpotifyService spotify, String api)
     {
         String songUri = "";
-
-
-
+        
         if ("spotify" .equals(api))
         {
 
@@ -49,18 +50,18 @@ public class SongFactory {
         }
         if ("soundcloud" .equals( api))
         {
-            //song = new SoundcloudSong(title, uri);
-            return song;
+            String uri = "";
+            song = new SoundCloudSong(title, uri);
         }
-        if ("applemusic" .equals( api))
+        if ("tidal" .equals( api))
         {
-            //song = new AppleMusicSong(title, uri);
-            return song;
+            String uri = "";
+            song = new TidalSong(title, uri);
         }
         if ("googleplay" .equals( api))
         {
-             //song = new GooglePlaySong(title, uri);
-            return song;
+            String uri = "";
+            song = new GooglePlaySong(title, uri);
         }
 
         return song;
