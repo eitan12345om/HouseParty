@@ -36,7 +36,7 @@ public class SongFactory {
     public Song createSong(final String title, SpotifyService spotify, String api)
     {
         String songUri = "";
-        
+
         if ("spotify" .equals(api))
         {
 
@@ -63,7 +63,7 @@ public class SongFactory {
             String uri = "";
             song = new GooglePlaySong(title, uri);
         }
-
+        
         return song;
     }
 
