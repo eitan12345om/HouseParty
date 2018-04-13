@@ -48,7 +48,7 @@ public class SongActivity extends AppCompatActivity implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     private ListView listView;
-    private List<String> list;
+    private List<String> displayList;
     private ArrayAdapter adapter;
     private MediaPlayer mediaPlayer;
     private String title = "HouseParty - ";
@@ -79,7 +79,7 @@ public class SongActivity extends AppCompatActivity implements
         Hashtable<String, String> t = MainActivity.getIdTable();
         String id = t.get(MainActivity.selection());
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
-        uriTable = new Hashtable<String, String>();
+        uriTable = new Hashtable<>();
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.show();
@@ -90,7 +90,7 @@ public class SongActivity extends AppCompatActivity implements
 
         listView = (ListView) findViewById(R.id.listView);
 
-        list = new ArrayList<>();
+        displayList = new ArrayList<>();
         /*
         Field[] fields = R.raw.class.getFields();
         for(int i = 0; i < fields.length; i++){
@@ -100,7 +100,7 @@ public class SongActivity extends AppCompatActivity implements
         */
         //list.add("Headlines");
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, displayList);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -113,7 +113,7 @@ public class SongActivity extends AppCompatActivity implements
                     //int resID = getResources().getIdentifier(list.get(i), "raw", getPackageName());
                     //mediaPlayer = MediaPlayer.create(SongActivity.this, resID);
                     //mediaPlayer.start();
-                    String uri = uriTable.get(list.get(i));
+                    String uri = uriTable.get(displayList.get(i));
                     Log.d("GETURI: ", uri + "END of URI");
                     spotifyPlayer.playUri(null, uri, 0, 0);
                 }
@@ -123,10 +123,10 @@ public class SongActivity extends AppCompatActivity implements
         sChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                System.out.println("Size of list is: " + list.size());
+                System.out.println("Size of list is: " + displayList.size());
                 Song sList = dataSnapshot.getValue(Song.class);
                 uriTable.put(sList.getTitle(), sList.getUri());
-                list.add(sList.getTitle());
+                displayList.add(sList.getTitle());
                 adapter.notifyDataSetChanged();
 
             }

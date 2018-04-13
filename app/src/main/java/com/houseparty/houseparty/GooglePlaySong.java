@@ -1,10 +1,11 @@
 package com.houseparty.houseparty;
 
 /**
- * @author Eitan created on 4/11/2018.
+ * Created by jacksonkurtz on 4/12/18.
  */
-public class SpotifySong extends Song {
-    public SpotifySong(String title, String uri) {
+
+public class GooglePlaySong extends Song {
+    public GooglePlaySong(String title, String uri) {
         super(title, uri);
     }
 
