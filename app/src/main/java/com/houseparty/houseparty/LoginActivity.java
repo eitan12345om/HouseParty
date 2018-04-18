@@ -33,7 +33,8 @@ public class LoginActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        createUserAndLogin("username", "password");
+        logins.add(new UserLogin("admin", "pokeman"));
+        // createUserAndLogin("username", "password");
     }
 
     public void playlistPage(View v) {
