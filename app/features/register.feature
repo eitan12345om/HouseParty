@@ -6,7 +6,7 @@ Feature: Register for a House Party account
         Then the account should be added to the Firebase server
         And the display will be updated to show the playlist page
     Scenario: Invalid email address entered
-        When I enter an email address with invalid characters or in an incorrect format
+        When I enter an email_address with invalid characters or in an incorrect format
         And all the other details are correct
         And I click the register button
         Then I should see text that indicates the valid email format
