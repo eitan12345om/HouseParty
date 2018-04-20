@@ -1,4 +1,4 @@
-/*package com.houseparty.houseparty;
+package com.houseparty.houseparty;
 
 import org.junit.Test;
 
@@ -30,4 +30,4 @@ public class PlaylistUnitTest {
         playlist.addSong(new SpotifySong("Thriller", "fake_uri"));
         assertTrue(playlist.toString().equals("JacksonBeat It"));
     }
-}*/
+}
