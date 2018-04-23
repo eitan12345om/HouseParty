@@ -1,4 +1,5 @@
 Feature: Stream songs from Spotify
+
     Background:
         Given I want to play a particular song in a playlist
         And the song is available on Spotify

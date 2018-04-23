@@ -1,4 +1,5 @@
 Feature: Set a password for a playlist
+
     Background:
         Given I want to make a new playlist
         And I want to lock the playlist with a password
