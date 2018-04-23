@@ -14,7 +14,7 @@ Feature: Register for a House Party account
         And the registration form should be re-displayed
     Scenario: Invalid password entered
         When I enter a password that doesn’t contain a special character
-        And is of incorrect length ( less than 8 or more than 14 )
+        And password is of incorrect length (less than 8 or more than 14)
         And the email address is correct
         Then a message should appear indicating the correct password format
         And the registration form should be re-displayed
