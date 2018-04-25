@@ -3,6 +3,7 @@ package com.houseparty.houseparty;
 import android.util.Log;
 
 import kaaes.spotify.webapi.android.SpotifyService;
+import com.spotify.sdk.android.player.SpotifyPlayer;
 
 /**
  * @author Nathan Boyd april 12 2018
@@ -10,6 +11,7 @@ import kaaes.spotify.webapi.android.SpotifyService;
 
 
 public class SongFactory {
+
 
     private static SongFactory instance;
 
@@ -26,32 +28,37 @@ public class SongFactory {
 
     }
 
-    public Song createSong(final String title, SpotifyService spotify, String api) {
+    public Song createSong(final String title, SpotifyService spotify) {
         String songUri = "";
 
-        if ("spotify".equals(api)) {
-
-            spotifySearchForTrack(title, new AsyncCallback() {
+            Facade.searchForTrack(title, new Facade.AsyncCallback() {
                 @Override
                 public void onSuccess(String uri) {
                     Log.i("SongActivity", "this is the uri: " + uri);
                     song = new SpotifySong(title, uri);
                 }
             }, spotify);
-        }
-        if ("soundcloud".equals(api)) {
-            String uri = "";
+            return song;
+    }
+
+   /* public Song createSong(final String title, SoundcloudService soundcloud) {
+            String uri = Facade.searchForTrack(title, soundcloud);
             song = new SoundCloudSong(title, uri);
-        }
-        if ("tidal".equals(api)) {
-            String uri = "";
-            song = new TidalSong(title, uri);
-        }
-        if ("googleplay".equals(api)) {
-            String uri = "";
-            song = new GooglePlaySong(title, uri);
+            return song;
         }
 
+    public Song createSong(final String title, TidalService tidal) {
+
+        String uri = Facade.searchForTrack(title, tidal);;
+        song = new TidalSong(title, uri);
         return song;
     }
+
+    public Song createSong(final String title, GooglePlayService googleplay) {
+
+            String uri = Facade.searchForTrack(title, googleplay);;
+            song = new GooglePlaySong(title, uri);
+            return song;
+    }*/
+
 }

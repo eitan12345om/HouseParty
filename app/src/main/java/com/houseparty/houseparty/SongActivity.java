@@ -170,6 +170,12 @@ public class SongActivity extends AppCompatActivity implements
                 if (song_name.isEmpty()) {
                     dialog.cancel();
                 } else {
+
+                    SongFactory factory = SongFactory.getInstance();
+
+                    Song song = factory.createSong(song_name, spotify);
+                    songDatabaseReference.push().setValue(song);
+                    /*
                     spotifySearchForTrack(song_name, new AsyncCallback() {
                         @Override
                         public void onSuccess(String uri) {
@@ -177,7 +183,7 @@ public class SongActivity extends AppCompatActivity implements
                             Song song = new SpotifySong(song_name, uri, accessToken, spotifyPlayer);
                             songDatabaseReference.push().setValue(song);
                         }
-                    });
+                    });*/
                 }
             }
         });

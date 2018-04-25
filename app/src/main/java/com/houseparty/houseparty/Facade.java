@@ -2,6 +2,8 @@ package com.houseparty.houseparty;
 
 import android.util.Log;
 
+import com.spotify.sdk.android.player.SpotifyPlayer;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +19,13 @@ import retrofit.client.Response;
  * @author Eitan created on 4/25/2018.
  */
 public class Facade {
-    private interface AsyncCallback {
+    public interface AsyncCallback {
         void onSuccess(String uri);
     }
 
-    public boolean spotifySearchForTrack(String query, final SongFactory.AsyncCallback callback, SpotifyService spotify) {
+
+
+    public static boolean searchForTrack(String query, final AsyncCallback callback, SpotifyService spotify) {
 
         query = query.replaceAll(" ", "+");
 
@@ -36,8 +40,6 @@ public class Facade {
                 public void success(TracksPager tracksPager, Response response) {
                     String songUri = "";
                     try {
-
-
                         List<Track> searchResults = tracksPager.tracks.items;
                         songUri = searchResults.get(0).uri;
                     } catch (Exception e) {
@@ -59,4 +61,32 @@ public class Facade {
 
         return true;
     }
+
+ /*   public static boolean searchForTrack(String query, final AsyncCallback callback, SoundcloudService soundcloud) {
+
+            //TO DO
+        return true;
+    }*/
+
+
+
+    public int playSong(Song song, SpotifyPlayer spotifyPlayer) {
+        spotifyPlayer.playUri(null, song.uri, 0, 0);
+        return 1;
+    }
+
+
+/*    public int playSong(Song song, SoundcloudPlayer soundcloudPlayer) {
+        soundcloudPlayer.playUri(null, song.uri, 0, 0);
+        return 1;
+    }
+    public int playSong(Song song, TidalPlayer tidalPlayer) {
+        tidalPlayer.playUri(null, song.uri, 0, 0);
+        return 1;
+    }
+    public int playSong(Song song, GooglePlayPlayer googlePlayPlayer) {
+        googlePlayPlayer.playUri(null, song.uri, 0, 0);
+        return 1;
+    }*/
+
 }

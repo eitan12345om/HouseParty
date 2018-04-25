@@ -11,8 +11,8 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 public class SpotifySong extends Song
         implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
-    protected String accessToken;
     protected SpotifyPlayer spotifyPlayer;
+    protected String accessToken;
 
     public SpotifySong(String title, String uri) {
         super(title, uri);
