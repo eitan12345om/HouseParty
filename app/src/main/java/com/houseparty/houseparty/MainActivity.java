@@ -15,42 +15,47 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
-import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
-
-import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.models.Track;
-import kaaes.spotify.webapi.android.models.TracksPager;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     private ListView listView;
     private List<String> list;
-    private ListAdapter adapter;
+    private ArrayAdapter adapter;
+    private ActionBar actionBar;
     private String playlist_name = "";
+    private String code = "";
+
     private String title = "HouseParty";
+    private static Hashtable<String, String> idTable;
+    private HashMap<String, String> dataTable;
+    //private static String selected_list;
     private static String selected_list;
+    private static String passcode;
+    private FirebaseDatabase pFirebaseDatabase;
+    private DatabaseReference pPlaylistDatabaseReference;
+    private ChildEventListener pChildEventListener;
+
+    private DatabaseReference passcodeDatabaseReference;
+
+    private static MainActivity instance;
 
     // Required constants for Spotify API connection.
     static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
@@ -59,49 +64,84 @@ public class MainActivity extends AppCompatActivity implements
     // Used to verify if Spotify results come from correct activity.
     static final int REQUEST_CODE = 777;
 
-    // Access token to be retrieved for the current Spotify connection session.
-//    private String accessToken;
+    private MainActivity() {}
 
-    // Object through which we access the Spotify Web API Wrapper.
-//    private SpotifyService spotify;
+    public static MainActivity getMainInstance(){
+        if( instance == null) {
+            instance = new MainActivity();
+        }
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        pFirebaseDatabase = FirebaseDatabase.getInstance();
+        pPlaylistDatabaseReference = pFirebaseDatabase.getReference().child("playlists");
+        //pPlaylistDatabaseReference.keepSynced(true);
+        idTable = new Hashtable<String, String>();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.show();
+        actionBar = getSupportActionBar();
+
         actionBar.setTitle(title);
 
         listView = (ListView) findViewById(R.id.listView);
-
-        list = new ArrayList<>();
-
-//        authenticateUser();
-
-        for(int i = 0; i < 20; i++){
-            list.add("Playlist_" + i);
-        }
+        list = new ArrayList<String>();
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
+        actionBar.show();
+
+        pChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                dataTable = (HashMap) dataSnapshot.getValue();
+                idTable.put(dataTable.get("name"), dataSnapshot.getKey());
+                //System.out.println("Add to list: " + name);
+                list.add(dataTable.get("name"));
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        pPlaylistDatabaseReference.addChildEventListener(pChildEventListener);
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selected_list = list.get(i);
-                Intent intent = new Intent(MainActivity.this, SongActivity.class);
-                intent.putExtra("CLIENT_ID", CLIENT_ID);
-                intent.putExtra("REDIRECT_URI", REDIRECT_URI);
-                intent.putExtra("REQUEST_CODE", REQUEST_CODE);
-//                intent.putExtra("accessToken", accessToken);
-                startActivity(intent);
+                String id = idTable.get(selected_list);
+                Log.d("ID FROM HASH", id);
+                dialogueBox_Passcode(view, dataTable.get("passcode"));
+                //passcodeDatabaseReference = pFirebaseDatabase.getReference().child("playlists").child(id);
+                //Log.d( "ELEMENT FROM DATABASE", dataTable.get("passcode"));
+
             }
         });
-
     }
 
     @Override
@@ -125,24 +165,97 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void dialogueBox_Playlist(View v) {
+    public void dialogueBox_InvalidPasscode(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Enter Playlist Name:");
+        builder.setTitle("Invalid passcode");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
 
-        final EditText input = new EditText(this);
+    public void dialogueBox_Passcode(View v, final String valid_code) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter passcode:");
+        final EditText inputPasscode = new EditText(this);
+        inputPasscode.setHint("XXXX");
+        layout.addView(inputPasscode);
+        inputPasscode.setInputType(InputType.TYPE_CLASS_TEXT);
 
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
+        builder.setView(layout);
+        final View thisView = v;
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                playlist_name = input.getText().toString();
-                if (playlist_name.isEmpty()) {
+                String entered_code = inputPasscode.getText().toString();
+                if (!entered_code.equals(valid_code)) {
+                    dialogueBox_InvalidPasscode(thisView);
+                    dialog.cancel();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, SongActivity.class);
+                    intent.putExtra("CLIENT_ID", CLIENT_ID);
+                    intent.putExtra("REDIRECT_URI", REDIRECT_URI);
+                    intent.putExtra("REQUEST_CODE", REQUEST_CODE);
+                    startActivity(intent);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    public void dialogueBox_Playlist(View v) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter Playlist Name:");
+
+        final EditText inputTitle = new EditText(this);
+        inputTitle.setHint("Title");
+        layout.addView(inputTitle);
+        final EditText inputPasscode = new EditText(this);
+        inputPasscode.setHint("Passcode (XXXX)");
+        layout.addView(inputPasscode);
+
+
+        inputTitle.setInputType(InputType.TYPE_CLASS_TEXT);
+        inputPasscode.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                playlist_name = inputTitle.getText().toString();
+                code = inputPasscode.getText().toString();
+                Log.d("NONNUMBERCHECK", Boolean.toString(code.matches("\\d+")));
+                if (playlist_name.isEmpty() ||
+                        !code.matches("\\d+")
+                        || code.length() != 4) {
                     dialog.cancel();
                 } else {
                     selected_list = playlist_name;
+                    passcode = code;
+                    Playlist plist = new Playlist(selected_list, passcode);
+                    Log.d("PLAYLIST", plist.getPasscode());
+                    pPlaylistDatabaseReference.push().setValue(plist);
                     Intent intent = new Intent(getBaseContext(), SongActivity.class);
+                    intent.putExtra("CLIENT_ID", CLIENT_ID);
+                    intent.putExtra("REDIRECT_URI", REDIRECT_URI);
+                    intent.putExtra("REQUEST_CODE", REQUEST_CODE);
                     startActivity(intent);
                 }
             }
@@ -161,64 +274,41 @@ public class MainActivity extends AppCompatActivity implements
         return selected_list;
     }
 
-//    void authenticateUser() {
-//
-//        // ---------USER AUTHENTICATION----------
-//
-//        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
-//                AuthenticationResponse.Type.TOKEN,
-//                REDIRECT_URI);
-//        builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public",
-//                "playlist-modify-private", "playlist-read-collaborative", "user-library-read",
-//                "user-library-modify", "user-read-playback-state", "user-modify-playback-state",
-//                "user-read-currently-playing"});
-//        AuthenticationRequest request = builder.build();
-//
-//        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-//
-//    }
+    public static Hashtable getIdTable() {
+        return idTable;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-
-//        // Check if result comes from the correct activity
-//        if (requestCode == REQUEST_CODE) {
-//            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-//            if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-//                accessToken = response.getAccessToken();
-//            }
-//        }
     }
 
     @Override
     public void onLoggedIn() {
-
         Log.d("MainActivity", "User logged in");
-
-//        SpotifyApi wrapper = new SpotifyApi();
-//        wrapper.setAccessToken(accessToken);
-//
-//        spotify = wrapper.getService();
-
     }
 
     @Override
-    public void onLoggedOut() {}
+    public void onLoggedOut() {
+    }
 
     @Override
-    public void onLoginFailed(Error error) {}
+    public void onLoginFailed(Error error) {
+    }
 
     @Override
-    public void onTemporaryError() {}
+    public void onTemporaryError() {
+    }
 
     @Override
-    public void onConnectionMessage(String s) {}
+    public void onConnectionMessage(String s) {
+    }
 
     @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {}
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+    }
 
     @Override
-    public void onPlaybackError(Error error) {}
-
+    public void onPlaybackError(Error error) {
+    }
 }

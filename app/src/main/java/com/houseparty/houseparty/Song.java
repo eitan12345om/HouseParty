@@ -1,54 +1,36 @@
 package com.houseparty.houseparty;
 
 /**
- * @author jacksonkurtz created on 2/23/18.
+ * Created by jacksonkurtz on 2/23/18.
  */
 
-public class Song {
-    private String title;
-    private String artist;
-    private String uri;
-    private String api;
+public abstract class Song {
+    protected String title;
+    protected String artist;
+    protected String uri;
+    protected String api;
 
-    public Song() {
-    }
-
-    public Song(String title, String artist, String uri, String api) {
+    public Song(String title, String uri) {
         this.title = title;
-        this.artist = artist;
         this.uri = uri;
-        this.api = api;
     }
 
     public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getArtist() {
-        return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
+        return this.title;
     }
 
     public String getUri() {
-        return uri;
+        return this.uri;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public String getArtist() {
+        return this.artist;
     }
 
-    public String getApi() {
-        return api;
+    @Override
+    public String toString() {
+        return this.title;
     }
 
-    public void setApi(String api) {
-        this.api = api;
-    }
+    public abstract int playSong();
 }

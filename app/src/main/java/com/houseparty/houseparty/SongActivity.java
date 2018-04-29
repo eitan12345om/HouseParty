@@ -1,18 +1,25 @@
 package com.houseparty.houseparty;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -23,9 +30,9 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -41,139 +48,189 @@ public class SongActivity extends AppCompatActivity implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     private ListView listView;
-    private List<String> list;
-    private ListAdapter adapter;
+    private List<String> displayList;
+    private ArrayAdapter adapter;
     private MediaPlayer mediaPlayer;
+    private String title = "HouseParty - ";
+    private static String song_name;
 
-    private String CLIENT_ID;
-    private String REDIRECT_URI;
-    private int REQUEST_CODE;
+    private FirebaseDatabase sFirebaseDatabase;
+    private DatabaseReference songDatabaseReference;
+    private ChildEventListener sChildEventListener;
+
+    private final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
+    private final String REDIRECT_URI = "houseparty-android://callback";
+    private final int REQUEST_CODE = 777;
     private String accessToken;
     private SpotifyPlayer spotifyPlayer;
     private SpotifyService spotify;
+    private static Hashtable<String, String> uriTable;
 
-//    private class FetchSongTask extends AsyncTask<String, Void, String> {
-//
-//        @Override
-//        protected String doInBackground(String... strings) {
-//            Log.d("FetchSongTask", "AsyncTask launched, fetching song.");
-//            return spotifySearchForTrack(strings[0]);
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String result) {
-//            Log.d("FetchSongTask", "onPostExecute: result = " + result);
-//            if (!spotifyPlayer.isLoggedIn()) {
-//                Log.d("FetchSongTask", "Logging in spotifyPlayer.");
-//                spotifyPlayer.login(accessToken);
-//            }
-//            Log.d("FetchSongTask", "Streaming URI " + result);
-//            spotifyPlayer.playUri(null, result, 0, 0);
-//        }
-//
-//        private String spotifySearchForTrack(String query) {
-//
-//            query = query.replaceAll(" ", "+");
-//
-//            Map<String,Object> options = new HashMap<String,Object>();
-//            //options.put("Authorization", accessToken);
-//            options.put("market", "US");
-//            options.put("limit", 20);
-//
-//            final String[] songUri = {""};
-//            spotify.searchTracks(query, options, new Callback<TracksPager>() {
-//                @Override
-//                public void success(TracksPager tracksPager, Response response) {
-//                    List<Track> searchResults = tracksPager.tracks.items;
-//                    songUri[0] = searchResults.get(0).uri;
-//                    Log.d("FetchSongTask", "1st song uri = " + songUri[0]);
-//                }
-//                @Override
-//                public void failure(RetrofitError error) {
-//                    error.printStackTrace();
-//                }
-//            });
-//
-//            return songUri[0];
-//
-//        }
-//
-//    }
+    private interface AsyncCallback {
+        void onSuccess(String uri);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
 
+        sFirebaseDatabase = FirebaseDatabase.getInstance();
+        Hashtable<String, String> t = MainActivity.getIdTable();
+        String id = t.get(MainActivity.selection());
+        songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
+        uriTable = new Hashtable<>();
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.show();
-        actionBar.setTitle("Song Menu");
+        actionBar.setTitle(title + MainActivity.selection());
 
+        // https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
         Bundle extras = getIntent().getExtras();
-        CLIENT_ID = extras.getString("CLIENT_ID");
-        Log.d("SongActivity", "CLIENT_ID = " + CLIENT_ID);
-        REDIRECT_URI = extras.getString("REDIRECT_URI");
-        Log.d("SongActivity", "REDIRECT_URI = " + REDIRECT_URI);
-        REQUEST_CODE = extras.getInt("REQUEST_CODE");
-        Log.d("SongActivity", "REQUEST_CODE = " + REQUEST_CODE);
 
         listView = (ListView) findViewById(R.id.listView);
 
-        list = new ArrayList<>();
-
+        displayList = new ArrayList<>();
+        /*
         Field[] fields = R.raw.class.getFields();
+        for(int i = 0; i < fields.length; i++){
+            list.add(fields[i].getName());
         for (Field f : fields)
             list.add(f.getName());
-        list.add("Headlines");
+        */
+        //list.add("Headlines");
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, displayList);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                authenticateUser();
                 if (mediaPlayer != null)
                     mediaPlayer.release();
-                if (list.get(i).equals("Headlines"))
-                    authenticateUser();
                 else {
-                    int resID = getResources().getIdentifier(list.get(i), "raw", getPackageName());
-                    mediaPlayer = MediaPlayer.create(SongActivity.this, resID);
-                    mediaPlayer.start();
+                    //int resID = getResources().getIdentifier(list.get(i), "raw", getPackageName());
+                    //mediaPlayer = MediaPlayer.create(SongActivity.this, resID);
+                    //mediaPlayer.start();
+                    String uri = uriTable.get(displayList.get(i));
+                    Log.d("GETURI: ", uri + "END of URI");
+                    spotifyPlayer.playUri(null, uri, 0, 0);
                 }
             }
         });
+
+        sChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                System.out.println("Size of list is: " + displayList.size());
+                Song sList = dataSnapshot.getValue(Song.class);
+                uriTable.put(sList.getTitle(), sList.getUri());
+                displayList.add(sList.getTitle());
+                adapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        songDatabaseReference.addChildEventListener(sChildEventListener);
+
     }
 
-    String spotifySearchForTrack(String query) {
+    public void dialogueBox_Song(View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter Song Name:");
 
-        query = query.replaceAll(" ", "+");
+        final EditText input = new EditText(this);
 
-        Map<String,Object> options = new HashMap<String,Object>();
-        //options.put("Authorization", accessToken);
-        options.put("market", "US");
-        options.put("limit", 20);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
 
-        final String[] songUri = {""};
-        spotify.searchTracks(query, options, new Callback<TracksPager>() {
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void success(TracksPager tracksPager, Response response) {
-                List<Track> searchResults = tracksPager.tracks.items;
-                songUri[0] = searchResults.get(0).uri;
-                Log.d("FetchSongTask", "1st song uri = " + songUri[0]);
+            public void onClick(DialogInterface dialog, int which) {
+                song_name = input.getText().toString();
+                if (song_name.isEmpty()) {
+                    dialog.cancel();
+                } else {
+                    spotifySearchForTrack(song_name, new AsyncCallback() {
+                        @Override
+                        public void onSuccess(String uri) {
+                            Log.i("SongActivity", "this is the uri: " + uri);
+                            Song song = new SpotifySong(song_name, uri, accessToken, spotifyPlayer);
+                            songDatabaseReference.push().setValue(song);
+                        }
+                    });
+                }
             }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
-            public void failure(RetrofitError error) {
-                error.printStackTrace();
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
             }
         });
 
-        return songUri[0];
+        builder.show();
+    }
+
+    boolean spotifySearchForTrack(String query, final AsyncCallback callback) {
+
+        query = query.replaceAll(" ", "+");
+
+        Map<String, Object> options = new HashMap<String, Object>();
+        //options.put("Authorization", accessToken);
+        options.put("market", "US");
+        options.put("limit", 20);
+        try {
+            spotify.searchTracks(query, options, new Callback<TracksPager>() {
+                @Override
+                public void success(TracksPager tracksPager, Response response) {
+                    String songUri = "";
+                    try {
+
+
+                        List<Track> searchResults = tracksPager.tracks.items;
+                        songUri = searchResults.get(0).uri;
+                    } catch (Exception e) {
+                        Log.d("SearchTracksInner: ", "No results");
+                    }
+                    Log.d("FetchSongTask", "1st song uri = " + songUri);
+                    callback.onSuccess(songUri);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    error.printStackTrace();
+                }
+            });
+
+        } catch (IndexOutOfBoundsException e) {
+            Log.d("SEARCHTRACKS", "No results");
+        }
+
+        return true;
 
     }
 
-    void authenticateUser() {
-
+    boolean authenticateUser() {
         // ---------USER AUTHENTICATION----------
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
@@ -187,6 +244,8 @@ public class SongActivity extends AppCompatActivity implements
 
         AuthenticationClient.openLoginActivity(SongActivity.this, REQUEST_CODE, request);
 
+        return true;
+
     }
 
     @Override
@@ -199,7 +258,7 @@ public class SongActivity extends AppCompatActivity implements
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
                 accessToken = response.getAccessToken();
                 Config playerConfig = new Config(SongActivity.this, accessToken, CLIENT_ID);
-                Spotify.getPlayer(playerConfig, SongActivity.this, new SpotifyPlayer.InitializationObserver(){
+                Spotify.getPlayer(playerConfig, SongActivity.this, new SpotifyPlayer.InitializationObserver() {
                     @Override
                     public void onInitialized(SpotifyPlayer spotifyPlayer) {
                         SongActivity.this.spotifyPlayer = spotifyPlayer;
@@ -208,6 +267,7 @@ public class SongActivity extends AppCompatActivity implements
                         SongActivity.this.spotifyPlayer.addNotificationCallback(SongActivity.this);
                         Log.d("SongActivity", "spotifyPlayer: callbacks added.");
                     }
+
                     @Override
                     public void onError(Throwable throwable) {
                         Log.e("SongActivity", "Could not initialize player: " + throwable.getMessage());
@@ -217,14 +277,53 @@ public class SongActivity extends AppCompatActivity implements
         }
     }
 
+    boolean testSearchForTrack() {
+        try {
+            spotifySearchForTrack("Headlines", new AsyncCallback() {
+                @Override
+                public void onSuccess(String uri) {
+                    Log.d("SearchTest", "Received uri = " + uri);
+                }
+            });
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    boolean testOnLoggedIn() {
+        try {
+            onLoggedIn();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    boolean testOnLoggedOut() {
+        try {
+            onLoggedOut();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    boolean testOnDestroy() {
+        try {
+            onDestroy();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Override
     public void onLoggedIn() {
         Log.d("SongActivity", "User authenticated.");
         SpotifyApi wrapper = new SpotifyApi();
         wrapper.setAccessToken(accessToken);
         spotify = wrapper.getService();
-        final String songUri = spotifySearchForTrack("Headlines");
-        spotifyPlayer.playUri(null, songUri, 0, 0);
     }
 
     @Override
@@ -241,7 +340,11 @@ public class SongActivity extends AppCompatActivity implements
     protected void onDestroy() {
         // --------SUPER IMPORTANT TO AVOID LEAKAGE----------
         Spotify.destroyPlayer(SongActivity.this);
-        spotifyPlayer.destroy();
+
+        if (spotifyPlayer != null) {
+            spotifyPlayer.destroy();
+        }
+
         super.onDestroy();
     }
 
@@ -274,5 +377,4 @@ public class SongActivity extends AppCompatActivity implements
                 break;
         }
     }
-
 }
