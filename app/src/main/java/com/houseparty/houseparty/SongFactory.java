@@ -28,7 +28,7 @@ public class SongFactory {
         void onSuccess(String uri);
     }
 
-    private SongFactory(){}
+    public SongFactory(){}
 
     public static SongFactory getInstance()
     {
@@ -43,25 +43,26 @@ public class SongFactory {
     public Song createSong(final String title, SpotifyService spotify, String api) {
         String songUri = "";
 
+
         if ("spotify".equals(api)) {
 
             spotifySearchForTrack(title, new AsyncCallback() {
                 @Override
                 public void onSuccess(String uri) {
-                    Log.i("SongActivity", "this is the uri: " + uri);
+                    Log.i("SongFactory", "this is the uri: " + uri);
                     song = new SpotifySong(title, uri);
                 }
             }, spotify);
         }
-        if ("soundcloud".equals(api)) {
+        else if ("soundcloud".equals(api)) {
             String uri = "";
             song = new SoundCloudSong(title, uri);
         }
-        if ("tidal".equals(api)) {
+        else if ("tidal".equals(api)) {
             String uri = "";
             song = new TidalSong(title, uri);
         }
-        if ("googleplay".equals(api)) {
+        else if ("googleplay".equals(api)) {
             String uri = "";
             song = new GooglePlaySong(title, uri);
         }

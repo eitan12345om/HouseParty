@@ -66,6 +66,8 @@ public class SongActivity extends AppCompatActivity implements
     private SpotifyService spotify;
     private static Hashtable<String, String> uriTable;
 
+    private SongFactory songFactory;
+
     private interface AsyncCallback {
         void onSuccess(String uri);
     }
@@ -80,6 +82,9 @@ public class SongActivity extends AppCompatActivity implements
         String id = t.get(MainActivity.selection());
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
         uriTable = new Hashtable<>();
+
+        authenticateUser();
+        songFactory = new SongFactory();
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.show();
@@ -124,7 +129,7 @@ public class SongActivity extends AppCompatActivity implements
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 System.out.println("Size of list is: " + displayList.size());
-                Song sList = dataSnapshot.getValue(SpotifySong.class);
+                SpotifySong sList = dataSnapshot.getValue(SpotifySong.class);
                 uriTable.put(sList.getTitle(), sList.getUri());
                 displayList.add(sList.getTitle());
                 adapter.notifyDataSetChanged();
@@ -175,8 +180,11 @@ public class SongActivity extends AppCompatActivity implements
                         @Override
                         public void onSuccess(String uri) {
                             Log.i("SongActivity", "this is the uri: " + uri);
-                            Song song = new SpotifySong(song_name, uri, accessToken, spotifyPlayer);
+                            //Song song = new Song(song_name, uri, accessToken, spotifyPlayer);
+                            Song song = songFactory.createSong(song_name, spotify, "spotify");
                             songDatabaseReference.push().setValue(song);
+                            Log.i("SongActivity", "This is the song name: " + song.title);
+
                         }
                     });
                 }

@@ -15,6 +15,13 @@ public abstract class Song {
         this.uri = uri;
     }
 
+    public Song(String title, String artist, String uri, String api ) {
+        this.title = title;
+        this.artist = artist;
+        this.uri = uri;
+        this.api = api;
+    }
+
     public String getTitle() {
         return this.title;
     }
