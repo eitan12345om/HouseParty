@@ -23,6 +23,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.PlayerEvent;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements
     private ActionBar actionBar;
     private String playlist_name = "";
     private String code = "";
+    private View currentView;
 
     private String title = "HouseParty";
     private static Hashtable<String, String> idTable;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements
     // Used to verify if Spotify results come from correct activity.
     static final int REQUEST_CODE = 777;
 
+    /*
     private MainActivity() {}
 
     public static MainActivity getMainInstance(){
@@ -71,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements
             instance = new MainActivity();
         }
         return instance;
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements
         actionBar = getSupportActionBar();
 
         actionBar.setTitle(title);
+
+        Log.d( "Main Activity: ", "On create");
 
         listView = (ListView) findViewById(R.id.listView);
         list = new ArrayList<String>();
@@ -133,10 +139,36 @@ public class MainActivity extends AppCompatActivity implements
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                currentView = view;
                 selected_list = list.get(i);
                 String id = idTable.get(selected_list);
                 Log.d("ID FROM HASH", id);
-                dialogueBox_Passcode(view, dataTable.get("passcode"));
+                //dataTable.get("passcode")
+                Query queryRef = pPlaylistDatabaseReference.child(id).child("passcode");
+                queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Log.d("Inside listener", (String) dataSnapshot.child("passcode").getValue());
+
+                        if( dataSnapshot.exists()) {
+                            passcode = (String)dataSnapshot.getValue();
+                            Log.d("Passcode of selected: ", passcode);
+                            dialogueBox_Passcode(currentView, passcode );
+
+                        }
+                        else {
+                            Log.d("Snapshot", "does not exist");
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                //dialogueBox_Passcode(view, passcode );
+
                 //passcodeDatabaseReference = pFirebaseDatabase.getReference().child("playlists").child(id);
                 //Log.d( "ELEMENT FROM DATABASE", dataTable.get("passcode"));
 

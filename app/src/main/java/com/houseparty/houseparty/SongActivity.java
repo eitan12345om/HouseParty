@@ -124,7 +124,7 @@ public class SongActivity extends AppCompatActivity implements
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 System.out.println("Size of list is: " + displayList.size());
-                Song sList = dataSnapshot.getValue(Song.class);
+                Song sList = dataSnapshot.getValue(SpotifySong.class);
                 uriTable.put(sList.getTitle(), sList.getUri());
                 displayList.add(sList.getTitle());
                 adapter.notifyDataSetChanged();
@@ -167,6 +167,7 @@ public class SongActivity extends AppCompatActivity implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 song_name = input.getText().toString();
+                Log.d( "SongActivity: ", song_name);
                 if (song_name.isEmpty()) {
                     dialog.cancel();
                 } else {
