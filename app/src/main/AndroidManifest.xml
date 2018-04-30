@@ -21,6 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SongActivity"></activity>
+        <activity android:name=".NewSongActivity"></activity>
+
         <!-- Needed for LoginActivity to work -->
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"

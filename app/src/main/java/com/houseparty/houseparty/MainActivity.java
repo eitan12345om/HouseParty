@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements
                     dialogueBox_InvalidPasscode(thisView);
                     dialog.cancel();
                 } else {
-                    Intent intent = new Intent(MainActivity.this, SongActivity.class);
+                    Intent intent = new Intent(MainActivity.this, NewSongActivity.class);
                     intent.putExtra("CLIENT_ID", CLIENT_ID);
                     intent.putExtra("REDIRECT_URI", REDIRECT_URI);
                     intent.putExtra("REQUEST_CODE", REQUEST_CODE);
@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements
                     Playlist plist = new Playlist(selected_list, passcode);
                     Log.d("PLAYLIST", plist.getPasscode());
                     pPlaylistDatabaseReference.push().setValue(plist);
-                    Intent intent = new Intent(getBaseContext(), SongActivity.class);
+                    Intent intent = new Intent(getBaseContext(), NewSongActivity.class);
                     intent.putExtra("CLIENT_ID", CLIENT_ID);
                     intent.putExtra("REDIRECT_URI", REDIRECT_URI);
                     intent.putExtra("REQUEST_CODE", REQUEST_CODE);
