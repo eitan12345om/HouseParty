@@ -10,6 +10,8 @@ public abstract class Song {
     protected String uri;
     protected String api;
 
+    public Song() {}
+
     public Song(String title, String uri) {
         this.title = title;
         this.uri = uri;
@@ -33,6 +35,11 @@ public abstract class Song {
     public String getArtist() {
         return this.artist;
     }
+
+    public String getApi() {
+        return this.api;
+    }
+
 
     @Override
     public String toString() {

@@ -14,7 +14,9 @@ public class SpotifySong extends Song
     protected String accessToken;
     protected SpotifyPlayer spotifyPlayer;
 
-    public SpotifySong(String title, String uri) {
+    public SpotifySong() {super();}
+
+    public SpotifySong(String title, String uri ) {
         super(title, uri);
     }
 
@@ -28,9 +30,13 @@ public class SpotifySong extends Song
 
     /* TODO */
     public int playSong() {
+
         spotifyPlayer.playUri(null, uri, 0, 0);
         return 1;
     }
+
+    public String getAccessToken() { return accessToken; }
+    public SpotifyPlayer getSpotifyPlayer() { return spotifyPlayer; }
 
 
     @Override

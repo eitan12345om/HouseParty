@@ -65,6 +65,7 @@ public class SongActivity extends AppCompatActivity implements
     private SpotifyPlayer spotifyPlayer;
     private SpotifyService spotify;
     private static Hashtable<String, String> uriTable;
+    private ArrayList<Song> songs;
 
     private SongFactory songFactory;
 
@@ -76,6 +77,8 @@ public class SongActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
+
+        songs = new ArrayList<Song>();
 
         sFirebaseDatabase = FirebaseDatabase.getInstance();
         Hashtable<String, String> t = MainActivity.getIdTable();
@@ -111,7 +114,7 @@ public class SongActivity extends AppCompatActivity implements
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                authenticateUser();
+                //authenticateUser();
                 if (mediaPlayer != null)
                     mediaPlayer.release();
                 else {
@@ -120,7 +123,8 @@ public class SongActivity extends AppCompatActivity implements
                     //mediaPlayer.start();
                     String uri = uriTable.get(displayList.get(i));
                     Log.d("GETURI: ", uri + "END of URI");
-                    spotifyPlayer.playUri(null, uri, 0, 0);
+                    //songs.get(i).playSong();
+                    spotifyPlayer.playUri(null, songs.get(i).uri, 0, 0);
                 }
             }
         });
@@ -129,9 +133,10 @@ public class SongActivity extends AppCompatActivity implements
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 System.out.println("Size of list is: " + displayList.size());
-                SpotifySong sList = dataSnapshot.getValue(SpotifySong.class);
-                uriTable.put(sList.getTitle(), sList.getUri());
-                displayList.add(sList.getTitle());
+                SpotifySong song = dataSnapshot.getValue(SpotifySong.class);
+                songs.add(song);
+                uriTable.put(song.getTitle(), song.getUri());
+                displayList.add(song.getTitle());
                 adapter.notifyDataSetChanged();
 
             }
@@ -180,8 +185,8 @@ public class SongActivity extends AppCompatActivity implements
                         @Override
                         public void onSuccess(String uri) {
                             Log.i("SongActivity", "this is the uri: " + uri);
-                            //Song song = new Song(song_name, uri, accessToken, spotifyPlayer);
-                            Song song = songFactory.createSong(song_name, spotify, "spotify");
+                            Song song = new SpotifySong(song_name, uri );
+                            //Song song = songFactory.createSong(song_name, spotify, "spotify");
                             songDatabaseReference.push().setValue(song);
                             Log.i("SongActivity", "This is the song name: " + song.title);
 
