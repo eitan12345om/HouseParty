@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -45,7 +46,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SongActivity extends AppCompatActivity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+    SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     private ListView listView;
     private List<String> displayList;
@@ -96,17 +97,9 @@ public class SongActivity extends AppCompatActivity implements
         // https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
         Bundle extras = getIntent().getExtras();
 
-        listView = (ListView) findViewById(R.id.listView);
+        listView = findViewById(R.id.listView);
 
         displayList = new ArrayList<>();
-        /*
-        Field[] fields = R.raw.class.getFields();
-        for(int i = 0; i < fields.length; i++){
-            list.add(fields[i].getName());
-        for (Field f : fields)
-            list.add(f.getName());
-        */
-        //list.add("Headlines");
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, displayList);
         listView.setAdapter(adapter);
@@ -126,6 +119,14 @@ public class SongActivity extends AppCompatActivity implements
                     //songs.get(i).playSong();
                     spotifyPlayer.playUri(null, songs.get(i).uri, 0, 0);
                 }
+            }
+        });
+
+        FloatingActionButton fab = findViewById(R.id.fab2);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogueBox_Song(view);
             }
         });
 
@@ -177,7 +178,7 @@ public class SongActivity extends AppCompatActivity implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 song_name = input.getText().toString();
-                Log.d( "SongActivity: ", song_name);
+                Log.d("SongActivity: ", song_name);
                 if (song_name.isEmpty()) {
                     dialog.cancel();
                 } else {
@@ -185,7 +186,7 @@ public class SongActivity extends AppCompatActivity implements
                         @Override
                         public void onSuccess(String uri) {
                             Log.i("SongActivity", "this is the uri: " + uri);
-                            Song song = new SpotifySong(song_name, uri );
+                            Song song = new SpotifySong(song_name, uri);
                             //Song song = songFactory.createSong(song_name, spotify, "spotify");
                             songDatabaseReference.push().setValue(song);
                             Log.i("SongActivity", "This is the song name: " + song.title);
@@ -248,12 +249,12 @@ public class SongActivity extends AppCompatActivity implements
         // ---------USER AUTHENTICATION----------
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
-                AuthenticationResponse.Type.TOKEN,
-                REDIRECT_URI);
+            AuthenticationResponse.Type.TOKEN,
+            REDIRECT_URI);
         builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public",
-                "playlist-modify-private", "playlist-read-collaborative", "user-library-read",
-                "user-library-modify", "user-read-playback-state", "user-modify-playback-state",
-                "user-read-currently-playing"});
+            "playlist-modify-private", "playlist-read-collaborative", "user-library-read",
+            "user-library-modify", "user-read-playback-state", "user-modify-playback-state",
+            "user-read-currently-playing"});
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(SongActivity.this, REQUEST_CODE, request);
