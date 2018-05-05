@@ -38,6 +38,7 @@ dependencies {
     implementation 'com.spotify.sdk:spotify-player-24-noconnect:2.20b@aar'
     
     implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:customtabs:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:design:26.1.0'
     //implementation 'com.google.firebase:firebase-database:11.0.4'
