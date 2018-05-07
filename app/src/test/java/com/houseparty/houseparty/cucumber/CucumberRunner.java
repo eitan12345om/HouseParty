@@ -30,11 +30,9 @@ import cucumber.api.junit.Cucumber;
 public class CucumberRunner {
     @BeforeClass
     public static void setup() {
-        return;
     }
 
     @AfterClass
     public static void teardown() {
-        return;
     }
 }
