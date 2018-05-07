@@ -28,12 +28,11 @@ public class SongFactory {
         void onSuccess(String uri);
     }
 
-    public SongFactory(){}
+    public SongFactory() {
+    }
 
-    public static SongFactory getInstance()
-    {
-        if (instance == null)
-        {
+    public static SongFactory getInstance() {
+        if (instance == null) {
             instance = new SongFactory();
         }
         return instance;
@@ -53,16 +52,13 @@ public class SongFactory {
                     song = new SpotifySong(title, uri);
                 }
             }, spotify);
-        }
-        else if ("soundcloud".equals(api)) {
+        } else if ("soundcloud".equals(api)) {
             String uri = "";
             song = new SoundCloudSong(title, uri);
-        }
-        else if ("tidal".equals(api)) {
+        } else if ("tidal".equals(api)) {
             String uri = "";
             song = new TidalSong(title, uri);
-        }
-        else if ("googleplay".equals(api)) {
+        } else if ("googleplay".equals(api)) {
             String uri = "";
             song = new GooglePlaySong(title, uri);
         }

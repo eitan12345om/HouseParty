@@ -1,7 +1,7 @@
 package com.houseparty.houseparty;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,7 +29,7 @@ public class NewSongActivity extends AppCompatActivity {
         myButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pause == false) {
+                if (!pause) {
                     myButton.setText("Pause");
                     pause = true;
                 } else {
@@ -44,7 +44,7 @@ public class NewSongActivity extends AppCompatActivity {
             list.add("Song " + i);
         }
 
-        listV = (ListView)findViewById(R.id.listView);
+        listV = findViewById(R.id.listView);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         listV.setAdapter(adapter);
 
