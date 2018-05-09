@@ -36,7 +36,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+    SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     private ListView listView;
     private List<String> list;
@@ -67,16 +67,6 @@ public class MainActivity extends AppCompatActivity implements
     // Used to verify if Spotify results come from correct activity.
     static final int REQUEST_CODE = 777;
 
-    /*
-    private MainActivity() {}
-
-    public static MainActivity getMainInstance(){
-        if( instance == null) {
-            instance = new MainActivity();
-        }
-        return instance;
-    }*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,16 +77,16 @@ public class MainActivity extends AppCompatActivity implements
         //pPlaylistDatabaseReference.keepSynced(true);
         idTable = new Hashtable<String, String>();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         actionBar = getSupportActionBar();
 
         actionBar.setTitle(title);
 
-        Log.d( "Main Activity: ", "On create");
+        Log.d("Main Activity: ", "On create");
 
-        listView = (ListView) findViewById(R.id.listView);
+        listView = findViewById(R.id.listView);
         list = new ArrayList<String>();
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
@@ -150,13 +140,12 @@ public class MainActivity extends AppCompatActivity implements
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Log.d("Inside listener", (String) dataSnapshot.child("passcode").getValue());
 
-                        if( dataSnapshot.exists()) {
-                            passcode = (String)dataSnapshot.getValue();
+                        if (dataSnapshot.exists()) {
+                            passcode = (String) dataSnapshot.getValue();
                             Log.d("Passcode of selected: ", passcode);
-                            dialogueBox_Passcode(currentView, passcode );
+                            dialogueBox_Passcode(currentView, passcode);
 
-                        }
-                        else {
+                        } else {
                             Log.d("Snapshot", "does not exist");
 
                         }
@@ -275,8 +264,8 @@ public class MainActivity extends AppCompatActivity implements
                 code = inputPasscode.getText().toString();
                 Log.d("NONNUMBERCHECK", Boolean.toString(code.matches("\\d+")));
                 if (playlist_name.isEmpty() ||
-                        !code.matches("\\d+")
-                        || code.length() != 4) {
+                    !code.matches("\\d+")
+                    || code.length() != 4) {
                     dialog.cancel();
                 } else {
                     selected_list = playlist_name;
