@@ -1,4 +1,11 @@
 language: android
+sudo: false
+install: true
+addons:
+  sonarcloud:
+    organization: "eitan12345om-github"
+    token:
+      secure: "e97750523d801bb3d958658a3544ddc84487bfb6"
 
 android:
     components:
@@ -36,10 +43,15 @@ cache:
       - $HOME/.gradle/caches/
       - $HOME/.gradle/wrapper/
       - $HOME/.android/build-cache
+      - $HOME/.m2/repository
+      - $HOME/.sonar/cache
+      - $HOME/.gradle
+      - .gradle
 
 script:
   - ./gradlew build check
   - ./gradlew test
+  - ./gradlew sonarqube
 
 before_install:
   - chmod +x gradlew
