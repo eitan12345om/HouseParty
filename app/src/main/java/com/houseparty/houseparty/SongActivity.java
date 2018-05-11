@@ -65,7 +65,7 @@ public class SongActivity extends AppCompatActivity implements
     private String accessToken;
     private SpotifyPlayer spotifyPlayer;
     private SpotifyService spotify;
-    private static Hashtable<String, String> uriTable;
+    private static HashMap<String, String> uriTable;
     private ArrayList<Song> songs;
 
     private SongFactory songFactory;
@@ -79,13 +79,13 @@ public class SongActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_song);
 
-        songs = new ArrayList<Song>();
+        songs = new ArrayList<>();
 
         sFirebaseDatabase = FirebaseDatabase.getInstance();
         Hashtable<String, String> t = MainActivity.getIdTable();
         String id = t.get(MainActivity.selection());
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
-        uriTable = new Hashtable<>();
+        uriTable = new HashMap<>();
 
         authenticateUser();
         songFactory = SongFactory.getInstance();
@@ -95,7 +95,7 @@ public class SongActivity extends AppCompatActivity implements
         actionBar.setTitle(title + MainActivity.selection());
 
         // https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
-        Bundle extras = getIntent().getExtras();
+//        Bundle extras = getIntent().getExtras();
 
         listView = findViewById(R.id.listView);
 
@@ -133,7 +133,6 @@ public class SongActivity extends AppCompatActivity implements
         sChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                System.out.println("Size of list is: " + displayList.size());
                 SpotifySong song = dataSnapshot.getValue(SpotifySong.class);
                 songs.add(song);
                 uriTable.put(song.getTitle(), song.getUri());
@@ -144,21 +143,22 @@ public class SongActivity extends AppCompatActivity implements
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                throw new UnsupportedOperationException();
             }
         };
         songDatabaseReference.addChildEventListener(sChildEventListener);
