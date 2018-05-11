@@ -16,7 +16,7 @@ public class NewSongActivity extends AppCompatActivity {
     private ListView listV;
     private List<String> list;
     private ArrayAdapter adapter;
-    private String selected_list;
+    private String selectedList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class NewSongActivity extends AppCompatActivity {
             }
         });
 
-        list = new ArrayList<String>();
+        list = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
             list.add("Song " + i);
         }
@@ -51,7 +51,7 @@ public class NewSongActivity extends AppCompatActivity {
         listV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                selected_list = list.get(i);
+                selectedList = list.get(i);
             }
         });
     }
