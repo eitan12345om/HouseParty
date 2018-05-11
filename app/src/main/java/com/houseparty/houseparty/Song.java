@@ -47,5 +47,26 @@ public abstract class Song {
         return this.title;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Song song = (Song) obj;
+        return title.equals(song.title)
+            && artist.equals(song.artist)
+            && uri.equals(song.uri)
+            && api.equals(song.api);
+    }
+
     public abstract int playSong();
 }

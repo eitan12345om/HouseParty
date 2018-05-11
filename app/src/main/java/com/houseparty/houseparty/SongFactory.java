@@ -28,7 +28,7 @@ public class SongFactory {
         void onSuccess(String uri);
     }
 
-    public SongFactory() {
+    private SongFactory() {
     }
 
     public static SongFactory getInstance() {
@@ -104,6 +104,23 @@ public class SongFactory {
         }
 
         return true;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        SongFactory songFactory = (SongFactory) obj;
+        return song.equals(songFactory.song);
     }
 }
