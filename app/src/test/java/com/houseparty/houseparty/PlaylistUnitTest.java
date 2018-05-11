@@ -9,14 +9,14 @@ public class PlaylistUnitTest {
     private Playlist playlist;
 
     @Test
-    public void test_toString_oneSong() throws Exception {
+    public void test_toString_oneSong() {
         playlist = new Playlist("Jackson", "12345");
         playlist.addSong(new SpotifySong("Thriller", "fake_uri"));
         assertTrue(playlist.toString().equals("JacksonThriller"));
     }
 
     @Test
-    public void test_toString_twoSongs() throws Exception {
+    public void test_toString_twoSongs() {
         playlist = new Playlist("Jackson", "12345");
         playlist.addSong(new SpotifySong("Thriller", "fake_uri"));
         playlist.addSong(new SpotifySong("Beat It", "fake_uri2"));
@@ -24,7 +24,7 @@ public class PlaylistUnitTest {
     }
 
     @Test
-    public void test_toString_twoSongs2() throws Exception {
+    public void test_toString_twoSongs2() {
         playlist = new Playlist("Jackson", "12345");
         playlist.addSong(new SpotifySong("Beat It", "fake_uri2"));
         playlist.addSong(new SpotifySong("Thriller", "fake_uri"));
