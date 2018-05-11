@@ -33,7 +33,6 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +80,7 @@ public class SongActivity extends AppCompatActivity implements
         songs = new ArrayList<>();
 
         sFirebaseDatabase = FirebaseDatabase.getInstance();
-        Hashtable<String, String> t = MainActivity.getIdTable();
+        HashMap<String, String> t = MainActivity.getIdTable();
         String id = t.get(MainActivity.selection());
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
         uriTable = new HashMap<>();
