@@ -124,7 +124,7 @@ public class SongActivity extends AppCompatActivity implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialogueBox_Song(view);
+                dialogueBoxSong(view);
             }
         });
 
@@ -163,7 +163,7 @@ public class SongActivity extends AppCompatActivity implements
 
     }
 
-    public void dialogueBox_Song(View v) {
+    public void dialogueBoxSong(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter Song Name:");
 

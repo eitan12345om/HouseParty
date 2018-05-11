@@ -33,6 +33,7 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements
     SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
@@ -88,7 +89,11 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void dialogueBox_InvalidPasscode(View v) {
+    public static Map<String, String> getIdTable() {
+        return idTable;
+    }
+
+    public void dialogueBoxInvalidPasscode(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Invalid passcode");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -100,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements
         builder.show();
     }
 
-    public void dialogueBox_Passcode(View v, final String valid_code) {
+    public void dialogueBoxPasscode(View v, final String valid_code) {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -116,9 +121,9 @@ public class MainActivity extends AppCompatActivity implements
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String entered_code = inputPasscode.getText().toString();
-                if (!entered_code.equals(valid_code)) {
-                    dialogueBox_InvalidPasscode(thisView);
+                String enteredCode = inputPasscode.getText().toString();
+                if (!enteredCode.equals(valid_code)) {
+                    dialogueBoxInvalidPasscode(thisView);
                     dialog.cancel();
                 } else {
                     Intent intent = new Intent(MainActivity.this, NewSongActivity.class);
@@ -139,11 +144,7 @@ public class MainActivity extends AppCompatActivity implements
         builder.show();
     }
 
-    public static HashMap<String, String> getIdTable() {
-        return idTable;
-    }
-
-    public void dialogueBox_Playlist(View v) {
+    public void dialogueBoxPlaylist(View v) {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
@@ -271,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements
                         if (dataSnapshot.exists()) {
                             passcode = (String) dataSnapshot.getValue();
                             Log.d("Passcode of selected: ", passcode);
-                            dialogueBox_Passcode(currentView, passcode);
+                            dialogueBoxPasscode(currentView, passcode);
 
                         } else {
                             Log.d("Snapshot", "does not exist");

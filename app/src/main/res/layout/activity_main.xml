@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="8dp"
-        android:onClick="dialogueBox_Playlist"
+        android:onClick="dialogueBoxPlaylist"
         android:src="@drawable/common_full_open_on_phone"
         app:layout_anchorGravity="right|bottom" />
 
@@ -42,7 +42,7 @@
     <!--android:layout_marginEnd="8dp"-->
     <!--android:layout_marginStart="8dp"-->
     <!--android:layout_marginTop="8dp"-->
-    <!--android:onClick="dialogueBox_Playlist"-->
+    <!--android:onClick="dialogueBoxPlaylist"-->
     <!--android:text="@string/new_playlist"-->
     <!--app:layout_anchor="@+id/include"-->
     <!--app:layout_anchorGravity="right|bottom"-->
