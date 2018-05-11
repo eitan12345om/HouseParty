@@ -53,15 +53,14 @@ public class SongActivity extends AppCompatActivity implements
     private ArrayAdapter adapter;
     private MediaPlayer mediaPlayer;
     private String title = "HouseParty - ";
-    private static String song_name;
+    private static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
 
     private FirebaseDatabase sFirebaseDatabase;
     private DatabaseReference songDatabaseReference;
     private ChildEventListener sChildEventListener;
-
-    private final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
-    private final String REDIRECT_URI = "houseparty-android://callback";
-    private final int REQUEST_CODE = 777;
+    private static final String REDIRECT_URI = "houseparty-android://callback";
+    private static final int REQUEST_CODE = 777;
+    private static String songName;
     private String accessToken;
     private SpotifyPlayer spotifyPlayer;
     private SpotifyService spotify;
@@ -177,17 +176,17 @@ public class SongActivity extends AppCompatActivity implements
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                song_name = input.getText().toString();
-                Log.d("SongActivity: ", song_name);
-                if (song_name.isEmpty()) {
+                songName = input.getText().toString();
+                Log.d("SongActivity: ", songName);
+                if (songName.isEmpty()) {
                     dialog.cancel();
                 } else {
-                    spotifySearchForTrack(song_name, new AsyncCallback() {
+                    spotifySearchForTrack(songName, new AsyncCallback() {
                         @Override
                         public void onSuccess(String uri) {
                             Log.i("SongActivity", "this is the uri: " + uri);
-                            Song song = new SpotifySong(song_name, uri);
-                            //Song song = songFactory.createSong(song_name, spotify, "spotify");
+                            Song song = new SpotifySong(songName, uri);
+                            //Song song = songFactory.createSong(songName, spotify, "spotify");
                             songDatabaseReference.push().setValue(song);
                             Log.i("SongActivity", "This is the song name: " + song.title);
 
