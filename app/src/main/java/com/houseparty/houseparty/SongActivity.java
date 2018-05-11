@@ -88,7 +88,7 @@ public class SongActivity extends AppCompatActivity implements
         uriTable = new Hashtable<>();
 
         authenticateUser();
-        songFactory = new SongFactory();
+        songFactory = SongFactory.getInstance();
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.show();
