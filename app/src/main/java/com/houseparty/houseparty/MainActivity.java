@@ -42,15 +42,15 @@ public class MainActivity extends AppCompatActivity implements
     private List<String> list;
     private ArrayAdapter adapter;
     private ActionBar actionBar;
-    private String playlist_name = "";
+    private static HashMap<String, String> idTable;
     private String code = "";
     private View currentView;
 
     private String title = "HouseParty";
-    private static Hashtable<String, String> idTable;
+    //private static String selectedList;
+    private static String selectedList;
     private HashMap<String, String> dataTable;
-    //private static String selected_list;
-    private static String selected_list;
+    private String playlistName = "";
     private static String passcode;
     private FirebaseDatabase pFirebaseDatabase;
     private DatabaseReference pPlaylistDatabaseReference;
@@ -67,102 +67,8 @@ public class MainActivity extends AppCompatActivity implements
     // Used to verify if Spotify results come from correct activity.
     static final int REQUEST_CODE = 777;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        pFirebaseDatabase = FirebaseDatabase.getInstance();
-        pPlaylistDatabaseReference = pFirebaseDatabase.getReference().child("playlists");
-        //pPlaylistDatabaseReference.keepSynced(true);
-        idTable = new Hashtable<String, String>();
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        actionBar = getSupportActionBar();
-
-        actionBar.setTitle(title);
-
-        Log.d("Main Activity: ", "On create");
-
-        listView = findViewById(R.id.listView);
-        list = new ArrayList<String>();
-
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
-        listView.setAdapter(adapter);
-        actionBar.show();
-
-        pChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                dataTable = (HashMap) dataSnapshot.getValue();
-                idTable.put(dataTable.get("name"), dataSnapshot.getKey());
-                //System.out.println("Add to list: " + name);
-                list.add(dataTable.get("name"));
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        pPlaylistDatabaseReference.addChildEventListener(pChildEventListener);
-
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                currentView = view;
-                selected_list = list.get(i);
-                String id = idTable.get(selected_list);
-                Log.d("ID FROM HASH", id);
-                //dataTable.get("passcode")
-                Query queryRef = pPlaylistDatabaseReference.child(id).child("passcode");
-                queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Log.d("Inside listener", (String) dataSnapshot.child("passcode").getValue());
-
-                        if (dataSnapshot.exists()) {
-                            passcode = (String) dataSnapshot.getValue();
-                            Log.d("Passcode of selected: ", passcode);
-                            dialogueBox_Passcode(currentView, passcode);
-
-                        } else {
-                            Log.d("Snapshot", "does not exist");
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-                //dialogueBox_Passcode(view, passcode );
-
-                //passcodeDatabaseReference = pFirebaseDatabase.getReference().child("playlists").child(id);
-                //Log.d( "ELEMENT FROM DATABASE", dataTable.get("passcode"));
-
-            }
-        });
+    public static String selection() {
+        return selectedList;
     }
 
     @Override
@@ -237,6 +143,103 @@ public class MainActivity extends AppCompatActivity implements
         builder.show();
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        pFirebaseDatabase = FirebaseDatabase.getInstance();
+        pPlaylistDatabaseReference = pFirebaseDatabase.getReference().child("playlists");
+        //pPlaylistDatabaseReference.keepSynced(true);
+        idTable = new HashMap<>();
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        actionBar = getSupportActionBar();
+
+        actionBar.setTitle(title);
+
+        Log.d("Main Activity: ", "On create");
+
+        listView = findViewById(R.id.listView);
+        list = new ArrayList<String>();
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+        listView.setAdapter(adapter);
+        actionBar.show();
+
+        pChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                dataTable = (HashMap) dataSnapshot.getValue();
+                idTable.put(dataTable.get("name"), dataSnapshot.getKey());
+                list.add(dataTable.get("name"));
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        pPlaylistDatabaseReference.addChildEventListener(pChildEventListener);
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                currentView = view;
+                selectedList = list.get(i);
+                String id = idTable.get(selectedList);
+                Log.d("ID FROM HASH", id);
+                //dataTable.get("passcode")
+                Query queryRef = pPlaylistDatabaseReference.child(id).child("passcode");
+                queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //Log.d("Inside listener", (String) dataSnapshot.child("passcode").getValue());
+
+                        if (dataSnapshot.exists()) {
+                            passcode = (String) dataSnapshot.getValue();
+                            Log.d("Passcode of selected: ", passcode);
+                            dialogueBox_Passcode(currentView, passcode);
+
+                        } else {
+                            Log.d("Snapshot", "does not exist");
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                //dialogueBox_Passcode(view, passcode );
+
+                //passcodeDatabaseReference = pFirebaseDatabase.getReference().child("playlists").child(id);
+                //Log.d( "ELEMENT FROM DATABASE", dataTable.get("passcode"));
+
+            }
+        });
+    }
+
     public void dialogueBox_Playlist(View v) {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -251,8 +254,6 @@ public class MainActivity extends AppCompatActivity implements
         inputPasscode.setHint("Passcode (XXXX)");
         layout.addView(inputPasscode);
 
-
-//        inputTitle.setInputType(InputType.TYPE_CLASS_TEXT);
         inputPasscode.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         builder.setView(layout);
@@ -260,17 +261,17 @@ public class MainActivity extends AppCompatActivity implements
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                playlist_name = inputTitle.getText().toString();
+                playlistName = inputTitle.getText().toString();
                 code = inputPasscode.getText().toString();
                 Log.d("NONNUMBERCHECK", Boolean.toString(code.matches("\\d+")));
-                if (playlist_name.isEmpty() ||
+                if (playlistName.isEmpty() ||
                     !code.matches("\\d+")
                     || code.length() != 4) {
                     dialog.cancel();
                 } else {
-                    selected_list = playlist_name;
+                    selectedList = playlistName;
                     passcode = code;
-                    Playlist plist = new Playlist(selected_list, passcode);
+                    Playlist plist = new Playlist(selectedList, passcode);
                     Log.d("PLAYLIST", plist.getPasscode());
                     pPlaylistDatabaseReference.push().setValue(plist);
                     Intent intent = new Intent(getBaseContext(), NewSongActivity.class);
@@ -291,10 +292,6 @@ public class MainActivity extends AppCompatActivity implements
         builder.show();
     }
 
-    public static String selection() {
-        return selected_list;
-    }
-
     public static Hashtable getIdTable() {
         return idTable;
     }
@@ -311,25 +308,31 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoggedOut() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void onLoginFailed(Error error) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void onTemporaryError() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void onConnectionMessage(String s) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void onPlaybackEvent(PlayerEvent playerEvent) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void onPlaybackError(Error error) {
+        throw new UnsupportedOperationException();
     }
 }
