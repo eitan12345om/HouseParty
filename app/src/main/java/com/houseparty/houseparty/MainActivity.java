@@ -252,8 +252,8 @@ public class MainActivity extends AppCompatActivity implements
         layout.addView(inputPasscode);
 
 
-        inputTitle.setInputType(InputType.TYPE_CLASS_TEXT);
-        inputPasscode.setInputType(InputType.TYPE_CLASS_TEXT);
+//        inputTitle.setInputType(InputType.TYPE_CLASS_TEXT);
+        inputPasscode.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         builder.setView(layout);
 

@@ -13,17 +13,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -47,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        buttonSignIn = (Button) findViewById(R.id.buttonSignIn);
+        buttonSignIn = findViewById(R.id.buttonSignIn);
         buttonSignIn.setOnClickListener(this);
 
         ActionBar actionBar = getSupportActionBar();
@@ -67,8 +62,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void userLogin() {
-        EditText username = (EditText) findViewById(R.id.editText);
-        EditText password = (EditText) findViewById(R.id.editText2);
+        EditText username = findViewById(R.id.editText);
+        EditText password = findViewById(R.id.editText2);
         String usernameString = username.getText().toString();
         String passwordString = password.getText().toString();
 
@@ -77,26 +72,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
         firebaseAuth.signInWithEmailAndPassword(usernameString, passwordString)
-                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        progressDialog.dismiss();
-                        if( task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    progressDialog.dismiss();
+                    if (task.isSuccessful()) {
+                        Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
 
-                            finish();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
+                        finish();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
 
-                        }
-                        else {
-                            Toast.makeText(LoginActivity.this, "Login failed, invalid email or password", Toast.LENGTH_SHORT).show();
-
-                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Login failed, invalid email or password", Toast.LENGTH_SHORT).show();
 
                     }
-                });
+
+                }
+            });
     }
+
     public void playlistPage(View v) {
 
         /*if (authenticateLogin(username.getText().toString(), password.getText().toString())) {
@@ -177,35 +172,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!pass.equals(pass2)) {
                     Toast.makeText(LoginActivity.this, "Registration failed, passwords don't match", Toast.LENGTH_SHORT).show();
                     dialog.cancel();
-                }
-                else if( pass.length() < 6 ) {
+                } else if (pass.length() < 6) {
                     Toast.makeText(LoginActivity.this, "Registration failed, passwords must be at least 6 characters", Toast.LENGTH_SHORT).show();
                     dialog.cancel();
-                }
-                else {
+                } else {
 
                     progressDialog.setMessage("Registering User...");
                     progressDialog.show();
 
                     firebaseAuth.createUserWithEmailAndPassword(email, pass)
-                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        //user successfully registers
-                                        Toast.makeText(LoginActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
-                                        progressDialog.hide();
+                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    //user successfully registers
+                                    Toast.makeText(LoginActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+                                    progressDialog.hide();
 
 
-                                    } else {
-                                        //user fails to register
-                                        Toast.makeText(LoginActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
-                                        progressDialog.hide();
+                                } else {
+                                    //user fails to register
+                                    Toast.makeText(LoginActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
+                                    progressDialog.hide();
 
 
-                                    }
                                 }
-                            });
+                            }
+                        });
                 }
                 /*if (!pass.equals(pass2)) {
                     dialog.cancel();
@@ -229,9 +222,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         builder.show();
     }
+
     @Override
     public void onClick(View view) {
-        if( view == buttonSignIn) {
+        if (view == buttonSignIn) {
             userLogin();
         }
     }

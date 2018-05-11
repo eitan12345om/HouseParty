@@ -10,14 +10,15 @@ public abstract class Song {
     protected String uri;
     protected String api;
 
-    public Song() {}
+    public Song() {
+    }
 
     public Song(String title, String uri) {
         this.title = title;
         this.uri = uri;
     }
 
-    public Song(String title, String artist, String uri, String api ) {
+    public Song(String title, String artist, String uri, String api) {
         this.title = title;
         this.artist = artist;
         this.uri = uri;
