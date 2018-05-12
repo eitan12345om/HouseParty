@@ -80,7 +80,7 @@ public class SongActivity extends AppCompatActivity implements
         songs = new ArrayList<>();
 
         sFirebaseDatabase = FirebaseDatabase.getInstance();
-        HashMap<String, String> t = MainActivity.getIdTable();
+        Map<String, String> t = MainActivity.getIdTable();
         String id = t.get(MainActivity.selection());
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
         uriTable = new HashMap<>();
