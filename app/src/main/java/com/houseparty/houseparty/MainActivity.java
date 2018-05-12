@@ -55,8 +55,6 @@ public class MainActivity extends AppCompatActivity implements
     private DatabaseReference pPlaylistDatabaseReference;
     private ChildEventListener pChildEventListener;
 
-    private DatabaseReference passcodeDatabaseReference;
-
     // Required constants for Spotify API connection.
     static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
     static final String REDIRECT_URI = "houseparty-android://callback";
@@ -287,11 +285,6 @@ public class MainActivity extends AppCompatActivity implements
                 });
             }
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
     }
 
     @Override

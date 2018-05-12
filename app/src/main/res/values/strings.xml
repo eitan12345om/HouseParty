@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">HouseParty</string>
     <string name="action_settings">Settings</string>
-    <string name="new_playlist">Create New Playlist</string>
-    <string name="new_song">Create New Song</string>
     <string name="username">Username</string>
 </resources>

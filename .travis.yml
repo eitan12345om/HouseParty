@@ -2,6 +2,8 @@ language: android
 sudo: false
 install: true
 addons:
+  apt:
+    update: true
   sonarcloud:
     organization: "eitan12345om-github"
     token:
