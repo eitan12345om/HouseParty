@@ -19,7 +19,6 @@ import retrofit.client.Response;
 
 
 public class SongFactory {
-
     private static SongFactory instance;
 
     private Song song;
@@ -69,9 +68,7 @@ public class SongFactory {
 
 
     boolean spotifySearchForTrack(String query, final AsyncCallback callback, SpotifyService spotify) {
-
         query = query.replaceAll(" ", "+");
-
 
         Map<String, Object> options = new HashMap<String, Object>();
         //options.put("Authorization", accessToken);
@@ -105,23 +102,5 @@ public class SongFactory {
         }
 
         return true;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
-
-        SongFactory songFactory = (SongFactory) obj;
-        return song.equals(songFactory.song);
     }
 }
