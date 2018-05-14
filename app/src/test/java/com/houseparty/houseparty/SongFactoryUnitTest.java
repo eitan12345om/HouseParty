@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class SongFactoryUnitTest {
     private SongFactory songFactory;
@@ -23,24 +22,24 @@ public class SongFactoryUnitTest {
     @Test
     public void test_createSongTidal() {
         Song song = songFactory.createSong("Beat It", null, "tidal");
-        assertTrue(song.getClass() == TidalSong.class);
+        assertEquals(TidalSong.class, song.getClass());
     }
 
     @Test
     public void test_createSongGooglePlay() {
         Song song = songFactory.createSong("Beat It", null, "googleplay");
-        assertTrue(song.getClass() == GooglePlaySong.class);
+        assertEquals(GooglePlaySong.class, song.getClass());
     }
 
     @Test
     public void test_createSongSoundCloud() {
         Song song = songFactory.createSong("Beat It", null, "soundcloud");
-        assertTrue(song.getClass() == SoundCloudSong.class);
+        assertEquals(SoundCloudSong.class, song.getClass());
     }
 
     @Test(expected = NullPointerException.class)
     public void test_createSongSpotify() {
         Song song = songFactory.createSong("Beat It", null, "spotify");
-        assertTrue(song.getClass() == SpotifySong.class);
+        assertEquals(SpotifySong.class, song.getClass());
     }
 }

@@ -22,13 +22,13 @@ public class SpotifySongUnitTest {
 
     @Test
     public void testGetAccessToken() {
-        assertEquals(song.getAccessToken(), null);
+        assertEquals(null, song.getAccessToken());
     }
 
     @Test
     public void testGetAccessToken2() {
         SpotifySong song2 = new SpotifySong("Beat It", "fake_uri", "Michael Jackson", "fake_access_token", null);
-        assertEquals(song2.getAccessToken(), "fake_access_token");
+        assertEquals("fake_access_token", song2.getAccessToken());
     }
 
     @Test(expected = NullPointerException.class)
@@ -38,7 +38,7 @@ public class SpotifySongUnitTest {
 
     @Test
     public void testGetSpotifyPlayer() {
-        assertEquals(song.getSpotifyPlayer(), null);
+        assertEquals(null, song.getSpotifyPlayer());
     }
 
     @Test(expected = UnsupportedOperationException.class)

@@ -20,22 +20,22 @@ public class SongUnitTest {
 
     @Test
     public void testToString() {
-        assertEquals(song.toString(), "Thriller");
+        assertEquals("Thriller", song.toString());
     }
 
     @Test
     public void testGetTitle() {
-        assertEquals(song.getTitle(), "Thriller");
+        assertEquals("Thriller", song.getTitle());
     }
 
     @Test
     public void testGetUri() {
-        assertEquals(song.getUri(), "fake_uri");
+        assertEquals("fake_uri", song.getUri());
     }
 
     @Test
     public void testGetArtist() {
-        assertEquals(song.getArtist(), "Michael Jackson");
+        assertEquals("Michael Jackson", song.getArtist());
     }
 
     @Test
@@ -57,7 +57,7 @@ public class SongUnitTest {
 
     @Test
     public void testNotEquals2() {
-        assertNotEquals(song, null);
+        assertNotEquals(null, song);
     }
 
     @Test

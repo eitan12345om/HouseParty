@@ -1,12 +1,19 @@
 package com.houseparty.houseparty;
 
+import org.junit.Before;
+
 /**
  * Created by jacksonkurtz on 4/4/18.
  */
 
 public class RegistrationUnitTest {
 
-    private LoginActivity activity = new LoginActivity();
+    private LoginActivity activity;
+
+    @Before
+    public void setUp() {
+        activity = new LoginActivity();
+    }
 
 //    @Test
 //    public void register_correctInputs() throws Exception {

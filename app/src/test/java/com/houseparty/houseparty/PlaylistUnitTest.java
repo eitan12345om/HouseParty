@@ -6,7 +6,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class PlaylistUnitTest {
 
@@ -20,41 +19,41 @@ public class PlaylistUnitTest {
     @Test
     public void testToStringOneSong() {
         playlist.addSong(new SpotifySong("Thriller", "fake_uri", "Michael Jackson"));
-        assertTrue(playlist.toString().equals("JacksonThriller"));
+        assertEquals("JacksonThriller", playlist.toString());
     }
 
     @Test
     public void testToStringTwoSongs() {
         playlist.addSong(new SpotifySong("Thriller", "fake_uri", "Michael Jackson"));
         playlist.addSong(new SpotifySong("Beat It", "fake_uri2", "Michael Jackson"));
-        assertTrue(playlist.toString().equals("JacksonThriller"));
+        assertEquals("JacksonThriller", playlist.toString());
     }
 
     @Test
     public void testToStringTwoSongs2() {
         playlist.addSong(new SpotifySong("Beat It", "fake_uri2", "Michael Jackson"));
         playlist.addSong(new SpotifySong("Thriller", "fake_uri", "Michael Jackson"));
-        assertTrue(playlist.toString().equals("JacksonBeat It"));
+        assertEquals("JacksonBeat It", playlist.toString());
     }
 
     @Test
     public void testGetName() {
-        assertEquals(playlist.getName(), "Jackson");
+        assertEquals("Jackson", playlist.getName());
     }
 
     @Test
     public void testGetPasscode() {
-        assertEquals(playlist.getPasscode(), "12345");
+        assertEquals("12345", playlist.getPasscode());
     }
 
     @Test
     public void testGetSongs() {
-        assertEquals(playlist.getSongs(), new ArrayList<Song>());
+        assertEquals(new ArrayList<Song>(), playlist.getSongs());
     }
 
     @Test
     public void testNoArgumentConstructor() {
         Playlist playlist = new Playlist();
-        assertEquals(playlist.getName(), null);
+        assertEquals(null, playlist.getName());
     }
 }
