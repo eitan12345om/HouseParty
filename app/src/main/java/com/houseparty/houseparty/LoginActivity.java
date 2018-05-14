@@ -137,7 +137,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }*/
 
 
-    public void dialogueBox_Register(View v) {
+    public void dialogueBoxRegister(View v) {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
@@ -154,7 +154,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         inputPasscode2.setHint("Password");
         layout.addView(inputPasscode2);
 
-
         inputEmail.setInputType(InputType.TYPE_CLASS_TEXT);
         inputPasscode.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         inputPasscode2.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -167,7 +166,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String email = inputEmail.getText().toString();
                 String pass = inputPasscode.getText().toString();
                 String pass2 = inputPasscode2.getText().toString();
-                //dialog.cancel();
 
                 if (!pass.equals(pass2)) {
                     Toast.makeText(LoginActivity.this, "Registration failed, passwords don't match", Toast.LENGTH_SHORT).show();
@@ -200,17 +198,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             }
                         });
                 }
-                /*if (!pass.equals(pass2)) {
-                    dialog.cancel();
-                }
-
-                *** Authentification Shenanigans ***
-
-                Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                intent.putExtra("CLIENT_ID", CLIENT_ID);
-                intent.putExtra("REDIRECT_URI", REDIRECT_URI);
-                intent.putExtra("REQUEST_CODE", REQUEST_CODE);
-                startActivity(intent);*/
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
