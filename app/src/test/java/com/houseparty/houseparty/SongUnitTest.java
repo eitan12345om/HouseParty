@@ -41,8 +41,24 @@ public class SongUnitTest {
     }
 
     @Test
+    public void testEquals2() {
+        assertEquals(song, song);
+    }
+
+    @Test
     public void testNotEquals() {
         Song song2 = new SpotifySong("Thrill", "fake_uri", "Michael Jackson");
+        assertNotEquals(song, song2);
+    }
+
+    @Test
+    public void testNotEquals2() {
+        assertNotEquals(song, null);
+    }
+
+    @Test
+    public void testNotEquals3() {
+        Song song2 = new TidalSong("Thrill", "fake_uri", "Michael Jackson");
         assertNotEquals(song, song2);
     }
 
@@ -50,5 +66,11 @@ public class SongUnitTest {
     public void testHashCode() {
         Song song2 = new SpotifySong("Thriller", "fake_uri", "Michael Jackson");
         assertEquals(song.hashCode(), song2.hashCode());
+    }
+
+    @Test
+    public void testNoArgumentConstructor() {
+        Song song2 = new SpotifySong();
+        assertNotEquals(song, song2);
     }
 }
