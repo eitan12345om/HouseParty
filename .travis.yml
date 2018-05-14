@@ -1,6 +1,7 @@
 language: android
 sudo: false
-install: true
+install:
+  - git fetch --unshallow
 addons:
   apt:
     update: true
