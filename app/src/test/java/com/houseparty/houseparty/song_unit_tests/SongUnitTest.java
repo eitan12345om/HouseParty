@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 public class SongUnitTest {
@@ -64,6 +65,11 @@ public class SongUnitTest {
     public void testNotEquals3() {
         Song song2 = new TidalSong("Thrill", "fake_uri", "Michael Jackson");
         assertNotEquals(song, song2);
+    }
+
+    @Test
+    public void testNotEquals4() {
+        assertFalse(song.equals(null));
     }
 
     @Test

@@ -23,6 +23,11 @@ public class NewSongActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_activity_song);
 
+        setUpButton();
+        setUpAdapter();
+    }
+
+    public void setUpButton() {
         pause = false;
         final Button myButton = findViewById(R.id.button3);
         myButton.setText("Play");
@@ -38,7 +43,9 @@ public class NewSongActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
+    public void setUpAdapter() {
         list = new ArrayList<>();
 
         listV = findViewById(R.id.listView);

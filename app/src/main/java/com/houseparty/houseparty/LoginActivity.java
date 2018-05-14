@@ -40,15 +40,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
-        /*if( firebaseAuth.getCurrentUser() != null) {
-            finish();
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-        }*/
-
-
-        //logins.add(new UserLogin("admin", "pokeman"));
-        // createUserAndLogin("username", "password");
     }
 
     public void userLogin() {
@@ -59,7 +50,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         progressDialog.setMessage("Logging in...");
         progressDialog.show();
-
 
         firebaseAuth.signInWithEmailAndPassword(usernameString, passwordString)
             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
@@ -81,51 +71,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             });
     }
-
-    public void playlistPage(View v) {
-
-        /*if (authenticateLogin(username.getText().toString(), password.getText().toString())) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }*/
-    }
-/*
-    public boolean createUserAndLogin(String username, String password) {
-        return register(username, password) && authenticateLogin(username, password);
-    } */
-/*
-    public boolean register(String username, String password) {
-        if (username == null || password == null) {
-            return false;
-        }
-
-        if (password.length() < 6 || password.length() > 16) {
-            return false;
-        }
-
-        Pattern badChars = Pattern.compile("[~#*+%{}<>]");
-        Pattern goodChars = Pattern.compile("[@.]");
-        Matcher badMatcher = badChars.matcher(username);
-        Matcher goodMatcher = goodChars.matcher(username);
-        if (badMatcher.find() || !goodMatcher.find())
-            return false;
-
-        logins.add(new UserLogin(username, password));
-        //return username.equals("jkurtz678@gmail.com") && password.equals("12345");
-    }
-
-    public boolean authenticateLogin(String username, String password) {
-        if (username == null || password == null) {
-            return false;
-        }
-        for (UserLogin login : logins) {
-            if (login.email.equals(username) && login.password.equals(password))
-                return true;
-        }
-        return false;
-    }*/
-
 
     public void dialogueBoxRegister(View v) {
         LinearLayout layout = new LinearLayout(this);
@@ -206,5 +151,4 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             userLogin();
         }
     }
-
 }
