@@ -13,7 +13,7 @@ public class PlaylistUnitTest {
 
     @Before
     public void setUp() {
-        playlist = new Playlist("Jackson", "12345");
+        playlist = new Playlist("Jackson", "12345", "example@example.com");
     }
 
     @Test
@@ -49,6 +49,11 @@ public class PlaylistUnitTest {
     @Test
     public void testGetSongs() {
         assertEquals(new ArrayList<Song>(), playlist.getSongs());
+    }
+
+    @Test
+    public void testGetHost() {
+        assertEquals("example@example.com", playlist.getHost());
     }
 
     @Test

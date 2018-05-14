@@ -80,8 +80,8 @@ public class SongActivity extends AppCompatActivity implements
         songs = new ArrayList<>();
 
         sFirebaseDatabase = FirebaseDatabase.getInstance();
-        Map<String, String> t = MainActivity.getIdTable();
-        String id = t.get(MainActivity.selection());
+        Map<String, String> t = PlaylistActivity.getIdTable();
+        String id = t.get(PlaylistActivity.selection());
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
         uriTable = new HashMap<>();
 
@@ -90,7 +90,7 @@ public class SongActivity extends AppCompatActivity implements
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.show();
-        actionBar.setTitle(title + MainActivity.selection());
+        actionBar.setTitle(title + PlaylistActivity.selection());
 
         // https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
 //        Bundle extras = getIntent().getExtras();

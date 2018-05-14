@@ -5,16 +5,17 @@ import java.util.List;
 
 public class Playlist {
     private String name;
-    private ArrayList<Song> songs;
+    private String host;
     private String passcode;
+    private List<Song> songs = new ArrayList<>();
 
     public Playlist() {
     }
 
-    public Playlist(String name, String passcode) {
+    public Playlist(String name, String passcode, String host) {
         this.name = name;
         this.passcode = passcode;
-        this.songs = new ArrayList<>();
+        this.host = host;
     }
 
     public void addSong(Song song) {
@@ -27,6 +28,10 @@ public class Playlist {
 
     public String getPasscode() {
         return this.passcode;
+    }
+
+    public String getHost() {
+        return host;
     }
 
     public List<Song> getSongs() {

@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements
+public class PlaylistActivity extends AppCompatActivity implements
     SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     private ListView listView;
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements
                     dialogueBoxInvalidPasscode(thisView);
                     dialog.cancel();
                 } else {
-                    Intent intent = new Intent(MainActivity.this, NewSongActivity.class);
+                    Intent intent = new Intent(PlaylistActivity.this, NewSongActivity.class);
                     intent.putExtra("CLIENT_ID", CLIENT_ID);
                     intent.putExtra("REDIRECT_URI", REDIRECT_URI);
                     intent.putExtra("REQUEST_CODE", REQUEST_CODE);
@@ -173,8 +173,8 @@ public class MainActivity extends AppCompatActivity implements
                 } else {
                     selectedList = playlistName;
                     passcode = code;
-                    Playlist plist = new Playlist(selectedList, passcode);
-                    Log.d("PLAYLIST", plist.getPasscode());
+                    /* FIXME */
+                    Playlist plist = new Playlist(selectedList, passcode, null);
                     pPlaylistDatabaseReference.push().setValue(plist);
                     Intent intent = new Intent(getBaseContext(), NewSongActivity.class);
                     intent.putExtra("CLIENT_ID", CLIENT_ID);
