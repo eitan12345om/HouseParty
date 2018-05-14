@@ -4,11 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class SoundCloudSongUnitTest {
-    Song song;
+    private Song song;
 
     @Before
     public void setUp() {
-        song = new SoundCloudSong("Beat It", "fake_uri");
+        song = new SoundCloudSong("Beat It", "fake_uri", "Michael Jackson");
     }
 
     @Test(expected = UnsupportedOperationException.class)

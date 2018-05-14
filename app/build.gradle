@@ -49,6 +49,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:15.0.1'
     implementation 'com.google.firebase:firebase-auth:15.1.0'
     implementation 'com.android.support:design:26.1.0'
+    implementation 'org.apache.commons:commons-lang3:3.5'
 
     androidTestImplementation 'info.cukes:cucumber-android:1.2.5@jar'
     androidTestImplementation 'info.cukes:cucumber-picocontainer:1.2.4'

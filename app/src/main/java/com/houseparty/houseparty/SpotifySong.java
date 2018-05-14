@@ -18,8 +18,8 @@ public class SpotifySong extends Song
         super();
     }
 
-    public SpotifySong(String title, String uri) {
-        super(title, uri, null);
+    public SpotifySong(String title, String uri, String artist) {
+        super(title, uri, artist);
     }
 
     public SpotifySong(String title, String uri, String token, SpotifyPlayer sp) {
@@ -38,25 +38,6 @@ public class SpotifySong extends Song
 
     public SpotifyPlayer getSpotifyPlayer() {
         return spotifyPlayer;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
-
-        SpotifySong spotifySong = (SpotifySong) obj;
-        return super.equals(obj)
-            && accessToken.equals(spotifySong.accessToken);
     }
 
     @Override

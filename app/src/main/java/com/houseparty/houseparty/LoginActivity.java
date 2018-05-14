@@ -27,16 +27,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ProgressDialog progressDialog;
     private Button buttonSignIn;
 
-    private class UserLogin {
-        private String email;
-        private String password;
-/*
-        public UserLogin(String email, String password) {
-            this.email = email;
-            this.password = password;
-        }*/
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

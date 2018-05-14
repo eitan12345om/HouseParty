@@ -1,5 +1,8 @@
 package com.houseparty.houseparty;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Created by jacksonkurtz on 2/23/18.
  */
@@ -50,9 +53,19 @@ public abstract class Song {
         }
 
         Song song = (Song) obj;
-        return title.equals(song.title)
-            && artist.equals(song.artist)
-            && uri.equals(song.uri);
+        return new EqualsBuilder()
+            .append(title, song.title)
+            .append(artist, song.artist)
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31)
+            .append(title)
+            .append(artist)
+            .append(uri)
+            .toHashCode();
     }
 
     public abstract void playSong();

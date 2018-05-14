@@ -5,8 +5,8 @@ package com.houseparty.houseparty;
  */
 
 public class TidalSong extends Song {
-    public TidalSong(String title, String uri) {
-        super(title, uri, null);
+    public TidalSong(String title, String uri, String artist) {
+        super(title, uri, artist);
     }
 
     /* TODO */

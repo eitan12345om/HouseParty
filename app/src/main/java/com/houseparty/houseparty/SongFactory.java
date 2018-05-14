@@ -42,6 +42,8 @@ public class SongFactory {
     public Song createSong(final String title, SpotifyService spotify, String api) {
         String songUri = "";
 
+        /* TODO: Change me to actually get from services */
+        final String artist = "Michael Jackson";
 
         if ("spotify".equals(api)) {
 
@@ -49,20 +51,19 @@ public class SongFactory {
                 @Override
                 public void onSuccess(String uri) {
                     Log.i("SongFactory", "this is the uri: " + uri);
-                    song = new SpotifySong(title, uri);
+                    song = new SpotifySong(title, uri, artist);
                 }
             }, spotify);
         } else if ("soundcloud".equals(api)) {
             String uri = "";
-            song = new SoundCloudSong(title, uri);
+            song = new SoundCloudSong(title, uri, artist);
         } else if ("tidal".equals(api)) {
             String uri = "";
-            song = new TidalSong(title, uri);
+            song = new TidalSong(title, uri, artist);
         } else if ("googleplay".equals(api)) {
             String uri = "";
-            song = new GooglePlaySong(title, uri);
+            song = new GooglePlaySong(title, uri, artist);
         }
-
         return song;
     }
 

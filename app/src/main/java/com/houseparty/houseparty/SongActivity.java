@@ -184,7 +184,7 @@ public class SongActivity extends AppCompatActivity implements
                         @Override
                         public void onSuccess(String uri) {
                             Log.i("SongActivity", "this is the uri: " + uri);
-                            Song song = new SpotifySong(songName, uri);
+                            Song song = new SpotifySong(songName, uri, null);
                             //Song song = songFactory.createSong(songName, spotify, "spotify");
                             songDatabaseReference.push().setValue(song);
                             Log.i("SongActivity", "This is the song name: " + song.title);

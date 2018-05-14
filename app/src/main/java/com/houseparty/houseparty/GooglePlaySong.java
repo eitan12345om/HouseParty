@@ -5,8 +5,8 @@ package com.houseparty.houseparty;
  */
 
 public class GooglePlaySong extends Song {
-    public GooglePlaySong(String title, String uri) {
-        super(title, uri, null);
+    public GooglePlaySong(String title, String uri, String artist) {
+        super(title, uri, artist);
     }
 
     /* TODO */
