@@ -40,9 +40,6 @@ public class NewSongActivity extends AppCompatActivity {
         });
 
         list = new ArrayList<>();
-        for (int i = 0; i < 15; i++) {
-            list.add("Song " + i);
-        }
 
         listV = findViewById(R.id.listView);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);

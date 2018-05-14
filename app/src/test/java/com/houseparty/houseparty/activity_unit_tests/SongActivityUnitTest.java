@@ -1,4 +1,6 @@
-package com.houseparty.houseparty;
+package com.houseparty.houseparty.activity_unit_tests;
+
+import com.houseparty.houseparty.NewSongActivity;
 
 public class SongActivityUnitTest {
 

@@ -1,8 +1,4 @@
-package com.houseparty.houseparty.SpotifyUnitTests;
-
-import com.houseparty.houseparty.SongActivity;
-
-import org.junit.Test;
+package com.houseparty.houseparty;
 
 /**
  * @author Eitan created on 4/9/2018.

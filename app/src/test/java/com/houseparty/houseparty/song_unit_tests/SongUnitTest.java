@@ -1,4 +1,8 @@
-package com.houseparty.houseparty;
+package com.houseparty.houseparty.song_unit_tests;
+
+import com.houseparty.houseparty.Song;
+import com.houseparty.houseparty.SpotifySong;
+import com.houseparty.houseparty.TidalSong;
 
 import org.junit.Before;
 import org.junit.Test;
