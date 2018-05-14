@@ -19,22 +19,17 @@ public class SpotifySong extends Song
     }
 
     public SpotifySong(String title, String uri) {
-        super(title, uri);
+        super(title, uri, null);
     }
 
     public SpotifySong(String title, String uri, String token, SpotifyPlayer sp) {
-
-        super(title, uri);
+        super(title, uri, null);
         this.accessToken = token;
         this.spotifyPlayer = sp;
-
     }
 
-    /* TODO */
-    public int playSong() {
-
+    public void playSong() {
         spotifyPlayer.playUri(null, uri, 0, 0);
-        return 1;
     }
 
     public String getAccessToken() {

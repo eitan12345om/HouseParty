@@ -6,12 +6,12 @@ package com.houseparty.houseparty;
 
 public class SoundCloudSong extends Song {
     public SoundCloudSong(String title, String uri) {
-        super(title, uri);
+        super(title, uri, null);
     }
 
     /* TODO */
-    public int playSong() {
-        return 1;
+    public void playSong() {
+        throw new UnsupportedOperationException();
     }
 
 }

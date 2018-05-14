@@ -8,21 +8,14 @@ public abstract class Song {
     protected String title;
     protected String artist;
     protected String uri;
-    protected String api;
 
     public Song() {
     }
 
-    public Song(String title, String uri) {
+    public Song(String title, String uri, String artist) {
         this.title = title;
         this.uri = uri;
-    }
-
-    public Song(String title, String artist, String uri, String api) {
-        this.title = title;
         this.artist = artist;
-        this.uri = uri;
-        this.api = api;
     }
 
     public String getTitle() {
@@ -36,11 +29,6 @@ public abstract class Song {
     public String getArtist() {
         return this.artist;
     }
-
-    public String getApi() {
-        return this.api;
-    }
-
 
     @Override
     public String toString() {
@@ -64,9 +52,8 @@ public abstract class Song {
         Song song = (Song) obj;
         return title.equals(song.title)
             && artist.equals(song.artist)
-            && uri.equals(song.uri)
-            && api.equals(song.api);
+            && uri.equals(song.uri);
     }
 
-    public abstract int playSong();
+    public abstract void playSong();
 }
