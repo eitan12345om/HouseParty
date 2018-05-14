@@ -39,8 +39,6 @@ public class SongFactory {
     }
 
     public Song createSong(final String title, SpotifyService spotify, String api) {
-        String songUri = "";
-
         /* TODO: Change me to actually get from services */
         final String artist = "Michael Jackson";
 
@@ -70,8 +68,7 @@ public class SongFactory {
     boolean spotifySearchForTrack(String query, final AsyncCallback callback, SpotifyService spotify) {
         query = query.replaceAll(" ", "+");
 
-        Map<String, Object> options = new HashMap<String, Object>();
-        //options.put("Authorization", accessToken);
+        Map<String, Object> options = new HashMap<>();
         options.put("market", "US");
         options.put("limit", 20);
         try {
@@ -93,7 +90,7 @@ public class SongFactory {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    error.printStackTrace();
+                    Log.d(getClass().getName(), String.valueOf(error.getResponse().getStatus()));
                 }
             });
 

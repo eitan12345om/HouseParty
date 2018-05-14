@@ -1,6 +1,7 @@
 package com.houseparty.houseparty;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Playlist {
     private String name;
@@ -28,7 +29,7 @@ public class Playlist {
         return this.passcode;
     }
 
-    public ArrayList<Song> getSongs() {
+    public List<Song> getSongs() {
         return this.songs;
     }
 
