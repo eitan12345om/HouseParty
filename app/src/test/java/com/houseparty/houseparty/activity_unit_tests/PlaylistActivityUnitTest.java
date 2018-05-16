@@ -18,7 +18,7 @@ public class PlaylistActivityUnitTest {
         playlistActivity.onLoginFailed(null);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void test_onLoggedOut() {
         playlistActivity.onLoggedOut();
     }

@@ -44,6 +44,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+@Deprecated
 public class SongActivity extends AppCompatActivity implements
     SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
@@ -54,6 +55,7 @@ public class SongActivity extends AppCompatActivity implements
     private String title = "HouseParty - ";
     private static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
 
+    private String host;
     private FirebaseDatabase sFirebaseDatabase;
     private DatabaseReference songDatabaseReference;
     private ChildEventListener sChildEventListener;
@@ -82,6 +84,10 @@ public class SongActivity extends AppCompatActivity implements
         sFirebaseDatabase = FirebaseDatabase.getInstance();
         Map<String, String> t = PlaylistActivity.getIdTable();
         String id = t.get(PlaylistActivity.selection());
+        DatabaseReference child = sFirebaseDatabase.getReference().child("playlists").child("playlists").child(id).child("host");
+        Log.d("OSDfS", "Taco Shell");
+        Log.d("OSDfS", child.toString());
+
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
         uriTable = new HashMap<>();
 
