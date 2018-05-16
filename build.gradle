@@ -22,9 +22,10 @@ plugins {
 
 sonarqube {
     properties {
-        property "sonar.sources", "app/src/main/java/com/houseparty/houseparty/"
-        property "sonar.tests", "app/src/test/java/com/houseparty/houseparty/"
-        property "sonar.exclusions", "CucumberRunner.java"
+        property "sonar.sources", "app/src/main/java/*"
+        property "sonar.tests", "app/src/test/java/*"
+        property "sonar.exclusions", "app/src/test/java/*"
+        property "sonar.test.exclusions", "app/src/main/java/*"
     }
 }
 
