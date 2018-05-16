@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,6 +47,7 @@ public class PlaylistActivity extends AppCompatActivity implements
     private static HashMap<String, String> idTable;
     private String code = "";
     private View currentView;
+    private FirebaseUser currentFirebaseUser;
 
     private String title = "HouseParty";
     private static String selectedList;
@@ -174,7 +177,7 @@ public class PlaylistActivity extends AppCompatActivity implements
                     selectedList = playlistName;
                     passcode = code;
                     /* FIXME */
-                    Playlist plist = new Playlist(selectedList, passcode, null);
+                    Playlist plist = new Playlist(selectedList, passcode, currentFirebaseUser.getUid());
                     pPlaylistDatabaseReference.push().setValue(plist);
                     Intent intent = new Intent(getBaseContext(), NewSongActivity.class);
                     intent.putExtra("CLIENT_ID", CLIENT_ID);
@@ -200,8 +203,13 @@ public class PlaylistActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         pFirebaseDatabase = FirebaseDatabase.getInstance();
+        pFirebaseDatabase.setPersistenceEnabled(true);
         pPlaylistDatabaseReference = pFirebaseDatabase.getReference().child("playlists");
-        //pPlaylistDatabaseReference.keepSynced(true);
+        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentFirebaseUser == null) {
+            Log.d("PlaylistActivity", "User not authenticated");
+        }
+
         idTable = new HashMap<>();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -223,7 +231,6 @@ public class PlaylistActivity extends AppCompatActivity implements
         pChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
                 dataTable = (HashMap) dataSnapshot.getValue();
                 idTable.put(dataTable.get("name"), dataSnapshot.getKey());
                 list.add(dataTable.get("name"));
@@ -232,12 +239,26 @@ public class PlaylistActivity extends AppCompatActivity implements
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                throw new UnsupportedOperationException();
+                /* TODO:
+                 *   I'm not sure how to approach this method...
+                 *   We can either store an ID along with every playlist and
+                 *   loop through each playlist in the list and determine which
+                 *   it was.
+                 *   OR
+                 *   We can reload the entire list from Firebase... But, I'm not
+                 *   sure Firebase even lets you do that.
+                 *   Any ideas?
+                 */
+                Log.i("PlaylistActivity", "Child Changed!");
+                Playlist playlist = dataSnapshot.getValue(Playlist.class);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                throw new UnsupportedOperationException();
+                dataTable = (HashMap) dataSnapshot.getValue();
+                list.remove(dataTable.get("name"));
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -265,8 +286,6 @@ public class PlaylistActivity extends AppCompatActivity implements
                 queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Log.d("Inside listener", (String) dataSnapshot.child("passcode").getValue());
-
                         if (dataSnapshot.exists()) {
                             passcode = (String) dataSnapshot.getValue();
                             Log.d("Passcode of selected: ", passcode);
@@ -274,7 +293,6 @@ public class PlaylistActivity extends AppCompatActivity implements
 
                         } else {
                             Log.d("Snapshot", "does not exist");
-
                         }
                     }
 
@@ -294,7 +312,9 @@ public class PlaylistActivity extends AppCompatActivity implements
 
     @Override
     public void onLoggedOut() {
-        throw new UnsupportedOperationException();
+        Intent intent = new Intent(PlaylistActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
