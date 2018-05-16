@@ -203,7 +203,7 @@ public class PlaylistActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         pFirebaseDatabase = FirebaseDatabase.getInstance();
-        pFirebaseDatabase.setPersistenceEnabled(true);
+//        pFirebaseDatabase.setPersistenceEnabled(true);
         pPlaylistDatabaseReference = pFirebaseDatabase.getReference().child("playlists");
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentFirebaseUser == null) {

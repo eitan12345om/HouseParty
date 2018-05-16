@@ -141,12 +141,26 @@ public class SongActivity extends AppCompatActivity implements
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                throw new UnsupportedOperationException();
+                /* TODO:
+                 *   I'm not sure how to approach this method...
+                 *   We can either store an ID along with every playlist and
+                 *   loop through each playlist in the list and determine which
+                 *   it was.
+                 *   OR
+                 *   We can reload the entire list from Firebase... But, I'm not
+                 *   sure Firebase even lets you do that.
+                 *   Any ideas?
+                 */
+                Log.i("SongActivity", "Child Changed!");
+                Song song = dataSnapshot.getValue(Song.class);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                throw new UnsupportedOperationException();
+                Song song = dataSnapshot.getValue(SpotifySong.class);
+                displayList.remove(song.getTitle());
+                adapter.notifyDataSetChanged();
             }
 
             @Override
