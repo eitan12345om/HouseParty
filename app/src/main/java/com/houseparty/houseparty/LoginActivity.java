@@ -72,6 +72,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             });
     }
 
+    public void playlistPage(View v) {
+
+        /*if (authenticateLogin(username.getText().toString(), password.getText().toString())) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }*/
+    }
+
     public void dialogueBoxRegister(View v) {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
