@@ -22,8 +22,9 @@ plugins {
 
 sonarqube {
     properties {
-        property "sonar.language", "java"
+        property "sonar.sources", "app/src/main/java/com/houseparty/houseparty/"
         property "sonar.tests", "app/src/test/java/com/houseparty/houseparty/"
+        property "sonar.exclusions", "CucumberRunner.java"
     }
 }
 
