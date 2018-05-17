@@ -1,6 +1,7 @@
 package com.houseparty.houseparty;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +17,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class NewSongActivity extends AppCompatActivity {
     private String selectedList;
     private ArrayList<Song> songs = new ArrayList<>();
 
-    private String host = null;
+    private String host;
     private FirebaseUser iam;  /* Variable to keep track of who I is */
 
     private FirebaseDatabase sFirebaseDatabase;
@@ -48,26 +48,10 @@ public class NewSongActivity extends AppCompatActivity {
 
         sFirebaseDatabase = FirebaseDatabase.getInstance();
         iam = FirebaseAuth.getInstance().getCurrentUser();
+        host = getIntent().getExtras().getString("HOST");
         Map<String, String> t = PlaylistActivity.getIdTable();
         String id = t.get(PlaylistActivity.selection());
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
-
-        DatabaseReference hostDbRef = sFirebaseDatabase.getReference().child("playlists").child(id).child("host");
-        hostDbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    host = (String) dataSnapshot.getValue();
-                } else {
-                    Log.d("Snapshot", "does not exist");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                throw new UnsupportedOperationException();
-            }
-        });
 
         sChildEventListener = new ChildEventListener() {
             @Override
@@ -117,6 +101,15 @@ public class NewSongActivity extends AppCompatActivity {
             }
         };
         songDatabaseReference.addChildEventListener(sChildEventListener);
+
+        String message = "You are not the host of this playlist";
+        if (iam.getUid().equals(host)) {
+            message = "You are the host of this playlist";
+        }
+
+        Log.d("TAG", host + ", iam: " + iam.getUid());
+
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
     }
 
     public void setUpButton() {

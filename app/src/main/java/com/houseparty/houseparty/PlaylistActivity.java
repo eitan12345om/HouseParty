@@ -25,8 +25,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.PlayerEvent;
@@ -44,10 +42,12 @@ public class PlaylistActivity extends AppCompatActivity implements
     private List<String> list;
     private ArrayAdapter adapter;
     private ActionBar actionBar;
+    /* What is this variable for? */
     private static HashMap<String, String> idTable;
     private String code = "";
     private View currentView;
     private FirebaseUser currentFirebaseUser;
+    private List<Playlist> playlists = new ArrayList<>();
 
     private String title = "HouseParty";
     private static String selectedList;
@@ -106,7 +106,10 @@ public class PlaylistActivity extends AppCompatActivity implements
         builder.show();
     }
 
-    public void dialogueBoxPasscode(View v, final String valid_code) {
+    public void dialogueBoxPasscode(View v, final Playlist playlist) {
+        final String passcode = playlist.getPasscode();
+        Log.d("Passcode of selected: ", passcode);
+
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -123,7 +126,7 @@ public class PlaylistActivity extends AppCompatActivity implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String enteredCode = inputPasscode.getText().toString();
-                if (!enteredCode.equals(valid_code)) {
+                if (!enteredCode.equals(passcode)) {
                     dialogueBoxInvalidPasscode(thisView);
                     dialog.cancel();
                 } else {
@@ -131,6 +134,7 @@ public class PlaylistActivity extends AppCompatActivity implements
                     intent.putExtra("CLIENT_ID", CLIENT_ID);
                     intent.putExtra("REDIRECT_URI", REDIRECT_URI);
                     intent.putExtra("REQUEST_CODE", REQUEST_CODE);
+                    intent.putExtra("HOST", playlist.getHost());
                     startActivity(intent);
                 }
             }
@@ -183,6 +187,7 @@ public class PlaylistActivity extends AppCompatActivity implements
                     intent.putExtra("CLIENT_ID", CLIENT_ID);
                     intent.putExtra("REDIRECT_URI", REDIRECT_URI);
                     intent.putExtra("REQUEST_CODE", REQUEST_CODE);
+                    intent.putExtra("HOST", currentFirebaseUser.getUid());
                     startActivity(intent);
                 }
             }
@@ -232,6 +237,13 @@ public class PlaylistActivity extends AppCompatActivity implements
                 dataTable = (HashMap) dataSnapshot.getValue();
                 idTable.put(dataTable.get("name"), dataSnapshot.getKey());
                 list.add(dataTable.get("name"));
+
+                playlists.add(new Playlist(
+                    dataTable.get("name"),
+                    dataTable.get("passcode"),
+                    dataTable.get("host")
+                ));
+
                 adapter.notifyDataSetChanged();
             }
 
@@ -256,6 +268,13 @@ public class PlaylistActivity extends AppCompatActivity implements
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 dataTable = (HashMap) dataSnapshot.getValue();
                 list.remove(dataTable.get("name"));
+
+                playlists.remove(new Playlist(
+                    dataTable.get("name"),
+                    dataTable.get("passcode"),
+                    dataTable.get("host")
+                ));
+
                 adapter.notifyDataSetChanged();
             }
 
@@ -280,25 +299,27 @@ public class PlaylistActivity extends AppCompatActivity implements
                 String id = idTable.get(selectedList);
                 Log.d("ID FROM HASH", id);
                 //dataTable.get("passcode")
-                Query queryRef = pPlaylistDatabaseReference.child(id).child("passcode");
-                queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            passcode = (String) dataSnapshot.getValue();
-                            Log.d("Passcode of selected: ", passcode);
-                            dialogueBoxPasscode(currentView, passcode);
-
-                        } else {
-                            Log.d("Snapshot", "does not exist");
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        throw new UnsupportedOperationException();
-                    }
-                });
+                dialogueBoxPasscode(currentView, playlists.get(i));
+//
+//                Query queryRef = pPlaylistDatabaseReference.child(id).child("passcode");
+//                queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot.exists()) {
+//                            passcode = (String) dataSnapshot.getValue();
+//                            Log.d("Passcode of selected: ", passcode);
+//                            dialogueBoxPasscode(currentView, passcode);
+//
+//                        } else {
+//                            Log.d("Snapshot", "does not exist");
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                        throw new UnsupportedOperationException();
+//                    }
+//                });
             }
         });
     }

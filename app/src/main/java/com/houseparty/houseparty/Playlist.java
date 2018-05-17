@@ -1,5 +1,8 @@
 package com.houseparty.houseparty;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,5 +44,36 @@ public class Playlist {
     @Override
     public String toString() {
         return this.name + songs.get(0).toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Playlist playlist = (Playlist) obj;
+        return new EqualsBuilder()
+            .append(name, playlist.name)
+            .append(host, playlist.host)
+            .append(passcode, playlist.passcode)
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31)
+            .append(name)
+            .append(host)
+            .append(passcode)
+            .toHashCode();
     }
 }
