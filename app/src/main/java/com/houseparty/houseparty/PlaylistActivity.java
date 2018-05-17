@@ -219,8 +219,6 @@ public class PlaylistActivity extends AppCompatActivity implements
 
         actionBar.setTitle(title);
 
-        Log.d("Main Activity: ", "On create");
-
         listView = findViewById(R.id.listView);
         list = new ArrayList<>();
 

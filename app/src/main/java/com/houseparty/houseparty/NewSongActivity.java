@@ -9,11 +9,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +31,9 @@ public class NewSongActivity extends AppCompatActivity {
     private String selectedList;
     private ArrayList<Song> songs = new ArrayList<>();
 
+    private String host = null;
+    private FirebaseUser iam;  /* Variable to keep track of who I is */
+
     private FirebaseDatabase sFirebaseDatabase;
     private DatabaseReference songDatabaseReference;
     private ChildEventListener sChildEventListener;
@@ -41,9 +47,27 @@ public class NewSongActivity extends AppCompatActivity {
         setUpAdapter();
 
         sFirebaseDatabase = FirebaseDatabase.getInstance();
+        iam = FirebaseAuth.getInstance().getCurrentUser();
         Map<String, String> t = PlaylistActivity.getIdTable();
         String id = t.get(PlaylistActivity.selection());
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
+
+        DatabaseReference hostDbRef = sFirebaseDatabase.getReference().child("playlists").child(id).child("host");
+        hostDbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    host = (String) dataSnapshot.getValue();
+                } else {
+                    Log.d("Snapshot", "does not exist");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                throw new UnsupportedOperationException();
+            }
+        });
 
         sChildEventListener = new ChildEventListener() {
             @Override
