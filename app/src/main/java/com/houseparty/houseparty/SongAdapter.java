@@ -17,8 +17,21 @@ public class SongAdapter extends
 
     private List<Song> mSongs;
 
+    // Define listener member variable
+    private OnItemClickListener listener;
+
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
     public SongAdapter(List<Song> songs) {
         mSongs = songs;
+    }
+
+    // Define the listener interface
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
     }
 
     @Override
@@ -52,10 +65,24 @@ public class SongAdapter extends
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView songTextView;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
 
             songTextView = itemView.findViewById(R.id.song_title);
+
+            // Setup the click listener
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Triggers click upwards to the adapter on click
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(itemView, position);
+                        }
+                    }
+                }
+            });
         }
     }
 }

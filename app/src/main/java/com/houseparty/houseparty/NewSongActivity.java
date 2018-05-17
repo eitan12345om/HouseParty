@@ -142,15 +142,17 @@ public class NewSongActivity extends AppCompatActivity {
     public void setUpAdapter() {
         recyclerView = findViewById(R.id.recyclerView);
         songs = new ArrayList<>();
+
         adapter = new SongAdapter(songs);
+        adapter.setOnItemClickListener(new SongAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Song song = songs.get(position);
+                Snackbar.make(view, song.getTitle(), Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getParent(), 1));
-
-//        listV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                selectedList = list.get(i);
-//            }
-//        });
     }
 }
