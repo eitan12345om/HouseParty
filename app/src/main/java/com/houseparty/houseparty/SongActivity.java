@@ -101,7 +101,7 @@ public class SongActivity extends AppCompatActivity implements
         // https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
 //        Bundle extras = getIntent().getExtras();
 
-        listView = findViewById(R.id.listView);
+//        listView = findViewById(R.id.listView);
 
         displayList = new ArrayList<>();
 

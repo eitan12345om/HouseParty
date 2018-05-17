@@ -6,17 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,16 +37,15 @@ import java.util.Map;
 public class PlaylistActivity extends AppCompatActivity implements
     SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
-    private ListView listView;
-    private List<String> list;
-    private ArrayAdapter adapter;
+    private RecyclerView recyclerView;
+    private PlaylistAdapter adapter;
     private ActionBar actionBar;
     /* What is this variable for? */
     private static HashMap<String, String> idTable;
     private String code = "";
     private View currentView;
     private FirebaseUser currentFirebaseUser;
-    private List<Playlist> playlists = new ArrayList<>();
+    private List<Playlist> playlists;
 
     private String title = "HouseParty";
     private static String selectedList;
@@ -224,11 +222,23 @@ public class PlaylistActivity extends AppCompatActivity implements
 
         actionBar.setTitle(title);
 
-        listView = findViewById(R.id.listView);
-        list = new ArrayList<>();
+        recyclerView = findViewById(R.id.recyclerView);
+        playlists = new ArrayList<>();
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
-        listView.setAdapter(adapter);
+        adapter = new PlaylistAdapter(playlists);
+        adapter.setOnItemClickListener(new PlaylistAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Playlist playlist = playlists.get(position);
+                selectedList = playlists.get(position).getName();
+                String id = idTable.get(selectedList);
+                dialogueBoxPasscode(view, playlist);
+            }
+        });
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(getParent(), 1));
+
         actionBar.show();
 
         pChildEventListener = new ChildEventListener() {
@@ -236,7 +246,6 @@ public class PlaylistActivity extends AppCompatActivity implements
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 dataTable = (HashMap) dataSnapshot.getValue();
                 idTable.put(dataTable.get("name"), dataSnapshot.getKey());
-                list.add(dataTable.get("name"));
 
                 playlists.add(new Playlist(
                     dataTable.get("name"),
@@ -244,6 +253,7 @@ public class PlaylistActivity extends AppCompatActivity implements
                     dataTable.get("host")
                 ));
 
+                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
@@ -261,13 +271,14 @@ public class PlaylistActivity extends AppCompatActivity implements
                  */
                 Log.i("PlaylistActivity", "Child Changed!");
                 Playlist playlist = dataSnapshot.getValue(Playlist.class);
+
+                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 dataTable = (HashMap) dataSnapshot.getValue();
-                list.remove(dataTable.get("name"));
 
                 playlists.remove(new Playlist(
                     dataTable.get("name"),
@@ -275,6 +286,7 @@ public class PlaylistActivity extends AppCompatActivity implements
                     dataTable.get("host")
                 ));
 
+                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
@@ -290,38 +302,37 @@ public class PlaylistActivity extends AppCompatActivity implements
         };
         pPlaylistDatabaseReference.addChildEventListener(pChildEventListener);
 
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                currentView = view;
-                selectedList = list.get(i);
-                String id = idTable.get(selectedList);
-                Log.d("ID FROM HASH", id);
-                //dataTable.get("passcode")
-                dialogueBoxPasscode(currentView, playlists.get(i));
-//
-//                Query queryRef = pPlaylistDatabaseReference.child(id).child("passcode");
-//                queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot.exists()) {
-//                            passcode = (String) dataSnapshot.getValue();
-//                            Log.d("Passcode of selected: ", passcode);
-//                            dialogueBoxPasscode(currentView, passcode);
-//
-//                        } else {
-//                            Log.d("Snapshot", "does not exist");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                        throw new UnsupportedOperationException();
-//                    }
-//                });
-            }
-        });
+//        recyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                currentView = view;
+//                selectedList = list.get(i);
+//                String id = idTable.get(selectedList);
+//                Log.d("ID FROM HASH", id);
+//                //dataTable.get("passcode")
+//                dialogueBoxPasscode(currentView, playlists.get(i));
+////
+////                Query queryRef = pPlaylistDatabaseReference.child(id).child("passcode");
+////                queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+////                    @Override
+////                    public void onDataChange(DataSnapshot dataSnapshot) {
+////                        if (dataSnapshot.exists()) {
+////                            passcode = (String) dataSnapshot.getValue();
+////                            Log.d("Passcode of selected: ", passcode);
+////                            dialogueBoxPasscode(currentView, passcode);
+////
+////                        } else {
+////                            Log.d("Snapshot", "does not exist");
+////                        }
+////                    }
+////
+////                    @Override
+////                    public void onCancelled(DatabaseError databaseError) {
+////                        throw new UnsupportedOperationException();
+////                    }
+////                });
+//            }
+//        });
     }
 
     @Override

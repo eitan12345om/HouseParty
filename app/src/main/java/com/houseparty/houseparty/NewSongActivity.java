@@ -3,12 +3,11 @@ package com.houseparty.houseparty;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,16 +19,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class NewSongActivity extends AppCompatActivity {
     private boolean pause = true;
-    private ListView listV;
-    private List<String> list;
-    private ArrayAdapter adapter;
+    private RecyclerView recyclerView;
+    private SongAdapter adapter;
     private String selectedList;
-    private ArrayList<Song> songs = new ArrayList<>();
+    private ArrayList<Song> songs;
 
     private String host;
     private FirebaseUser iam;  /* Variable to keep track of who I is */
@@ -57,12 +54,15 @@ public class NewSongActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 HashMap<String, String> dataTable = (HashMap) dataSnapshot.getValue();
+
+                /* TODO: Use SongFactory */
                 songs.add(new SpotifySong(
                     dataTable.get("title"),
                     dataTable.get("uri"),
-                    null
+                    dataTable.get("artist")
                 ));
-                list.add(dataTable.get("title"));
+
+                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
@@ -79,14 +79,23 @@ public class NewSongActivity extends AppCompatActivity {
                  *   Any ideas?
                  */
                 Log.i("SongActivity", "Child Changed!");
-                Song song = dataSnapshot.getValue(Song.class);
+
+                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 HashMap<String, String> dataTable = (HashMap) dataSnapshot.getValue();
-                list.remove(dataTable.get("title"));
+
+                /* TODO: Use SongFactory */
+                songs.remove(new SpotifySong(
+                    dataTable.get("title"),
+                    dataTable.get("uri"),
+                    dataTable.get("artist")
+                ));
+
+                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
@@ -131,17 +140,17 @@ public class NewSongActivity extends AppCompatActivity {
     }
 
     public void setUpAdapter() {
-        list = new ArrayList<>();
+        recyclerView = findViewById(R.id.recyclerView);
+        songs = new ArrayList<>();
+        adapter = new SongAdapter(songs);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(getParent(), 1));
 
-        listV = findViewById(R.id.listView);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
-        listV.setAdapter(adapter);
-
-        listV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedList = list.get(i);
-            }
-        });
+//        listV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                selectedList = list.get(i);
+//            }
+//        });
     }
 }
