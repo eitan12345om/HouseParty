@@ -239,9 +239,24 @@ public class PlaylistActivity extends AppCompatActivity implements
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                // Remove item from backing list here
-                adapter.notifyDataSetChanged();
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PlaylistActivity.this);
+                builder.setTitle("Are you sure you want to delete this playlist?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int position = viewHolder.getAdapterPosition();
+                        playlists.remove(position);
+                        adapter.notifyItemRemoved(position);
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
             }
 
             @Override
