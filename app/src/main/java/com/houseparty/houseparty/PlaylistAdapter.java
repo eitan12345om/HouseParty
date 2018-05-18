@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.List;
 
 /**
@@ -17,11 +20,14 @@ public class PlaylistAdapter extends
 
     private List<Playlist> mPlaylists;
 
+    private FirebaseUser currentUser;
+
     // Define listener member variable
     private OnItemClickListener listener;
 
     public PlaylistAdapter(List<Playlist> playlists) {
         mPlaylists = playlists;
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     // Define the method that allows the parent activity or fragment to define the listener
@@ -48,8 +54,14 @@ public class PlaylistAdapter extends
         Playlist playlist = mPlaylists.get(position);
 
         // Set item views based on your views and data model
-        TextView textView = holder.playlistTextView;
+        TextView textView = holder.playlistName;
         textView.setText(playlist.getName());
+
+        TextView hostTextView = holder.hostNotifier;
+
+        if (currentUser.getUid().equals(playlist.getHost())) {
+            hostTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -63,12 +75,14 @@ public class PlaylistAdapter extends
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView playlistTextView;
+        public TextView playlistName;
+        public TextView hostNotifier;
 
         public ViewHolder(final View itemView) {
             super(itemView);
 
-            playlistTextView = itemView.findViewById(R.id.playlist_name);
+            playlistName = itemView.findViewById(R.id.playlist_name);
+            hostNotifier = itemView.findViewById(R.id.host_notifier);
 
             // Setup the click listener
             itemView.setOnClickListener(new View.OnClickListener() {

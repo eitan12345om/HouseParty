@@ -7,10 +7,28 @@
 
     <TextView
         android:id="@+id/playlist_name"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingEnd="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingStart="10dp"
+        android:text="TEXT_HERE"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/host_notifier"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:gravity="end"
+        android:paddingEnd="10dp"
+        android:paddingRight="10dp"
         android:paddingLeft="10dp"
-        android:paddingStart="10dp" />
+        android:paddingStart="10dp"
+        android:text="Host"
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone" />
 
 </LinearLayout>

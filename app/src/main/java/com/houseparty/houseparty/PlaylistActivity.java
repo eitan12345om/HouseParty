@@ -301,38 +301,6 @@ public class PlaylistActivity extends AppCompatActivity implements
             }
         };
         pPlaylistDatabaseReference.addChildEventListener(pChildEventListener);
-
-//        recyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                currentView = view;
-//                selectedList = list.get(i);
-//                String id = idTable.get(selectedList);
-//                Log.d("ID FROM HASH", id);
-//                //dataTable.get("passcode")
-//                dialogueBoxPasscode(currentView, playlists.get(i));
-////
-////                Query queryRef = pPlaylistDatabaseReference.child(id).child("passcode");
-////                queryRef.addListenerForSingleValueEvent(new ValueEventListener() {
-////                    @Override
-////                    public void onDataChange(DataSnapshot dataSnapshot) {
-////                        if (dataSnapshot.exists()) {
-////                            passcode = (String) dataSnapshot.getValue();
-////                            Log.d("Passcode of selected: ", passcode);
-////                            dialogueBoxPasscode(currentView, passcode);
-////
-////                        } else {
-////                            Log.d("Snapshot", "does not exist");
-////                        }
-////                    }
-////
-////                    @Override
-////                    public void onCancelled(DatabaseError databaseError) {
-////                        throw new UnsupportedOperationException();
-////                    }
-////                });
-//            }
-//        });
     }
 
     @Override

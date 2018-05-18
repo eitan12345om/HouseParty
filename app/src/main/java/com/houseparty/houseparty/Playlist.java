@@ -37,6 +37,10 @@ public class Playlist {
         return host;
     }
 
+    public boolean isHost(String uid) {
+        return host.equals(uid);
+    }
+
     public List<Song> getSongs() {
         return this.songs;
     }
