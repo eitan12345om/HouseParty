@@ -269,11 +269,11 @@ public class PlaylistActivity extends AppCompatActivity implements
                  *   sure Firebase even lets you do that.
                  *   Any ideas?
                  */
-                Log.i("PlaylistActivity", "Child Changed!");
-                Playlist playlist = dataSnapshot.getValue(Playlist.class);
+                //Log.i("PlaylistActivity", "Child Changed!");
+                //Playlist playlist = dataSnapshot.getValue(Playlist.class);
 
                 /* TODO: This is bad practice. Be more specific */
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
             }
 
             @Override

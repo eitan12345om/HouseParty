@@ -101,7 +101,7 @@ public class SongActivity extends AppCompatActivity implements
         // https://stackoverflow.com/questions/10674388/nullpointerexception-from-getextras
 //        Bundle extras = getIntent().getExtras();
 
-//        listView = findViewById(R.id.listView);
+//        listView = findViewById( R.id.listView);
 
         displayList = new ArrayList<>();
 
@@ -204,7 +204,7 @@ public class SongActivity extends AppCompatActivity implements
                         @Override
                         public void onSuccess(String uri) {
                             Log.i("SongActivity", "this is the uri: " + uri);
-                            Song song = new SpotifySong(songName, uri, null);
+                            Song song = new SpotifySong(songName, uri, null, accessToken, spotifyPlayer);
                             //Song song = songFactory.createSong(songName, spotify, "spotify");
                             songDatabaseReference.push().setValue(song);
                             Log.i("SongActivity", "This is the song name: " + song.title);
