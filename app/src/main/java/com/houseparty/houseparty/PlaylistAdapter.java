@@ -16,7 +16,7 @@ import java.util.List;
  * @author Eitan created on 5/17/2018.
  */
 public class PlaylistAdapter extends
-    RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
+    RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
 
     private List<Playlist> mPlaylists;
 
@@ -36,7 +36,7 @@ public class PlaylistAdapter extends
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PlaylistViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -44,12 +44,11 @@ public class PlaylistAdapter extends
         View playlistView = inflater.inflate(R.layout.playlist_item, parent, false);
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(playlistView);
-        return viewHolder;
+        return new PlaylistViewHolder(playlistView);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(PlaylistViewHolder holder, int position) {
         // Get the data model based on position
         Playlist playlist = mPlaylists.get(position);
 
@@ -74,11 +73,11 @@ public class PlaylistAdapter extends
         void onItemClick(View itemView, int position);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView playlistName;
-        public TextView hostNotifier;
+    public class PlaylistViewHolder extends RecyclerView.ViewHolder {
+        private TextView playlistName;
+        private TextView hostNotifier;
 
-        public ViewHolder(final View itemView) {
+        public PlaylistViewHolder(final View itemView) {
             super(itemView);
 
             playlistName = itemView.findViewById(R.id.playlist_name);
@@ -97,6 +96,22 @@ public class PlaylistAdapter extends
                     }
                 }
             });
+        }
+
+        public TextView getPlaylistName() {
+            return playlistName;
+        }
+
+        public void setPlaylistName(TextView playlistName) {
+            this.playlistName = playlistName;
+        }
+
+        public TextView getHostNotifier() {
+            return hostNotifier;
+        }
+
+        public void setHostNotifier(TextView hostNotifier) {
+            this.hostNotifier = hostNotifier;
         }
     }
 }
