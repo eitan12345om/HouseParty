@@ -59,7 +59,7 @@ public class PlaylistAdapter extends
 
         TextView hostTextView = holder.hostNotifier;
 
-        if (currentUser.getUid().equals(playlist.getHost())) {
+        if (playlist.isHost(currentUser.getUid())) {
             hostTextView.setVisibility(View.VISIBLE);
         }
     }
