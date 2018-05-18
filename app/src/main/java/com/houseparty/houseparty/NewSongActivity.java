@@ -46,6 +46,7 @@ import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TracksPager;
 import retrofit.Callback;
@@ -143,7 +144,7 @@ public class NewSongActivity extends AppCompatActivity implements
                 songs.remove(new SpotifySong(
                     dataTable.get("title"),
                     dataTable.get("uri"),
-                    dataTable.get("artist")
+                dataTable.get("artist")
                 ));
 
                 /* TODO: This is bad practice. Be more specific */
@@ -236,15 +237,27 @@ public class NewSongActivity extends AppCompatActivity implements
                 @Override
                 public void success(TracksPager tracksPager, Response response) {
                     String songUri = "";
+                    String imageURL = "";
                     try {
-
-
                         List<Track> searchResults = tracksPager.tracks.items;
+                        Log.d( "SpotifySearchForTrack", "beginning of try block");
+                        //Log.d( "SpotifySearchForTrack", imageURL);
                         songUri = searchResults.get(0).uri;
+                        try {
+                            Log.d("SpotifySearchForTrack", searchResults.get(0).external_urls.toString());
+                            Log.d("SpotifySearchForTrack", searchResults.get(0).href);
+                            Log.d("SpotifyExternalURL", searchResults.get(0).artists.get(0).external_urls.toString());
+                            Log.d("SpotifySearchForTrack", searchResults.get(0).preview_url);
+                        }
+                        catch (Exception e) {
+                            Log.d("SpotifySearchForTrack", "log failure");
+                        }
+
                     } catch (Exception e) {
                         Log.d("SearchTracksInner: ", "No results");
                     }
                     Log.d("FetchSongTask", "1st song uri = " + songUri);
+                    //imageURL = searchResults.get(0).external_urls.get("images");
                     callback.onSuccess(songUri);
                 }
 
