@@ -92,10 +92,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         inputEmail.setHint("Email");
         layout.addView(inputEmail);
         final EditText inputPasscode = new EditText(this);
-        inputPasscode.setHint("Password");
+        inputPasscode.setHint("Password(six characters minimum)");
         layout.addView(inputPasscode);
         final EditText inputPasscode2 = new EditText(this);
-        inputPasscode2.setHint("Password");
+        inputPasscode2.setHint("Confirm password");
         layout.addView(inputPasscode2);
 
         inputEmail.setInputType(InputType.TYPE_CLASS_TEXT);

@@ -48,7 +48,7 @@ public class SongFactory {
                 @Override
                 public void onSuccess(String uri) {
                     Log.i("SongFactory", "this is the uri: " + uri);
-                    song = new SpotifySong(title, uri, artist);
+                    //song = new SpotifySong(title, uri, artist);
                 }
             }, spotify);
         } else if ("soundcloud".equals(api)) {
