@@ -13,7 +13,7 @@ import java.util.List;
  * @author Eitan created on 5/17/2018.
  */
 public class SongAdapter extends
-    RecyclerView.Adapter<SongAdapter.ViewHolder> {
+    RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
     private List<Song> mSongs;
 
@@ -35,7 +35,7 @@ public class SongAdapter extends
     }
 
     @Override
-    public SongAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SongAdapter.SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -43,12 +43,11 @@ public class SongAdapter extends
         View songView = inflater.inflate(R.layout.song_item, parent, false);
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(songView);
-        return viewHolder;
+        return new SongViewHolder(songView);
     }
 
     @Override
-    public void onBindViewHolder(SongAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(SongAdapter.SongViewHolder holder, int position) {
         // Get the data model based on position
         Song song = mSongs.get(position);
 
@@ -62,10 +61,10 @@ public class SongAdapter extends
         return mSongs.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView songTextView;
+    public class SongViewHolder extends RecyclerView.ViewHolder {
+        private TextView songTextView;
 
-        public ViewHolder(final View itemView) {
+        public SongViewHolder(final View itemView) {
             super(itemView);
 
             songTextView = itemView.findViewById(R.id.song_title);
@@ -83,6 +82,14 @@ public class SongAdapter extends
                     }
                 }
             });
+        }
+
+        public TextView getSongTextView() {
+            return songTextView;
+        }
+
+        public void setSongTextView(TextView songTextView) {
+            this.songTextView = songTextView;
         }
     }
 }
