@@ -1,10 +1,17 @@
 package com.houseparty.houseparty;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -110,15 +117,6 @@ public class NewSongActivity extends AppCompatActivity {
             }
         };
         songDatabaseReference.addChildEventListener(sChildEventListener);
-
-        String message = "You are not the host of this playlist";
-        if (iam.getUid().equals(host)) {
-            message = "You are the host of this playlist";
-        }
-
-        Log.d("TAG", host + ", iam: " + iam.getUid());
-
-        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show();
     }
 
     public void setUpButton() {
@@ -154,5 +152,59 @@ public class NewSongActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getParent(), 1));
+
+        // Add snap scrolling
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            Drawable background = new ColorDrawable(Color.RED);
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                // Don't create dialogbox if the user doesn't own the playlist
+                if (!iam.getUid().equals(host)) {
+                    return;
+                }
+
+
+                int position = viewHolder.getAdapterPosition();
+//                songDatabaseReference.child(idTable.get(playlists.get(position).getName())).removeValue();
+                songs.remove(position);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView,
+                                    RecyclerView.ViewHolder viewHolder,
+                                    float dX, float dY, int actionState,
+                                    boolean isCurrentlyActive) {
+                View itemView = viewHolder.itemView;
+
+                // not sure why, but this method get's called for viewholder that are already swiped away
+                if (viewHolder.getAdapterPosition() == -1) {
+                    // not interested in those
+                    return;
+                }
+
+                // Don't swipe if the user doesn't own the playlist
+                if (!iam.getUid().equals(host)) {
+                    return;
+                }
+
+                // draw red background
+                background.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                background.draw(c);
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        });
+
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 }
