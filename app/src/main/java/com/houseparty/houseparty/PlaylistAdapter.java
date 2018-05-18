@@ -50,9 +50,6 @@ public class PlaylistAdapter extends
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        // This could be unneccesary and not actually fixing our bug
-        holder.setIsRecyclable(false);
-
         // Get the data model based on position
         Playlist playlist = mPlaylists.get(position);
 
@@ -65,8 +62,6 @@ public class PlaylistAdapter extends
         if (playlist.isHost(currentUser.getUid())) {
             hostTextView.setVisibility(View.VISIBLE);
         }
-
-        holder.setIsRecyclable(true);
     }
 
     @Override

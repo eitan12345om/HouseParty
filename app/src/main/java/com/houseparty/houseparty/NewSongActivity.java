@@ -34,6 +34,7 @@ public class NewSongActivity extends AppCompatActivity {
     private SongAdapter adapter;
     private String selectedList;
     private ArrayList<Song> songs;
+    private Map<String, String> songIDs;
 
     private String host;
     private FirebaseUser iam;  /* Variable to keep track of who I is */
@@ -56,11 +57,14 @@ public class NewSongActivity extends AppCompatActivity {
         Map<String, String> t = PlaylistActivity.getIdTable();
         String id = t.get(PlaylistActivity.selection());
         songDatabaseReference = sFirebaseDatabase.getReference().child("playlists").child(id).child("songs");
+        songIDs = new HashMap<>();
 
         sChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 HashMap<String, String> dataTable = (HashMap) dataSnapshot.getValue();
+
+                songIDs.put(dataTable.get("title"), dataSnapshot.getKey());
 
                 /* TODO: Use SongFactory */
                 songs.add(new SpotifySong(
@@ -174,7 +178,7 @@ public class NewSongActivity extends AppCompatActivity {
 
 
                 int position = viewHolder.getAdapterPosition();
-//                songDatabaseReference.child(idTable.get(playlists.get(position).getName())).removeValue();
+                songDatabaseReference.child(songIDs.get(songs.get(position).getTitle())).removeValue();
                 songs.remove(position);
                 adapter.notifyDataSetChanged();
             }
