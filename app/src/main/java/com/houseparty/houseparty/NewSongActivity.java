@@ -177,10 +177,29 @@ public class NewSongActivity extends AppCompatActivity {
                 }
 
 
-                int position = viewHolder.getAdapterPosition();
-                songDatabaseReference.child(songIDs.get(songs.get(position).getTitle())).removeValue();
-                songs.remove(position);
-                adapter.notifyDataSetChanged();
+                final int position = viewHolder.getAdapterPosition();
+
+                final Song song = songs.remove(position);
+                adapter.notifyItemRemoved(position);
+
+                Snackbar.make(findViewById(R.id.recyclerView), "1 item removed", Snackbar.LENGTH_LONG)
+                    .setAction("undo", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            songs.add(position, song);
+                            adapter.notifyItemInserted(position);
+                        }
+                    })
+                    .setActionTextColor(Color.MAGENTA)
+                    .addCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar snackbar, int event) {
+                            if (event == DISMISS_EVENT_TIMEOUT) {
+                                songDatabaseReference.child(songIDs.get(songs.get(position).getTitle())).removeValue();
+                            }
+                        }
+                    })
+                    .show();
             }
 
             @Override
