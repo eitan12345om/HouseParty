@@ -213,7 +213,6 @@ public class PlaylistActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         pFirebaseDatabase = FirebaseDatabase.getInstance();
-//        pFirebaseDatabase.setPersistenceEnabled(true);
         pPlaylistDatabaseReference = pFirebaseDatabase.getReference().child("playlists");
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentFirebaseUser == null) {
@@ -246,6 +245,7 @@ public class PlaylistActivity extends AppCompatActivity implements
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int position = viewHolder.getAdapterPosition();
+                        pPlaylistDatabaseReference.child(idTable.get(playlists.get(position).getName())).removeValue();
                         playlists.remove(position);
                         adapter.notifyItemRemoved(position);
                     }
@@ -316,8 +316,7 @@ public class PlaylistActivity extends AppCompatActivity implements
                     dataTable.get("host")
                 ));
 
-                /* TODO: This is bad practice. Be more specific */
-                adapter.notifyDataSetChanged();
+                adapter.notifyItemInserted(playlists.size() - 1);
             }
 
             @Override
