@@ -225,6 +225,7 @@ public class PlaylistActivity extends AppCompatActivity implements
         recyclerView = findViewById(R.id.recyclerView);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             Drawable background = new ColorDrawable(Color.RED);
+            Drawable delete = getResources().getDrawable(R.drawable.delete);
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -280,6 +281,9 @@ public class PlaylistActivity extends AppCompatActivity implements
                 // draw red background
                 background.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
                 background.draw(c);
+
+                delete.setBounds(itemView.getRight() - 140, itemView.getTop() + 25, itemView.getRight() - 20, itemView.getBottom() - 25);
+                delete.draw(c);
 
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
