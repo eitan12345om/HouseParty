@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -100,15 +101,7 @@ public class PlaylistActivity extends AppCompatActivity implements
     }
 
     public void dialogueBoxInvalidPasscode(View v) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Invalid passcode");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.show();
+        Snackbar.make(findViewById(R.id.recyclerView), "Invalid passcode", Snackbar.LENGTH_SHORT).show();
     }
 
     public void dialogueBoxPasscode(View v, final Playlist playlist) {
@@ -239,6 +232,11 @@ public class PlaylistActivity extends AppCompatActivity implements
 
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                // Don't create dialogbox if the user doesn't own the playlist
+                if (!playlists.get(viewHolder.getAdapterPosition()).isHost(currentFirebaseUser.getUid())) {
+                    return;
+                }
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(PlaylistActivity.this);
                 builder.setTitle("Are you sure you want to delete this playlist?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -247,13 +245,14 @@ public class PlaylistActivity extends AppCompatActivity implements
                         int position = viewHolder.getAdapterPosition();
                         pPlaylistDatabaseReference.child(idTable.get(playlists.get(position).getName())).removeValue();
                         playlists.remove(position);
-                        adapter.notifyItemRemoved(position);
+                        adapter.notifyDataSetChanged();
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
+                        adapter.notifyDataSetChanged();
                     }
                 });
                 builder.show();
@@ -269,6 +268,11 @@ public class PlaylistActivity extends AppCompatActivity implements
                 // not sure why, but this method get's called for viewholder that are already swiped away
                 if (viewHolder.getAdapterPosition() == -1) {
                     // not interested in those
+                    return;
+                }
+
+                // Don't swipe if the user doesn't own the playlist
+                if (!playlists.get(viewHolder.getAdapterPosition()).isHost(currentFirebaseUser.getUid())) {
                     return;
                 }
 
@@ -316,7 +320,7 @@ public class PlaylistActivity extends AppCompatActivity implements
                     dataTable.get("host")
                 ));
 
-                adapter.notifyItemInserted(playlists.size() - 1);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -332,7 +336,6 @@ public class PlaylistActivity extends AppCompatActivity implements
                  *   Any ideas?
                  */
                 Log.i("PlaylistActivity", "Child Changed!");
-                Playlist playlist = dataSnapshot.getValue(Playlist.class);
 
                 /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();

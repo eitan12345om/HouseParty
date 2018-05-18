@@ -5,7 +5,6 @@ package com.houseparty.houseparty;
  */
 
 public class SpotifySearchTest {
-    private SongActivity activity = new SongActivity();
 
     /*
     @Test

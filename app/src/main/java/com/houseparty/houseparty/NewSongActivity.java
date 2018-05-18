@@ -78,7 +78,7 @@ public class NewSongActivity extends AppCompatActivity {
                  *   sure Firebase even lets you do that.
                  *   Any ideas?
                  */
-                Log.i("SongActivity", "Child Changed!");
+                Log.i("NewSongActivity", "Child Changed!");
 
                 /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
