@@ -11,6 +11,7 @@ public abstract class Song {
     protected String title;
     protected String artist;
     protected String uri;
+    protected String coverArtUrl;
 
     public Song() {
     }
