@@ -1,16 +1,15 @@
 package com.houseparty.houseparty;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
@@ -43,10 +42,8 @@ import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 import com.squareup.picasso.Picasso;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-//import org.w3c.dom.Document;
+import org.jsoup.nodes.Document;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -57,12 +54,13 @@ import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TracksPager;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+//import org.w3c.dom.Document;
 
 public class NewSongActivity extends AppCompatActivity implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
@@ -460,7 +458,7 @@ public class NewSongActivity extends AppCompatActivity implements
                         @Override
                         public void onDismissed(Snackbar snackbar, int event) {
                             if (event == DISMISS_EVENT_TIMEOUT) {
-                                songDatabaseReference.child(songIDs.get(songs.get(position).getTitle())).removeValue();
+                                songDatabaseReference.child(songIDs.get(song.getTitle())).removeValue();
                             }
                         }
                     })
