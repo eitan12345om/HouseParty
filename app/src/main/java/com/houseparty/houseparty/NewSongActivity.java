@@ -1,12 +1,13 @@
 package com.houseparty.houseparty;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,7 +40,13 @@ import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
+import com.squareup.picasso.Picasso;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +59,8 @@ import kaaes.spotify.webapi.android.models.TracksPager;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+//import org.w3c.dom.Document;
 
 public class NewSongActivity extends AppCompatActivity implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
@@ -70,6 +80,8 @@ public class NewSongActivity extends AppCompatActivity implements
     private SpotifyPlayer spotifyPlayer;
     private SpotifyService spotify;
 
+    String currentImage;
+
     private String host;
     private FirebaseUser iam;  /* Variable to keep track of who I is */
 
@@ -81,10 +93,24 @@ public class NewSongActivity extends AppCompatActivity implements
         void onSuccess(String uri);
     }
 
+    private final SpotifyPlayer.OperationCallback mOperationCallback = new SpotifyPlayer.OperationCallback() {
+        @Override
+        public void onSuccess() {
+            Log.d("OperationCallback", "OK!");
+        }
+
+        @Override
+        public void onError(Error error) {
+            Log.d("OperationCallback", "Error: " + error);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_activity_song);
+
+        currentImage = "";
 
         setUpButton();
         setUpAdapter();
@@ -99,6 +125,8 @@ public class NewSongActivity extends AppCompatActivity implements
 
         authenticateUser();
 
+
+
         sChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -110,7 +138,7 @@ public class NewSongActivity extends AppCompatActivity implements
                 songs.add(new SpotifySong(
                     dataTable.get("title"),
                     dataTable.get("uri"),
-                    dataTable.get("artist"), accessToken, spotifyPlayer
+                    dataTable.get("artist"), accessToken, spotifyPlayer, dataTable.get("coverArtUrl")
                 ));
 
                 /* TODO: This is bad practice. Be more specific */
@@ -143,7 +171,7 @@ public class NewSongActivity extends AppCompatActivity implements
                 songs.remove(new SpotifySong(
                     dataTable.get("title"),
                     dataTable.get("uri"),
-                    dataTable.get("artist")
+                dataTable.get("artist")
                 ));
 
                 /* TODO: This is bad practice. Be more specific */
@@ -161,6 +189,18 @@ public class NewSongActivity extends AppCompatActivity implements
             }
         };
         songDatabaseReference.addChildEventListener(sChildEventListener);
+
+        ImageView view = findViewById(R.id.imageView2);
+        view.setImageResource( R.drawable.ic_launcher_background);
+        /*
+        try {
+            Log.d("First song url", songs.get(0).coverArtUrl);
+
+            Picasso.get().load(songs.get(0).coverArtUrl).into(view);
+        }
+        catch( Exception e ) {
+            Log.d("ImageOnCreate: ", "Failed to add image!");
+        }*/
     }
 
     public void setUpButton() {
@@ -171,11 +211,13 @@ public class NewSongActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 if (!pause) {
-                    myButton.setText("Pause");
-                    pause = true;
-                } else {
                     myButton.setText("Play");
+                    pause = true;
+                    spotifyPlayer.pause(mOperationCallback);
+                } else {
+                    myButton.setText("Pause");
                     pause = false;
+                    spotifyPlayer.resume(mOperationCallback);
                 }
             }
         });
@@ -200,9 +242,11 @@ public class NewSongActivity extends AppCompatActivity implements
                 } else {
                     spotifySearchForTrack(songName, new NewSongActivity.AsyncCallback() {
                         @Override
-                        public void onSuccess(String uri) {
+                        public void onSuccess(String uri ) {
                             Log.i("SongActivity", "this is the uri: " + uri);
-                            Song song = new SpotifySong(songName, uri, null, accessToken, spotifyPlayer);
+                            Log.i("PushToFirebaseImageURL", currentImage);
+
+                            Song song = new SpotifySong(songName, uri, null, accessToken, spotifyPlayer, currentImage);
                             //Song song = songFactory.createSong(songName, spotify, "spotify");
                             songDatabaseReference.push().setValue(song);
                             Log.i("SongActivity", "This is the song name: " + song.title);
@@ -236,15 +280,41 @@ public class NewSongActivity extends AppCompatActivity implements
                 @Override
                 public void success(TracksPager tracksPager, Response response) {
                     String songUri = "";
+                    String imageURL = "";
                     try {
-
-
                         List<Track> searchResults = tracksPager.tracks.items;
+                        Log.d( "SpotifySearchForTrack", "beginning of try block");
+                        //Log.d( "SpotifySearchForTrack", imageURL);
                         songUri = searchResults.get(0).uri;
+                        try {
+                            //Log.d("SpotifySearchExternal", searchResults.get(0).external_urls.toString());
+                            //Log.d("SpotifySearchExternal", searchResults.get(0).external_urls.get("spotify"));
+                            //Log.d("SpotifySearchForTrack", searchResults.get(0).href);
+                            //Log.d("SpotifyArtistURL", searchResults.get(0).artists.get(0).external_urls.toString());
+                            //Log.d("SpotifySearchForTrack", searchResults.get(0).preview_url);
+                        }
+                        catch (Exception e) {
+                            Log.d("SpotifySearchFailure", e.toString());
+                        }
+                        try {
+                            String webpageURL = searchResults.get(0).external_urls.get("spotify");
+                            currentImage = new RetrieveImage().execute( webpageURL ).get();
+                            Log.d("AsyncRetrieveImage", currentImage);
+
+
+                        } catch (Exception e) {
+                            Log.d("SpotifySearchForTrack", "JSoup failure");
+                            Log.d("SpotifySearchForTrack", e.toString());
+
+                        }
+
                     } catch (Exception e) {
                         Log.d("SearchTracksInner: ", "No results");
                     }
+
+
                     Log.d("FetchSongTask", "1st song uri = " + songUri);
+                    //imageURL = searchResults.get(0).external_urls.get("images");
                     callback.onSuccess(songUri);
                 }
 
@@ -259,6 +329,29 @@ public class NewSongActivity extends AppCompatActivity implements
         }
 
         return true;
+
+    }
+    // used in spotifySearchForTrack to scrape web for cover art url
+    private class RetrieveImage extends AsyncTask<String, Void, String > {
+
+        private Exception exception;
+        private String imageURL;
+
+        protected String doInBackground(String... args ) {
+            //String imageURL = "";
+            try {
+                Log.d("doInBackgroundArg", args[0] );
+                Document doc = Jsoup.connect(args[0]).timeout(10000).get();
+                imageURL = doc.select("img").get(1).absUrl("src");
+                Log.d("ImageForLoop", imageURL );
+
+            }
+            catch( Exception e) {
+                Log.d("Retrieve Image", e.toString());
+
+            }
+            return imageURL;
+        }
 
     }
 
@@ -280,6 +373,16 @@ public class NewSongActivity extends AppCompatActivity implements
 
     }
 
+    public static Drawable LoadImage(String url) {
+        try {
+            InputStream is = (InputStream) new URL(url).getContent();
+            Drawable d = Drawable.createFromStream(is, "src name");
+            return d;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public void setUpAdapter() {
         recyclerView = findViewById(R.id.recyclerView);
         songs = new ArrayList<>();
@@ -291,10 +394,26 @@ public class NewSongActivity extends AppCompatActivity implements
                 Song song = songs.get(position);
                 Log.d( "NewSongActivity", song.getUri());
                 authenticateUser();
+                songs.set(position, new SpotifySong(song.title, song.uri, song.artist, accessToken, spotifyPlayer, song.coverArtUrl));
+                song = songs.get(position);
                 song.playSong();
-                Snackbar.make(view, "Now playing: " + song.getTitle(), Snackbar.LENGTH_SHORT).show();
+                try {
+                    Log.d("CurrentSongCoverURL", song.coverArtUrl);
+                    ImageView currentView = findViewById(R.id.imageView2);
+                    Picasso.get().load(song.coverArtUrl).into(currentView);
+                }
+                catch( Exception e ) {
+                    Log.d( "ImageOnPlay", "Failed to get image");
+
+                }
+                Snackbar.make(view, "Now playing: " + song.getTitle(), Snackbar.LENGTH_LONG).show();
+                Button myButton = findViewById(R.id.button3);
+                myButton.setText("Pause");
+                pause = false;
             }
         });
+
+
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getParent(), 1));
@@ -339,7 +458,7 @@ public class NewSongActivity extends AppCompatActivity implements
                         @Override
                         public void onDismissed(Snackbar snackbar, int event) {
                             if (event == DISMISS_EVENT_TIMEOUT) {
-                                songDatabaseReference.child(songIDs.get(songs.get(position).getTitle())).removeValue();
+                                songDatabaseReference.child(songIDs.get(song.getTitle())).removeValue();
                             }
                         }
                     })

@@ -1,5 +1,7 @@
 package com.houseparty.houseparty;
 
+import android.util.Log;
+
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.PlayerEvent;
@@ -22,13 +24,19 @@ public class SpotifySong extends Song
         super(title, uri, artist);
     }
 
-    public SpotifySong(String title, String uri, String artist, String token, SpotifyPlayer sp) {
+    public SpotifySong(String title, String uri, String artist, String token, SpotifyPlayer sp, String coverArtUrl) {
         super(title, uri, artist);
         this.accessToken = token;
         this.spotifyPlayer = sp;
+        this.coverArtUrl = coverArtUrl;
     }
 
     public void playSong() {
+        if (!spotifyPlayer.isLoggedIn()) {
+            Log.d("playSong", "Logging in spotifyPlayer.");
+            spotifyPlayer.login(accessToken);
+        }
+        Log.d("playSong", "spotifyPlayer is logged in.");
         spotifyPlayer.playUri(null, super.uri, 0, 0);
     }
 
