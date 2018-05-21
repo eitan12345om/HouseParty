@@ -304,8 +304,10 @@ public class NewSongActivity extends AppCompatActivity implements
                 Song song = songs.get(position);
                 Log.d( "NewSongActivity", song.getUri());
                 authenticateUser();
+                songs.set(position, new SpotifySong(song.title, song.uri, song.artist, accessToken, spotifyPlayer));
+                song = songs.get(position);
                 song.playSong();
-                Snackbar.make(view, "Now playing: " + song.getTitle(), Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view, "Now playing: " + song.getTitle(), Snackbar.LENGTH_LONG).show();
             }
         });
 
