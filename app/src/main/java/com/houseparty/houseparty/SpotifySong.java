@@ -13,7 +13,7 @@ public class SpotifySong extends Song
 
     protected String accessToken;
     protected SpotifyPlayer spotifyPlayer;
-    /*
+
     public SpotifySong() {
         super();
     }
@@ -21,7 +21,7 @@ public class SpotifySong extends Song
     public SpotifySong(String title, String uri, String artist) {
         super(title, uri, artist);
     }
-    */
+
     public SpotifySong(String title, String uri, String artist, String token, SpotifyPlayer sp) {
         super(title, uri, artist);
         this.accessToken = token;
