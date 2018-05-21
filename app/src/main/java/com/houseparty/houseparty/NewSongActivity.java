@@ -95,6 +95,18 @@ public class NewSongActivity extends AppCompatActivity implements
         void onSuccess(String uri);
     }
 
+    private final SpotifyPlayer.OperationCallback mOperationCallback = new SpotifyPlayer.OperationCallback() {
+        @Override
+        public void onSuccess() {
+            Log.d("OperationCallback", "OK!");
+        }
+
+        @Override
+        public void onError(Error error) {
+            Log.d("OperationCallback", "Error: " + error);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +126,8 @@ public class NewSongActivity extends AppCompatActivity implements
         songIDs = new HashMap<>();
 
         authenticateUser();
+
+
 
         sChildEventListener = new ChildEventListener() {
             @Override
@@ -199,12 +213,13 @@ public class NewSongActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 if (!pause) {
-                    myButton.setText("Pause");
-                    pause = true;
-                    //spotifyPlayer.pause(void);
-                } else {
                     myButton.setText("Play");
+                    pause = true;
+                    spotifyPlayer.pause(mOperationCallback);
+                } else {
+                    myButton.setText("Pause");
                     pause = false;
+                    spotifyPlayer.resume(mOperationCallback);
                 }
             }
         });
@@ -394,6 +409,9 @@ public class NewSongActivity extends AppCompatActivity implements
 
                 }
                 Snackbar.make(view, "Now playing: " + song.getTitle(), Snackbar.LENGTH_LONG).show();
+                Button myButton = findViewById(R.id.button3);
+                myButton.setText("Pause");
+                pause = false;
             }
         });
 
