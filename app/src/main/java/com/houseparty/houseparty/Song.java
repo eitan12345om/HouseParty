@@ -16,10 +16,18 @@ public abstract class Song {
     public Song() {
     }
 
+    @Deprecated
     public Song(String title, String uri, String artist) {
         this.title = title;
         this.uri = uri;
         this.artist = artist;
+    }
+
+    public Song(String title, String uri, String artist, String coverArtUrl) {
+        this.title = title;
+        this.uri = uri;
+        this.artist = artist;
+        this.coverArtUrl = coverArtUrl;
     }
 
     public String getTitle() {
@@ -32,6 +40,10 @@ public abstract class Song {
 
     public String getArtist() {
         return this.artist;
+    }
+
+    public String getCoverArtUrl() {
+        return coverArtUrl;
     }
 
     @Override
