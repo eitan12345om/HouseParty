@@ -22,15 +22,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import static com.houseparty.houseparty.HousePartyPreferences.PREF_PASSWORD;
+import static com.houseparty.houseparty.HousePartyPreferences.PREF_USERNAME;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     //private ArrayList<UserLogin> logins = new ArrayList<UserLogin>();
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
     private Button buttonSignIn;
-
-    private static final String PREF_USERNAME = "username";
-    private static final String PREF_PASSWORD = "password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             .edit()
                             .putString(PREF_USERNAME, usernameString)
                             .putString(PREF_PASSWORD, passwordString)
-                            .commit();
+                            .apply();
 
                         finish();
                         Intent intent = new Intent(LoginActivity.this, PlaylistActivity.class);
