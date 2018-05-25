@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +43,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.houseparty.houseparty.HousePartyPreferences.PREF_PASSWORD;
+import static com.houseparty.houseparty.HousePartyPreferences.PREF_USERNAME;
 
 public class PlaylistActivity extends AppCompatActivity implements
     SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
@@ -89,9 +93,15 @@ public class PlaylistActivity extends AppCompatActivity implements
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+
+        switch (id) {
+            case R.id.action_logout:
+                onClickLogout();
+                return true;
+            case R.id.action_settings:
+                return true;
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -99,6 +109,19 @@ public class PlaylistActivity extends AppCompatActivity implements
 
     public static Map<String, String> getIdTable() {
         return idTable;
+    }
+
+    public void onClickLogout() {
+        FirebaseAuth.getInstance().signOut();
+        PreferenceManager.getDefaultSharedPreferences(PlaylistActivity.this)
+            .edit()
+            .putString(PREF_USERNAME, null)
+            .putString(PREF_PASSWORD, null)
+            .apply();
+
+        finish();
+        Intent intent = new Intent(PlaylistActivity.this, LoginActivity.class);
+        startActivity(intent);
     }
 
     public void dialogueBoxInvalidPasscode(View v) {

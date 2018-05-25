@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +21,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+
+import static com.houseparty.houseparty.HousePartyPreferences.PREF_PASSWORD;
+import static com.houseparty.houseparty.HousePartyPreferences.PREF_USERNAME;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -38,15 +43,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        progressDialog = new ProgressDialog(this);
-        firebaseAuth = FirebaseAuth.getInstance();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String username = pref.getString(PREF_USERNAME, null);
+        String password = pref.getString(PREF_PASSWORD, null);
+
+        if (username == null || password == null) {
+            progressDialog = new ProgressDialog(this);
+            firebaseAuth = FirebaseAuth.getInstance();
+        } else {
+            finish();
+            Intent intent = new Intent(LoginActivity.this, PlaylistActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void userLogin() {
         EditText username = findViewById(R.id.editText);
         EditText password = findViewById(R.id.editText2);
-        String usernameString = username.getText().toString();
-        String passwordString = password.getText().toString();
+        final String usernameString = username.getText().toString();
+        final String passwordString = password.getText().toString();
 
         progressDialog.setMessage("Logging in...");
         progressDialog.show();
@@ -58,6 +73,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     progressDialog.dismiss();
                     if (task.isSuccessful()) {
                         Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+
+                        PreferenceManager.getDefaultSharedPreferences(LoginActivity.this)
+                            .edit()
+                            .putString(PREF_USERNAME, usernameString)
+                            .putString(PREF_PASSWORD, passwordString)
+                            .apply();
 
                         finish();
                         Intent intent = new Intent(LoginActivity.this, PlaylistActivity.class);
