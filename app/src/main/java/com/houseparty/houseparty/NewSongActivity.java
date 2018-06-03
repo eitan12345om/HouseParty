@@ -245,11 +245,16 @@ public class NewSongActivity extends AppCompatActivity implements
                             Log.i("SongActivity", "this is the uri: " + uri);
                             Log.i("PushToFirebaseImageURL", currentImage);
 
-                            Song song = new SpotifySong(songName, uri, null, accessToken, spotifyPlayer, currentImage);
+                            Song song = new SpotifySong(
+                                songName,
+                                uri,
+                                null,
+                                accessToken,
+                                spotifyPlayer,
+                                currentImage
+                            );
                             //Song song = songFactory.createSong(songName, spotify, "spotify");
                             songDatabaseReference.push().setValue(song);
-                            Log.i("SongActivity", "This is the song name: " + song.title);
-
                         }
                     });
                 }
