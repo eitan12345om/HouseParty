@@ -18,9 +18,10 @@ public abstract class Song implements Comparable<Song> {
     protected String uri;
     protected String coverArtUrl;
     protected Set<String> thumbs = new HashSet<>();
-    /* Add a songAdded variable? */
+    private Long timeAdded;
 
     public Song() {
+        timeAdded = System.currentTimeMillis();
     }
 
     @Deprecated
@@ -28,6 +29,7 @@ public abstract class Song implements Comparable<Song> {
         this.title = title;
         this.uri = uri;
         this.artist = artist;
+        timeAdded = System.currentTimeMillis();
     }
 
     public Song(String title, String uri, String artist, String coverArtUrl) {
@@ -35,6 +37,7 @@ public abstract class Song implements Comparable<Song> {
         this.uri = uri;
         this.artist = artist;
         this.coverArtUrl = coverArtUrl;
+        timeAdded = System.currentTimeMillis();
     }
 
     public String getTitle() {
@@ -67,6 +70,10 @@ public abstract class Song implements Comparable<Song> {
 
     public boolean thumbsContains(String uid) {
         return thumbs.contains(uid);
+    }
+
+    public Long getTimeAdded() {
+        return this.timeAdded;
     }
 
     @Override
@@ -109,6 +116,11 @@ public abstract class Song implements Comparable<Song> {
         int result;
 
         result = other.getThumbsSize() - getThumbsSize();
+        if (result != 0) {
+            return result;
+        }
+
+        result = (int) (other.getTimeAdded() - getTimeAdded());
         if (result != 0) {
             return result;
         }
