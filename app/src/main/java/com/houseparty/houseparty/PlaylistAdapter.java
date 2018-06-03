@@ -97,21 +97,5 @@ public class PlaylistAdapter extends
                 }
             });
         }
-
-        public TextView getPlaylistName() {
-            return playlistName;
-        }
-
-        public void setPlaylistName(TextView playlistName) {
-            this.playlistName = playlistName;
-        }
-
-        public TextView getHostNotifier() {
-            return hostNotifier;
-        }
-
-        public void setHostNotifier(TextView hostNotifier) {
-            this.hostNotifier = hostNotifier;
-        }
     }
 }

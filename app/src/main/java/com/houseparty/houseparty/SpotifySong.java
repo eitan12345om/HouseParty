@@ -25,10 +25,9 @@ public class SpotifySong extends Song
     }
 
     public SpotifySong(String title, String uri, String artist, String token, SpotifyPlayer sp, String coverArtUrl) {
-        super(title, uri, artist);
+        super(title, uri, artist, coverArtUrl);
         this.accessToken = token;
         this.spotifyPlayer = sp;
-        this.coverArtUrl = coverArtUrl;
     }
 
     public void playSong() {

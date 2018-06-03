@@ -1,17 +1,24 @@
 package com.houseparty.houseparty;
 
+import android.support.annotation.NonNull;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by jacksonkurtz on 2/23/18.
  */
 
-public abstract class Song {
+public abstract class Song implements Comparable<Song> {
     protected String title;
     protected String artist;
     protected String uri;
     protected String coverArtUrl;
+    protected Set<String> thumbs = new HashSet<>();
+    /* Add a songAdded variable? */
 
     public Song() {
     }
@@ -44,6 +51,22 @@ public abstract class Song {
 
     public String getCoverArtUrl() {
         return coverArtUrl;
+    }
+
+    public int getThumbsSize() {
+        return thumbs.size();
+    }
+
+    public boolean addThumbsUp(String uid) {
+        return thumbs.add(uid);
+    }
+
+    public boolean removeThumbsUp(String uid) {
+        return thumbs.remove(uid);
+    }
+
+    public boolean thumbsContains(String uid) {
+        return thumbs.contains(uid);
     }
 
     @Override
@@ -79,6 +102,28 @@ public abstract class Song {
             .append(artist)
             .append(uri)
             .toHashCode();
+    }
+
+    @Override
+    public int compareTo(@NonNull Song other) {
+        int result;
+
+        result = other.getThumbsSize() - getThumbsSize();
+        if (result != 0) {
+            return result;
+        }
+
+        result = other.getTitle().compareTo(getTitle());
+        if (result != 0) {
+            return result;
+        }
+
+        result = other.getArtist().compareTo(getArtist());
+        if (result != 0) {
+            return result;
+        }
+
+        return 0;
     }
 
     public abstract void playSong();

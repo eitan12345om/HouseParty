@@ -5,7 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
@@ -16,13 +20,20 @@ public class SongAdapter extends
     RecyclerView.Adapter<SongAdapter.SongViewHolder> {
 
     private List<Song> mSongs;
+    private FirebaseUser currentUser;
 
     // Define listener member variable
     private OnItemClickListener listener;
+    private OnItemClickListener thumbListener;
 
     // Define the method that allows the parent activity or fragment to define the listener
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnThumbClickListener(OnItemClickListener listener) {
+        this.thumbListener = listener;
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     public SongAdapter(List<Song> songs) {
@@ -54,6 +65,11 @@ public class SongAdapter extends
         // Set item views based on your views and data model
         TextView textView = holder.songTextView;
         textView.setText(song.getTitle());
+
+        ImageButton thumbImageButton = holder.thumbImageButton;
+        thumbImageButton.setSelected(song.thumbsContains(currentUser.getUid()));
+
+        holder.songLikesTextView.setText(String.valueOf(song.getThumbsSize()));
     }
 
     @Override
@@ -63,14 +79,18 @@ public class SongAdapter extends
 
     public class SongViewHolder extends RecyclerView.ViewHolder {
         private TextView songTextView;
+        private TextView songLikesTextView;
+        private ImageButton thumbImageButton;
 
         public SongViewHolder(final View itemView) {
             super(itemView);
 
             songTextView = itemView.findViewById(R.id.song_title);
+            songLikesTextView = itemView.findViewById(R.id.song_likes);
+            thumbImageButton = itemView.findViewById(R.id.thumb);
 
             // Setup the click listener
-            itemView.setOnClickListener(new View.OnClickListener() {
+            songTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // Triggers click upwards to the adapter on click
@@ -82,14 +102,18 @@ public class SongAdapter extends
                     }
                 }
             });
-        }
 
-        public TextView getSongTextView() {
-            return songTextView;
-        }
-
-        public void setSongTextView(TextView songTextView) {
-            this.songTextView = songTextView;
+            thumbImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (thumbListener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            thumbListener.onItemClick(itemView, position);
+                        }
+                    }
+                }
+            });
         }
     }
 }
