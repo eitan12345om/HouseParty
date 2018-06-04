@@ -4,8 +4,8 @@
 
 Never fight for the aux again.
 
-## Collaborative Live Playlists
+## Collaborative Live Queues
 - Start a Party or join a friend's.  
 - Connect with Spotify Premium to queue up your favorite songs.
 - Up-vote the songs you want to hear first.  
-- Hosts can pause/skip songs and control who's in the Party.
+- Hosts can pause/skip songs and control who's in their Party.
