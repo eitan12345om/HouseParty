@@ -62,6 +62,13 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import android.app.Application;
+
+import com.napster.cedar.Napster;
+import com.napster.cedar.player.Player;
+import com.napster.cedar.player.notification.NotificationActionListener;
+import com.napster.cedar.session.SessionManager;
+
 //import org.w3c.dom.Document;
 
 public class NewSongActivity extends AppCompatActivity implements
@@ -90,6 +97,9 @@ public class NewSongActivity extends AppCompatActivity implements
     private FirebaseDatabase sFirebaseDatabase;
     private DatabaseReference songDatabaseReference;
     private ChildEventListener sChildEventListener;
+
+    protected Napster napster;
+    protected Player napsterPlayer;
 
     private interface AsyncCallback {
         void onSuccess(String uri);
@@ -126,6 +136,10 @@ public class NewSongActivity extends AppCompatActivity implements
         songIDs = new HashMap<>();
 
         authenticateUser();
+
+        napster = Napster.register( this,"OTY2ZDkxYTctZDZlYy00MDBkLWE2ZWQtMGQ5YzhhOGIyZjMw", "NTI2NWVjOGYtODY3ZS00YTg5LWIyNWYtZDkyNzY5ODM0Nzcw");
+        napsterPlayer = napster.getPlayer();
+        //napsterPlayer.play( )
 
 
         sChildEventListener = new ChildEventListener() {
