@@ -69,7 +69,7 @@ public class SongAdapter extends
         ImageButton thumbImageButton = holder.thumbImageButton;
         thumbImageButton.setSelected(song.thumbsContains(currentUser.getUid()));
 
-        holder.songLikesTextView.setText(String.valueOf(song.getThumbsSize()));
+        holder.songLikesTextView.setText(String.valueOf(song.retrieveThumbsSize()));
     }
 
     @Override

@@ -135,15 +135,18 @@ public class NewSongActivity extends AppCompatActivity implements
 
                 songIDs.put(dataTable.get(getString(R.string.title)), dataSnapshot.getKey());
 
-                /* TODO: Use SongFactory */
-                songs.add(new SpotifySong(
+                Song song = new SpotifySong(
                     dataTable.get(getString(R.string.title)),
                     dataTable.get("uri"),
                     dataTable.get("artist"),
                     accessToken,
                     spotifyPlayer,
                     dataTable.get("coverArtUrl")
-                ));
+                );
+                song.setUid(dataSnapshot.getKey());
+
+                /* TODO: Use SongFactory */
+                songs.add(song);
 
                 Collections.sort(songs);
 
@@ -163,7 +166,16 @@ public class NewSongActivity extends AppCompatActivity implements
                  *   sure Firebase even lets you do that.
                  *   Any ideas?
                  */
+                HashMap<String, Object> dataTable = (HashMap) dataSnapshot.getValue();
+
                 Log.i("NewSongActivity", "Child Changed!");
+
+                songs.get(songs.indexOf(new SpotifySong(
+                    (String) dataTable.get("title"),
+                    (String) dataTable.get("uri"),
+                    (String) dataTable.get("artist")
+                )))
+                    .setThumbs((List<String>) dataTable.get("thumbs"));
 
                 Collections.sort(songs);
 
@@ -428,6 +440,8 @@ public class NewSongActivity extends AppCompatActivity implements
                 } else {
                     song.removeThumbsUp(currentUser.getUid());
                 }
+
+                songDatabaseReference.child(song.getUid()).child("thumbs").setValue(song.getThumbs());
 
                 Collections.sort(songs);
                 adapter.notifyDataSetChanged();

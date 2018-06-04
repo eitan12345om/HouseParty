@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jacksonkurtz on 2/23/18.
@@ -17,8 +17,9 @@ public abstract class Song implements Comparable<Song> {
     protected String artist;
     protected String uri;
     protected String coverArtUrl;
-    protected Set<String> thumbs = new HashSet<>();
+    private List<String> thumbs = new ArrayList<>();
     private Long timeAdded;
+    private String uid;
 
     public Song() {
         timeAdded = System.currentTimeMillis();
@@ -56,16 +57,24 @@ public abstract class Song implements Comparable<Song> {
         return coverArtUrl;
     }
 
-    public int getThumbsSize() {
+    public List<String> getThumbs() {
+        return thumbs;
+    }
+
+    public void setThumbs(List<String> thumbs) {
+        this.thumbs = thumbs;
+    }
+
+    public int retrieveThumbsSize() {
         return thumbs.size();
     }
 
-    public boolean addThumbsUp(String uid) {
-        return thumbs.add(uid);
+    public void addThumbsUp(String uid) {
+        thumbs.add(uid);
     }
 
-    public boolean removeThumbsUp(String uid) {
-        return thumbs.remove(uid);
+    public void removeThumbsUp(String uid) {
+        thumbs.remove(uid);
     }
 
     public boolean thumbsContains(String uid) {
@@ -74,6 +83,14 @@ public abstract class Song implements Comparable<Song> {
 
     public Long getTimeAdded() {
         return this.timeAdded;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     @Override
@@ -115,12 +132,12 @@ public abstract class Song implements Comparable<Song> {
     public int compareTo(@NonNull Song other) {
         int result;
 
-        result = other.getThumbsSize() - getThumbsSize();
+        result = other.retrieveThumbsSize() - retrieveThumbsSize();
         if (result != 0) {
             return result;
         }
 
-        result = (int) (other.getTimeAdded() - getTimeAdded());
+        result = (int) (getTimeAdded() - other.getTimeAdded());
         if (result != 0) {
             return result;
         }
