@@ -79,7 +79,7 @@ public class NewSongActivity extends AppCompatActivity implements
     private static final int REQUEST_CODE = 777;
 
     private String accessToken;
-    private SpotifyPlayer spotifyPlayer;
+    public static SpotifyPlayer spotifyPlayer;
     private SpotifyService spotify;
 
     private String currentImage;
@@ -140,7 +140,6 @@ public class NewSongActivity extends AppCompatActivity implements
                     dataTable.get("uri"),
                     dataTable.get("artist"),
                     accessToken,
-                    spotifyPlayer,
                     dataTable.get("coverArtUrl")
                 );
                 song.setUid(dataSnapshot.getKey());
@@ -166,16 +165,13 @@ public class NewSongActivity extends AppCompatActivity implements
                  *   sure Firebase even lets you do that.
                  *   Any ideas?
                  */
-                HashMap<String, Object> dataTable = (HashMap) dataSnapshot.getValue();
+                Song song = dataSnapshot.getValue(SpotifySong.class);
 
                 Log.i("NewSongActivity", "Child Changed!");
 
-                songs.get(songs.indexOf(new SpotifySong(
-                    (String) dataTable.get("title"),
-                    (String) dataTable.get("uri"),
-                    (String) dataTable.get("artist")
-                )))
-                    .setThumbs((List<String>) dataTable.get("thumbs"));
+                assert song != null;
+                songs.get(songs.indexOf(song))
+                    .setThumbs(song.getThumbs());
 
                 Collections.sort(songs);
 
@@ -262,7 +258,6 @@ public class NewSongActivity extends AppCompatActivity implements
                                 uri,
                                 null,
                                 accessToken,
-                                spotifyPlayer,
                                 currentImage
                             );
                             //Song song = songFactory.createSong(songName, spotify, "spotify");
@@ -410,7 +405,7 @@ public class NewSongActivity extends AppCompatActivity implements
             public void onItemClick(View view, int position) {
                 Song song = songs.get(position);
                 authenticateUser();
-                songs.set(position, new SpotifySong(song.title, song.uri, song.artist, accessToken, spotifyPlayer, song.coverArtUrl));
+                songs.set(position, new SpotifySong(song.title, song.uri, song.artist, accessToken, song.coverArtUrl));
                 song = songs.get(position);
                 song.playSong();
                 try {
