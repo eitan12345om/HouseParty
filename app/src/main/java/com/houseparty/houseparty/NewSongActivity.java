@@ -91,10 +91,12 @@ public class NewSongActivity extends AppCompatActivity implements
     private DatabaseReference songDatabaseReference;
     private ChildEventListener sChildEventListener;
 
+    // This callback is used when searching Spotify for a song.
     private interface AsyncCallback {
         void onSuccess(String uri);
     }
 
+    // This callback is used when the spotifyPlayer pauses or resumes a song.
     private final SpotifyPlayer.OperationCallback mOperationCallback = new SpotifyPlayer.OperationCallback() {
         @Override
         public void onSuccess() {
@@ -407,7 +409,8 @@ public class NewSongActivity extends AppCompatActivity implements
                 authenticateUser();
                 songs.set(position, new SpotifySong(song.title, song.uri, song.artist, accessToken, song.coverArtUrl));
                 song = songs.get(position);
-                song.playSong();
+                song.playSong(); // Uses public static spotifyPlayer object.
+
                 try {
                     Log.d("CurrentSongCoverURL", song.coverArtUrl);
                     ImageView currentView = findViewById(R.id.imageView2);
@@ -535,10 +538,10 @@ public class NewSongActivity extends AppCompatActivity implements
                 Spotify.getPlayer(playerConfig, NewSongActivity.this, new SpotifyPlayer.InitializationObserver() {
                     @Override
                     public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                        NewSongActivity.this.spotifyPlayer = spotifyPlayer;
+                        NewSongActivity.spotifyPlayer = spotifyPlayer;
                         Log.d("SongActivity", "spotifyPlayer initialized.");
-                        NewSongActivity.this.spotifyPlayer.addConnectionStateCallback(NewSongActivity.this);
-                        NewSongActivity.this.spotifyPlayer.addNotificationCallback(NewSongActivity.this);
+                        NewSongActivity.spotifyPlayer.addConnectionStateCallback(NewSongActivity.this);
+                        NewSongActivity.spotifyPlayer.addNotificationCallback(NewSongActivity.this);
                         Log.d("SongActivity", "spotifyPlayer: callbacks added.");
                     }
 

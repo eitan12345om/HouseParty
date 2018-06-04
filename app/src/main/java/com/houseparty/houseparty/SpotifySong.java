@@ -26,12 +26,12 @@ public class SpotifySong extends Song {
 
     @Override
     public void playSong() {
-        if (!spotifyPlayer.isLoggedIn()) {
+        if (!NewSongActivity.spotifyPlayer.isLoggedIn()) {
             Log.d("playSong", "Logging in spotifyPlayer.");
-            spotifyPlayer.login(accessToken);
+            NewSongActivity.spotifyPlayer.login(accessToken);
         }
         Log.d("playSong", "spotifyPlayer is logged in.");
-        spotifyPlayer.playUri(null, super.uri, 0, 0);
+        NewSongActivity.spotifyPlayer.playUri(null, super.uri, 0, 0);
     }
 
     public String getAccessToken() {
