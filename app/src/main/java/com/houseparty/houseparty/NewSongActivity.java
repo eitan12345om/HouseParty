@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.icu.text.AlphabeticIndex;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -19,11 +20,15 @@ import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +37,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.GsonBuilder;
+import com.houseparty.houseparty.napsterSampleLibrary.Search;
+import com.houseparty.houseparty.napsterSampleLibrary.Tracks;
+import com.houseparty.houseparty.napsterSampleLibrary.Metadata;
+
+
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -42,6 +53,7 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 import com.squareup.picasso.Picasso;
+//import com.napster.cedar.sample.library.metadata.Tracks;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -62,12 +74,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import android.app.Application;
-
 import com.napster.cedar.Napster;
 import com.napster.cedar.player.Player;
-import com.napster.cedar.player.notification.NotificationActionListener;
-import com.napster.cedar.session.SessionManager;
 
 //import org.w3c.dom.Document;
 
@@ -100,6 +108,7 @@ public class NewSongActivity extends AppCompatActivity implements
 
     protected Napster napster;
     protected Player napsterPlayer;
+    protected Metadata metadata;
 
     private interface AsyncCallback {
         void onSuccess(String uri);
@@ -139,8 +148,7 @@ public class NewSongActivity extends AppCompatActivity implements
 
         napster = Napster.register( this,"OTY2ZDkxYTctZDZlYy00MDBkLWE2ZWQtMGQ5YzhhOGIyZjMw", "NTI2NWVjOGYtODY3ZS00YTg5LWIyNWYtZDkyNzY5ODM0Nzcw");
         napsterPlayer = napster.getPlayer();
-        //napsterPlayer.play( )
-
+        metadata = new Metadata( "OTY2ZDkxYTctZDZlYy00MDBkLWE2ZWQtMGQ5YzhhOGIyZjMw");
 
         sChildEventListener = new ChildEventListener() {
             @Override
@@ -240,10 +248,28 @@ public class NewSongActivity extends AppCompatActivity implements
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter Song Name:");
 
+        LinearLayout layout = new LinearLayout(this);
         final EditText input = new EditText(this);
 
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
+        input.setHint(R.string.song_name_hint);
+        layout.addView(input);
+        final Spinner selectAPI = new Spinner( this );
+        final ArrayList<String> apiList = new ArrayList<String>();
+        apiList.add("Spotify");
+        apiList.add("Apple Music");
+        apiList.add("Napster");
+        apiList.add("Soundcloud");
+        apiList.add("Youtube");
+        apiList.add("Google Play");
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, apiList);
+        selectAPI.setAdapter(arrayAdapter);
+        layout.addView(selectAPI);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        //layout.setGravity(Gravity.CENTER);
+
+        builder.setView(layout);
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
@@ -253,19 +279,25 @@ public class NewSongActivity extends AppCompatActivity implements
                 if (songName.isEmpty()) {
                     dialog.cancel();
                 } else {
-                    spotifySearchForTrack(songName, new NewSongActivity.AsyncCallback() {
-                        @Override
-                        public void onSuccess(String uri) {
-                            Log.i("SongActivity", "this is the uri: " + uri);
-                            Log.i("PushToFirebaseImageURL", currentImage);
+                    if( selectAPI.getSelectedItem() == "Spotify" ) {
+                        spotifySearchForTrack(songName, new NewSongActivity.AsyncCallback() {
+                            @Override
+                            public void onSuccess(String uri) {
+                                Log.i("SongActivity", "this is the uri: " + uri);
+                                Log.i("PushToFirebaseImageURL", currentImage);
 
-                            Song song = new SpotifySong(songName, uri, null, accessToken, spotifyPlayer, currentImage);
-                            //Song song = songFactory.createSong(songName, spotify, "spotify");
-                            songDatabaseReference.push().setValue(song);
-                            Log.i("SongActivity", "This is the song name: " + song.title);
+                                Song song = new SpotifySong(songName, uri, null, accessToken, spotifyPlayer, currentImage);
+                                //Song song = songFactory.createSong(songName, spotify, "spotify");
+                                songDatabaseReference.push().setValue(song);
+                                Log.i("SongActivity", "This is the song name: " + song.title);
 
-                        }
-                    });
+                            }
+                        });
+                    }
+                    else if( selectAPI.getSelectedItem() == "Napster") {
+                        napsterSearchForTrack(songName);
+
+                    }
                 }
             }
         });
@@ -278,6 +310,54 @@ public class NewSongActivity extends AppCompatActivity implements
         });
 
         builder.show();
+    }
+
+
+    boolean napsterSearchForTrack( String query ) {
+        Log.d( "NapsterSearchForTrack", "search for track is called");
+
+        metadata.queryTrack(query, new Callback<Search>() {
+
+            @Override
+            public void success(Search search, Response response) {
+                try {
+                    Log.d( "NapsterSearchForTrack", "successful search");
+                    Log.d( "NapsterSearchForTrack", "tracks: " + search.toString());
+                    //Log.d( "NapsterSearchForTrack", "response: " + new GsonBuilder().setPrettyPrinting().create().toJson(response));
+
+                    napsterPlayer.play(search.search.get(0));
+                }
+                catch( Exception e) {
+                    Log.d( "NapsterSearchForTrack", e.getMessage());
+
+                    Log.d( "NapsterSearchForTrack", "Failed to play napster song");
+
+
+                }
+                //trackAdapter.updateTracks(tracks.tracks);
+                //trackListPlayer.setTrackList(new TrackList(tracks.tracks));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+            }
+        });
+
+        /*metadata.getTopTracks(10, 0, new Callback<Tracks>() {
+
+            @Override
+            public void success(Tracks tracks, Response response) {
+                Log.d( "NapsterSearchForTrack", "successful search");
+                napsterPlayer.play(tracks.tracks.get(0));
+                //trackAdapter.updateTracks(tracks.tracks);
+                //trackListPlayer.setTrackList(new TrackList(tracks.tracks));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+            }
+        });*/
+        return true;
     }
 
     boolean spotifySearchForTrack(String query, final NewSongActivity.AsyncCallback callback) {
@@ -652,3 +732,4 @@ public class NewSongActivity extends AppCompatActivity implements
         }
     }
 }
+
