@@ -102,11 +102,15 @@ public class NewSongActivity extends AppCompatActivity implements
     private ChildEventListener sChildEventListener;
 
     protected Napster napster;
-    protected com.napster.cedar.player.Player napsterPlayer;
+    public static com.napster.cedar.player.Player napsterPlayer;
     protected com.houseparty.houseparty.napsterSampleLibrary.Metadata metadata;
 
     private interface AsyncCallback {
         void onSuccess(String uri);
+    }
+
+    private interface NapsterCallback {
+        void onSuccess(com.napster.cedar.player.data.Track track);
     }
 
     private final SpotifyPlayer.OperationCallback mOperationCallback = new SpotifyPlayer.OperationCallback() {
@@ -290,7 +294,7 @@ public class NewSongActivity extends AppCompatActivity implements
                         });
                     }
                     else if( selectAPI.getSelectedItem() == "Napster") {
-                        napsterSearchForTrack(songName);
+                        napsterSearchForTrack(songName );
 
                     }
                 }
@@ -307,7 +311,7 @@ public class NewSongActivity extends AppCompatActivity implements
         builder.show();
     }
 
-    boolean napsterSearchForTrack( String query ) {
+    boolean napsterSearchForTrack( String query ) {// final NewSongActivity.NapsterCallback callback) {
         Log.d( "NapsterSearchForTrack", "search for track is called");
 
         metadata.queryTrack(query, new Callback<Search>() {
@@ -318,7 +322,15 @@ public class NewSongActivity extends AppCompatActivity implements
                     Log.d( "NapsterSearchForTrack", "successful search");
                     Log.d( "NapsterSearchForTrack", "tracks: " + search.toString());
                     //Log.d( "NapsterSearchForTrack", "response: " + new GsonBuilder().setPrettyPrinting().create().toJson(response));
-
+                    com.napster.cedar.player.data.Track firstTrack = search.search.get(0);
+                    songs.add(new NapsterSong(
+                            firstTrack.name,
+                            firstTrack.id,
+                            firstTrack.artistName,
+                            firstTrack,
+                            ""
+                    ));
+                    adapter.notifyDataSetChanged();
                     napsterPlayer.play(search.search.get(0));
                 }
                 catch( Exception e) {
