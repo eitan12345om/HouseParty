@@ -34,7 +34,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.github.kaaes:spotify-web-api-android:0.4.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
-
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //implementation 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
 
     // This library handles authentication and authorization
     implementation 'com.github.spotify:android-auth:9425c6a140'

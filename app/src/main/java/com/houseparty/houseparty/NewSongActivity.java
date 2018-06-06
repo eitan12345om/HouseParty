@@ -79,7 +79,7 @@ public class NewSongActivity extends AppCompatActivity implements
     private static final int REQUEST_CODE = 777;
 
     private String accessToken;
-    public static SpotifyPlayer spotifyPlayer;
+    private SpotifyPlayer spotifyPlayer;
     private SpotifyService spotify;
 
     private String currentImage;
@@ -91,12 +91,10 @@ public class NewSongActivity extends AppCompatActivity implements
     private DatabaseReference songDatabaseReference;
     private ChildEventListener sChildEventListener;
 
-    // This callback is used when searching Spotify for a song.
     private interface AsyncCallback {
         void onSuccess(String uri);
     }
 
-    // This callback is used when the spotifyPlayer pauses or resumes a song.
     private final SpotifyPlayer.OperationCallback mOperationCallback = new SpotifyPlayer.OperationCallback() {
         @Override
         public void onSuccess() {
@@ -137,17 +135,15 @@ public class NewSongActivity extends AppCompatActivity implements
 
                 songIDs.put(dataTable.get(getString(R.string.title)), dataSnapshot.getKey());
 
-                Song song = new SpotifySong(
+                /* TODO: Use SongFactory */
+                songs.add(new SpotifySong(
                     dataTable.get(getString(R.string.title)),
                     dataTable.get("uri"),
                     dataTable.get("artist"),
                     accessToken,
+                    spotifyPlayer,
                     dataTable.get("coverArtUrl")
-                );
-                song.setUid(dataSnapshot.getKey());
-
-                /* TODO: Use SongFactory */
-                songs.add(song);
+                ));
 
                 Collections.sort(songs);
 
@@ -167,13 +163,7 @@ public class NewSongActivity extends AppCompatActivity implements
                  *   sure Firebase even lets you do that.
                  *   Any ideas?
                  */
-                Song song = dataSnapshot.getValue(SpotifySong.class);
-
                 Log.i("NewSongActivity", "Child Changed!");
-
-                assert song != null;
-                songs.get(songs.indexOf(song))
-                    .setThumbs(song.getThumbs());
 
                 Collections.sort(songs);
 
@@ -255,15 +245,11 @@ public class NewSongActivity extends AppCompatActivity implements
                             Log.i("SongActivity", "this is the uri: " + uri);
                             Log.i("PushToFirebaseImageURL", currentImage);
 
-                            Song song = new SpotifySong(
-                                songName,
-                                uri,
-                                null,
-                                accessToken,
-                                currentImage
-                            );
+                            Song song = new SpotifySong(songName, uri, null, accessToken, spotifyPlayer, currentImage);
                             //Song song = songFactory.createSong(songName, spotify, "spotify");
                             songDatabaseReference.push().setValue(song);
+                            Log.i("SongActivity", "This is the song name: " + song.title);
+
                         }
                     });
                 }
@@ -407,10 +393,9 @@ public class NewSongActivity extends AppCompatActivity implements
             public void onItemClick(View view, int position) {
                 Song song = songs.get(position);
                 authenticateUser();
-                songs.set(position, new SpotifySong(song.title, song.uri, song.artist, accessToken, song.coverArtUrl));
+                songs.set(position, new SpotifySong(song.title, song.uri, song.artist, accessToken, spotifyPlayer, song.coverArtUrl));
                 song = songs.get(position);
-                song.playSong(); // Uses public static spotifyPlayer object.
-
+                song.playSong();
                 try {
                     Log.d("CurrentSongCoverURL", song.coverArtUrl);
                     ImageView currentView = findViewById(R.id.imageView2);
@@ -438,8 +423,6 @@ public class NewSongActivity extends AppCompatActivity implements
                 } else {
                     song.removeThumbsUp(currentUser.getUid());
                 }
-
-                songDatabaseReference.child(song.getUid()).child("thumbs").setValue(song.getThumbs());
 
                 Collections.sort(songs);
                 adapter.notifyDataSetChanged();
@@ -538,10 +521,10 @@ public class NewSongActivity extends AppCompatActivity implements
                 Spotify.getPlayer(playerConfig, NewSongActivity.this, new SpotifyPlayer.InitializationObserver() {
                     @Override
                     public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                        NewSongActivity.spotifyPlayer = spotifyPlayer;
+                        NewSongActivity.this.spotifyPlayer = spotifyPlayer;
                         Log.d("SongActivity", "spotifyPlayer initialized.");
-                        NewSongActivity.spotifyPlayer.addConnectionStateCallback(NewSongActivity.this);
-                        NewSongActivity.spotifyPlayer.addNotificationCallback(NewSongActivity.this);
+                        NewSongActivity.this.spotifyPlayer.addConnectionStateCallback(NewSongActivity.this);
+                        NewSongActivity.this.spotifyPlayer.addNotificationCallback(NewSongActivity.this);
                         Log.d("SongActivity", "spotifyPlayer: callbacks added.");
                     }
 

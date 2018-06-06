@@ -6,4 +6,5 @@
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="title">title</string>
+    <string name="song_name_hint">Song name</string>
 </resources>
