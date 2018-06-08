@@ -9,7 +9,6 @@ public class GooglePlaySong extends Song {
         super(title, uri, artist);
     }
 
-    /* TODO */
     public void playSong() {
         throw new UnsupportedOperationException();
     }

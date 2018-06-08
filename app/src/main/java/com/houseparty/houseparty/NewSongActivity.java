@@ -43,8 +43,6 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Metadata;
-import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
@@ -153,7 +151,6 @@ public class NewSongActivity extends AppCompatActivity implements
 
                 songIDs.put(dataTable.get(getString(R.string.title)), dataSnapshot.getKey());
 
-                /* TODO: Use SongFactory */
                 songs.add(new SpotifySong(
                     dataTable.get(getString(R.string.title)),
                     dataTable.get("uri"),
@@ -164,27 +161,15 @@ public class NewSongActivity extends AppCompatActivity implements
 
                 Collections.sort(songs);
 
-                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                /* TODO:
-                 *   I'm not sure how to approach this method...
-                 *   We can either store an ID along with every playlist and
-                 *   loop through each playlist in the list and determine which
-                 *   it was.
-                 *   OR
-                 *   We can reload the entire list from Firebase... But, I'm not
-                 *   sure Firebase even lets you do that.
-                 *   Any ideas?
-                 */
                 Log.i("NewSongActivity", "Child Changed!");
 
                 Collections.sort(songs);
 
-                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
@@ -192,14 +177,12 @@ public class NewSongActivity extends AppCompatActivity implements
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 HashMap<String, String> dataTable = (HashMap) dataSnapshot.getValue();
 
-                /* TODO: Use SongFactory */
                 songs.remove(new SpotifySong(
                     dataTable.get("title"),
                     dataTable.get("uri"),
                     dataTable.get("artist")
                 ));
 
-                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
