@@ -58,7 +58,7 @@ public class PlaylistActivity extends AppCompatActivity implements
     private String code = "";
     private View currentView;
     private FirebaseUser currentFirebaseUser;
-    private List<Playlist> playlists;
+    public List<Playlist> playlists;
 
     private String title = "HouseParty";
     private static String selectedList;
@@ -148,10 +148,11 @@ public class PlaylistActivity extends AppCompatActivity implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String enteredCode = inputPasscode.getText().toString();
-                if (!enteredCode.equals(passcode)) {
+                if(!selectPlaylist(playlist, enteredCode) ) {
                     dialogueBoxInvalidPasscode(thisView);
                     dialog.cancel();
-                } else {
+                }
+                else {
                     Intent intent = new Intent(PlaylistActivity.this, NewSongActivity.class);
                     intent.putExtra("CLIENT_ID", CLIENT_ID);
                     intent.putExtra("REDIRECT_URI", REDIRECT_URI);
@@ -169,6 +170,15 @@ public class PlaylistActivity extends AppCompatActivity implements
         });
 
         builder.show();
+    }
+
+    public boolean selectPlaylist(Playlist playlist, String enteredCode) {
+        if (!enteredCode.equals(passcode)) {
+            return false;
+
+        } else {
+            return true;
+        }
     }
 
     public void dialogueBoxPlaylist(View v) {
@@ -195,16 +205,13 @@ public class PlaylistActivity extends AppCompatActivity implements
                 playlistName = inputTitle.getText().toString();
                 code = inputPasscode.getText().toString();
                 Log.d("NONNUMBERCHECK", Boolean.toString(code.matches("\\d+")));
-                if (playlistName.isEmpty() ||
-                    !code.matches("\\d+")
-                    || code.length() != 4) {
+                selectedList = playlistName;
+                passcode = code;
+                if( !createPlaylist( selectedList, passcode )) {
                     dialog.cancel();
-                } else {
-                    selectedList = playlistName;
-                    passcode = code;
-                    /* FIXME */
-                    Playlist plist = new Playlist(selectedList, passcode, currentFirebaseUser.getUid());
-                    pPlaylistDatabaseReference.push().setValue(plist);
+
+                }
+                else {
                     Intent intent = new Intent(getBaseContext(), NewSongActivity.class);
                     intent.putExtra("CLIENT_ID", CLIENT_ID);
                     intent.putExtra("REDIRECT_URI", REDIRECT_URI);
@@ -212,6 +219,7 @@ public class PlaylistActivity extends AppCompatActivity implements
                     intent.putExtra("HOST", currentFirebaseUser.getUid());
                     startActivity(intent);
                 }
+
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -222,6 +230,19 @@ public class PlaylistActivity extends AppCompatActivity implements
         });
 
         builder.show();
+    }
+
+    public boolean createPlaylist(String selectedList, String passcode) {
+        if (playlistName.isEmpty() ||
+                !code.matches("\\d+")
+                || code.length() != 4) {
+            return false;
+        } else {
+            Playlist plist = new Playlist(selectedList, passcode, currentFirebaseUser.getUid());
+            pPlaylistDatabaseReference.push().setValue(plist);
+            return true;
+        }
+
     }
 
     @Override

@@ -31,6 +31,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
     private Button buttonSignIn;
+    private boolean loginSuccess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +58,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    public void userLogin() {
-        EditText username = findViewById(R.id.editText);
-        EditText password = findViewById(R.id.editText2);
-        final String usernameString = username.getText().toString();
-        final String passwordString = password.getText().toString();
+    public boolean userLogin(final String usernameString, final String passwordString) {
 
         progressDialog.setMessage("Logging in...");
         progressDialog.show();
@@ -83,14 +80,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         finish();
                         Intent intent = new Intent(LoginActivity.this, PlaylistActivity.class);
                         startActivity(intent);
+                        loginSuccess = true;
+
 
                     } else {
                         Toast.makeText(LoginActivity.this, "Login failed, invalid email or password", Toast.LENGTH_SHORT).show();
-
+                        loginSuccess = false;
                     }
 
                 }
             });
+        return loginSuccess;
     }
 
     public void playlistPage(View v) {
@@ -132,36 +132,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String pass = inputPasscode.getText().toString();
                 String pass2 = inputPasscode2.getText().toString();
 
-                if (!pass.equals(pass2)) {
-                    Toast.makeText(LoginActivity.this, "Registration failed, passwords don't match", Toast.LENGTH_SHORT).show();
+                Boolean exitCode = registerUser(email, pass, pass2 );
+
+                if( exitCode ) {
                     dialog.cancel();
-                } else if (pass.length() < 6) {
-                    Toast.makeText(LoginActivity.this, "Registration failed, passwords must be at least 6 characters", Toast.LENGTH_SHORT).show();
-                    dialog.cancel();
-                } else {
-
-                    progressDialog.setMessage("Registering User...");
-                    progressDialog.show();
-
-                    firebaseAuth.createUserWithEmailAndPassword(email, pass)
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    //user successfully registers
-                                    Toast.makeText(LoginActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
-                                    progressDialog.hide();
-
-
-                                } else {
-                                    //user fails to register
-                                    Toast.makeText(LoginActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
-                                    progressDialog.hide();
-
-
-                                }
-                            }
-                        });
                 }
             }
         });
@@ -175,10 +149,49 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         builder.show();
     }
 
+    public boolean registerUser( String email, String pass, String pass2) {
+        if (!pass.equals(pass2)) {
+            Toast.makeText(LoginActivity.this, "Registration failed, passwords don't match", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (pass.length() < 6) {
+            Toast.makeText(LoginActivity.this, "Registration failed, passwords must be at least 6 characters", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+
+            progressDialog.setMessage("Registering User...");
+            progressDialog.show();
+
+            firebaseAuth.createUserWithEmailAndPassword(email, pass)
+                    .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                //user successfully registers
+                                Toast.makeText(LoginActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+                                progressDialog.hide();
+
+
+                            } else {
+                                //user fails to register
+                                Toast.makeText(LoginActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
+                                progressDialog.hide();
+
+
+                            }
+                        }
+                    });
+        }
+        return true;
+    }
+
     @Override
     public void onClick(View view) {
         if (view == buttonSignIn) {
-            userLogin();
+            EditText username = findViewById(R.id.editText);
+            EditText password = findViewById(R.id.editText2);
+            final String usernameString = username.getText().toString();
+            final String passwordString = password.getText().toString();
+            userLogin(usernameString, passwordString);
         }
     }
 }

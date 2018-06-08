@@ -5,7 +5,6 @@ Feature: Register for a House Party account
     Scenario: Successful sign up
         When I sign up with valid information
         Then the account should be added to the Firebase server
-        Then the display will be updated to show the playlist page
     Scenario: Invalid email address entered
         When I enter an email_address with invalid characters or in an incorrect format
         And all the other details are correct
