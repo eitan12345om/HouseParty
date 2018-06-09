@@ -31,4 +31,9 @@ public class LoginTextTest {
     public void validatePassword() {
         onView(withId(R.id.editText2)).perform(typeText("password")).check(matches(withText("password")));
     }
+
+    @Test
+    public void validatePassword2() {
+        onView(withId(R.id.passwordConfirm)).perform(typeText("password2")).check(matches(withText("password2")));
+    }
 }

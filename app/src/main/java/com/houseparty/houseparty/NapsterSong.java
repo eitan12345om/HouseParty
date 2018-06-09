@@ -1,7 +1,5 @@
 package com.houseparty.houseparty;
 
-import android.util.Log;
-
 import com.napster.cedar.player.data.Track;
 
 /**
@@ -23,11 +21,6 @@ public class NapsterSong extends Song {
 
     @Override
     public void playSong() {
-        /*if (!NewSongActivity.spotifyPlayer.isLoggedIn()) {
-            Log.d("playSong", "Logging in spotifyPlayer.");
-            NewSongActivity.napsterPlayer.login(accessToken);
-        }*/
-        //Log.d("playSong", "spotifyPlayer is logged in.");
         NewSongActivity.napsterPlayer.play(track);
     }
 

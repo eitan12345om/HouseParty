@@ -21,6 +21,10 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 repositories {
@@ -46,7 +50,7 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support:exifinterface:26.1.0'
     implementation 'com.android.support:customtabs:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support:support-annotations:27.1.1'
     implementation 'com.google.firebase:firebase-database:16.0.1'
@@ -63,8 +67,6 @@ dependencies {
 
     testImplementation 'io.cucumber:cucumber-java:2.4.0'
     testImplementation 'io.cucumber:cucumber-junit:2.4.0'
-
-    //testImplementation
 
     androidTestImplementation('com.android.support.test:runner:1.0.2') {
         // Necessary if your app targets Marshmallow (since the test runner

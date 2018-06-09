@@ -27,11 +27,11 @@ import static com.houseparty.houseparty.HousePartyPreferences.PREF_USERNAME;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    //private ArrayList<UserLogin> logins = new ArrayList<UserLogin>();
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
     private Button buttonSignIn;
     private boolean loginSuccess;
+    private boolean loginResult = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,12 +94,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void playlistPage(View v) {
-
-        /*if (authenticateLogin(username.getText().toString(), password.getText().toString())) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }*/
     }
 
     public void dialogueBoxRegister(View v) {
@@ -182,6 +176,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     });
         }
         return true;
+    }
+
+    public boolean testUserLogin() {
+        userLogin();
+        return true;
+    }
+
+    public boolean testUserLogin(String user, String pass) {
+
+        firebaseAuth.signInWithEmailAndPassword(user, pass)
+                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressDialog.dismiss();
+                        if (task.isSuccessful()) {
+                            loginResult = true;
+                        } else {
+                            loginResult = false;
+                        }
+
+                    }
+                });
+
+        return loginResult;
+
     }
 
     @Override
