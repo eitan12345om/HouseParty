@@ -124,8 +124,8 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     public void dialogueBoxPasscode(View v, final Playlist playlist) {
-        final String passcode = playlist.getPasscode();
-        Log.d("Passcode of selected: ", passcode);
+        final String thePassword = playlist.getPasscode();
+        Log.d("Passcode of selected: ", thePassword);
 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -143,7 +143,7 @@ public class PlaylistActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String enteredCode = inputPasscode.getText().toString();
-                if (!enteredCode.equals(passcode)) {
+                if (!enteredCode.equals(thePassword)) {
                     dialogueBoxInvalidPasscode(thisView);
                     dialog.cancel();
                 } else {
