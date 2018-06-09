@@ -59,7 +59,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TracksPager;
@@ -67,20 +66,14 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-//import com.napster.cedar.Napster;
-//import com.napster.cedar.player.Player;
-
-//import org.w3c.dom.Document;
-
 public class NewSongActivity extends AppCompatActivity implements
     SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
     private boolean pause = true;
     private RecyclerView recyclerView;
     private SongAdapter adapter;
-    private String selectedList;
     private ArrayList<Song> songs;
     private Map<String, String> songIDs;
-    private static String songName;
+    private String songName;
 
     private static final String CLIENT_ID = "4c6b32bf19e4481abdcfbe77ab6e46c0";
     private static final String REDIRECT_URI = "houseparty-android://callback";
@@ -102,6 +95,41 @@ public class NewSongActivity extends AppCompatActivity implements
     protected Napster napster;
     public static com.napster.cedar.player.Player napsterPlayer;
     protected com.houseparty.houseparty.napsterSampleLibrary.Metadata metadata;
+
+    @Override
+    public void onLoggedIn() {
+
+    }
+
+    @Override
+    public void onLoggedOut() {
+
+    }
+
+    @Override
+    public void onLoginFailed(Error error) {
+
+    }
+
+    @Override
+    public void onTemporaryError() {
+
+    }
+
+    @Override
+    public void onConnectionMessage(String s) {
+
+    }
+
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+
+    }
+
+    @Override
+    public void onPlaybackError(Error error) {
+
+    }
 
     private interface AsyncCallback {
         void onSuccess(String uri);
@@ -143,9 +171,9 @@ public class NewSongActivity extends AppCompatActivity implements
 
         authenticateUser();
 
-        napster = Napster.register( this,"OTY2ZDkxYTctZDZlYy00MDBkLWE2ZWQtMGQ5YzhhOGIyZjMw", "NTI2NWVjOGYtODY3ZS00YTg5LWIyNWYtZDkyNzY5ODM0Nzcw");
+        napster = Napster.register(this, "OTY2ZDkxYTctZDZlYy00MDBkLWE2ZWQtMGQ5YzhhOGIyZjMw", "NTI2NWVjOGYtODY3ZS00YTg5LWIyNWYtZDkyNzY5ODM0Nzcw");
         napsterPlayer = napster.getPlayer();
-        metadata = new com.houseparty.houseparty.napsterSampleLibrary.Metadata( "OTY2ZDkxYTctZDZlYy00MDBkLWE2ZWQtMGQ5YzhhOGIyZjMw");
+        metadata = new com.houseparty.houseparty.napsterSampleLibrary.Metadata("OTY2ZDkxYTctZDZlYy00MDBkLWE2ZWQtMGQ5YzhhOGIyZjMw");
 
 
         sChildEventListener = new ChildEventListener() {
@@ -170,8 +198,6 @@ public class NewSongActivity extends AppCompatActivity implements
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.i("NewSongActivity", "Child Changed!");
-
                 Collections.sort(songs);
 
                 adapter.notifyDataSetChanged();
@@ -236,7 +262,7 @@ public class NewSongActivity extends AppCompatActivity implements
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setHint(R.string.song_name_hint);
         layout.addView(input);
-        final Spinner selectAPI = new Spinner( this );
+        final Spinner selectAPI = new Spinner(this);
         final ArrayList<String> apiList = new ArrayList<String>();
         apiList.add("Spotify");
         apiList.add("Apple Music");
@@ -261,7 +287,7 @@ public class NewSongActivity extends AppCompatActivity implements
                 if (songName.isEmpty()) {
                     dialog.cancel();
                 } else {
-                    if( selectAPI.getSelectedItem() == "Spotify" ) {
+                    if (selectAPI.getSelectedItem() == "Spotify") {
                         spotifySearchForTrack(songName, new NewSongActivity.AsyncCallback() {
                             @Override
                             public void onSuccess(String uri) {
@@ -275,9 +301,8 @@ public class NewSongActivity extends AppCompatActivity implements
 
                             }
                         });
-                    }
-                    else if( selectAPI.getSelectedItem() == "Napster") {
-                        napsterSearchForTrack(songName );
+                    } else if (selectAPI.getSelectedItem() == "Napster") {
+                        napsterSearchForTrack(songName);
 
                     }
                 }
@@ -294,17 +319,16 @@ public class NewSongActivity extends AppCompatActivity implements
         builder.show();
     }
 
-    boolean napsterSearchForTrack( String query ) {// final NewSongActivity.NapsterCallback callback) {
-        Log.d( "NapsterSearchForTrack", "search for track is called");
+    boolean napsterSearchForTrack(String query) {
+        Log.d("NapsterSearchForTrack", "search for track is called");
 
         metadata.queryTrack(query, new Callback<Search>() {
 
             @Override
             public void success(Search search, Response response) {
                 try {
-                    Log.d( "NapsterSearchForTrack", "successful search");
-                    Log.d( "NapsterSearchForTrack", "tracks: " + search.toString());
-                    //Log.d( "NapsterSearchForTrack", "response: " + new GsonBuilder().setPrettyPrinting().create().toJson(response));
+                    Log.d("NapsterSearchForTrack", "successful search");
+                    Log.d("NapsterSearchForTrack", "tracks: " + search.toString());
                     com.napster.cedar.player.data.Track firstTrack = search.search.get(0);
                     songs.add(new NapsterSong(
                             firstTrack.name,
@@ -315,16 +339,13 @@ public class NewSongActivity extends AppCompatActivity implements
                     ));
                     adapter.notifyDataSetChanged();
                     napsterPlayer.play(search.search.get(0));
+                } catch (Exception e) {
+                    Log.d("NapsterSearchForTrack", e.getMessage());
+
+                    Log.d("NapsterSearchForTrack", "Failed to play napster song");
+
+
                 }
-                catch( Exception e) {
-                    Log.d( "NapsterSearchForTrack", e.getMessage());
-
-                    Log.d( "NapsterSearchForTrack", "Failed to play napster song");
-
-
-                }
-                //trackAdapter.updateTracks(tracks.tracks);
-                //trackListPlayer.setTrackList(new TrackList(tracks.tracks));
             }
 
             @Override
@@ -332,18 +353,6 @@ public class NewSongActivity extends AppCompatActivity implements
             }
         });
 
-        /*metadata.getTopTracks(10, 0, new Callback<Tracks>() {
-            @Override
-            public void success(Tracks tracks, Response response) {
-                Log.d( "NapsterSearchForTrack", "successful search");
-                napsterPlayer.play(tracks.tracks.get(0));
-                //trackAdapter.updateTracks(tracks.tracks);
-                //trackListPlayer.setTrackList(new TrackList(tracks.tracks));
-            }
-            @Override
-            public void failure(RetrofitError error) {
-            }
-        });*/
         return true;
     }
 
@@ -352,7 +361,6 @@ public class NewSongActivity extends AppCompatActivity implements
         query = query.replaceAll(" ", "+");
 
         Map<String, Object> options = new HashMap<>();
-        //options.put("Authorization", accessToken);
         options.put("market", "US");
         options.put("limit", 20);
         try {
@@ -365,15 +373,6 @@ public class NewSongActivity extends AppCompatActivity implements
                         List<Track> searchResults = tracksPager.tracks.items;
                         Log.d("SpotifySearchForTrack", "beginning of try block");
                         songUri = searchResults.get(0).uri;
-//                        try {
-//                            //Log.d("SpotifySearchExternal", searchResults.get(0).external_urls.toString());
-//                            //Log.d("SpotifySearchExternal", searchResults.get(0).external_urls.get("spotify"));
-//                            //Log.d("SpotifySearchForTrack", searchResults.get(0).href);
-//                            //Log.d("SpotifyArtistURL", searchResults.get(0).artists.get(0).external_urls.toString());
-//                            //Log.d("SpotifySearchForTrack", searchResults.get(0).preview_url);
-//                        } catch (Exception e) {
-//                            Log.d("SpotifySearchFailure", e.toString());
-//                        }
                         try {
                             String webpageURL = searchResults.get(0).external_urls.get("spotify");
                             currentImage = new RetrieveImage().execute(webpageURL).get();
@@ -408,7 +407,7 @@ public class NewSongActivity extends AppCompatActivity implements
     }
 
     // used in spotifySearchForTrack to scrape web for cover art url
-    private class RetrieveImage extends AsyncTask<String, Void, String> {
+    class RetrieveImage extends AsyncTask<String, Void, String> {
 
         private Exception exception;
         private String imageURL;
@@ -427,7 +426,6 @@ public class NewSongActivity extends AppCompatActivity implements
             }
             return imageURL;
         }
-
     }
 
     boolean authenticateUser() {
@@ -616,106 +614,5 @@ public class NewSongActivity extends AppCompatActivity implements
                 });
             }
         }
-    }
-
-    boolean testSearchForTrack() {
-        try {
-            spotifySearchForTrack("Headlines", new NewSongActivity.AsyncCallback() {
-                @Override
-                public void onSuccess(String uri) {
-                    Log.d("SearchTest", "Received uri = " + uri);
-                }
-            });
-            return true;
-        } catch (Exception e) {
-            return false;
         }
     }
-
-    boolean testOnLoggedIn() {
-        try {
-            onLoggedIn();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    boolean testOnLoggedOut() {
-        try {
-            onLoggedOut();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    boolean testOnDestroy() {
-        try {
-            onDestroy();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @Override
-    public void onLoggedIn() {
-        Log.d("SongActivity", "User authenticated.");
-        SpotifyApi wrapper = new SpotifyApi();
-        wrapper.setAccessToken(accessToken);
-        spotify = wrapper.getService();
-    }
-
-    @Override
-    public void onLoggedOut() {
-        Log.d("SongActivity", "User logged out");
-    }
-
-    @Override
-    public void onLoginFailed(Error error) {
-        Log.e("SongActivity", "Login failed");
-    }
-
-    @Override
-    protected void onDestroy() {
-        // --------SUPER IMPORTANT TO AVOID LEAKAGE----------
-        Spotify.destroyPlayer(NewSongActivity.this);
-
-        if (spotifyPlayer != null) {
-            spotifyPlayer.destroy();
-        }
-
-        super.onDestroy();
-    }
-
-    @Override
-    public void onTemporaryError() {
-        Log.d("SongActivity", "Temporary error occurred");
-    }
-
-    @Override
-    public void onConnectionMessage(String message) {
-        Log.d("SongActivity", "Received connection message: " + message);
-    }
-
-    @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {
-        Log.d("SongActivity", "Playback event received: " + playerEvent.name());
-        switch (playerEvent) {
-            // Handle event type as necessary
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onPlaybackError(Error error) {
-        Log.d("SongActivity", "Playback error received: " + error.name());
-        switch (error) {
-            // Handle error type as necessary
-            default:
-                break;
-        }
-    }
-}

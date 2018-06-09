@@ -34,10 +34,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.PlayerEvent;
-import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,8 +43,7 @@ import java.util.Map;
 import static com.houseparty.houseparty.HousePartyPreferences.PREF_PASSWORD;
 import static com.houseparty.houseparty.HousePartyPreferences.PREF_USERNAME;
 
-public class PlaylistActivity extends AppCompatActivity implements
-    SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+public class PlaylistActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private PlaylistAdapter adapter;
@@ -129,8 +124,8 @@ public class PlaylistActivity extends AppCompatActivity implements
     }
 
     public void dialogueBoxPasscode(View v, final Playlist playlist) {
-        final String passcode = playlist.getPasscode();
-        Log.d("Passcode of selected: ", passcode);
+        final String thePassword = playlist.getPasscode();
+        Log.d("Passcode of selected: ", thePassword);
 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -148,7 +143,7 @@ public class PlaylistActivity extends AppCompatActivity implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String enteredCode = inputPasscode.getText().toString();
-                if (!enteredCode.equals(passcode)) {
+                if (!enteredCode.equals(thePassword)) {
                     dialogueBoxInvalidPasscode(thisView);
                     dialog.cancel();
                 } else {
@@ -202,7 +197,6 @@ public class PlaylistActivity extends AppCompatActivity implements
                 } else {
                     selectedList = playlistName;
                     passcode = code;
-                    /* FIXME */
                     Playlist plist = new Playlist(selectedList, passcode, currentFirebaseUser.getUid());
                     pPlaylistDatabaseReference.push().setValue(plist);
                     Intent intent = new Intent(getBaseContext(), NewSongActivity.class);
@@ -355,19 +349,8 @@ public class PlaylistActivity extends AppCompatActivity implements
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                /* TODO:
-                 *   I'm not sure how to approach this method...
-                 *   We can either store an ID along with every playlist and
-                 *   loop through each playlist in the list and determine which
-                 *   it was.
-                 *   OR
-                 *   We can reload the entire list from Firebase... But, I'm not
-                 *   sure Firebase even lets you do that.
-                 *   Any ideas?
-                 */
                 Log.i("PlaylistActivity", "Child Changed!");
 
-                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
@@ -381,7 +364,6 @@ public class PlaylistActivity extends AppCompatActivity implements
                     dataTable.get("host")
                 ));
 
-                /* TODO: This is bad practice. Be more specific */
                 adapter.notifyDataSetChanged();
             }
 
@@ -396,42 +378,5 @@ public class PlaylistActivity extends AppCompatActivity implements
             }
         };
         pPlaylistDatabaseReference.addChildEventListener(pChildEventListener);
-    }
-
-    @Override
-    public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
-    }
-
-    @Override
-    public void onLoggedOut() {
-        Intent intent = new Intent(PlaylistActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
-    public void onLoginFailed(Error error) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void onTemporaryError() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void onConnectionMessage(String s) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void onPlaybackError(Error error) {
-        throw new UnsupportedOperationException();
     }
 }
