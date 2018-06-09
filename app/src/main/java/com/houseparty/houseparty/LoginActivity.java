@@ -30,6 +30,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
     private Button buttonSignIn;
+    private boolean loginResult = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +167,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
 
         builder.show();
+    }
+
+    public boolean testUserLogin() {
+        userLogin();
+        return true;
+    }
+
+    public boolean testUserLogin(String user, String pass) {
+
+        firebaseAuth.signInWithEmailAndPassword(user, pass)
+                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressDialog.dismiss();
+                        if (task.isSuccessful()) {
+                            loginResult = true;
+                        } else {
+                            loginResult = false;
+                        }
+
+                    }
+                });
+
+        return loginResult;
+
     }
 
     @Override
