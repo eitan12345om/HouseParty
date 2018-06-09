@@ -21,9 +21,7 @@ public class SongFactory {
 
     }
 
-    public Song createSong(final String title, String api) {
-        final String artist = null;
-
+    public Song createSong(final String title, String artist, String api) {
         if ("spotify".equals(api)) {
             String uri = "";
             song = new SpotifySong(title, uri, artist);
