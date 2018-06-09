@@ -1,7 +1,5 @@
 package com.houseparty.houseparty.cucumber_steps;
 
-import android.view.View;
-
 import com.houseparty.houseparty.LoginActivity;
 
 import cucumber.api.PendingException;
@@ -19,22 +17,18 @@ public class Register {
     @Given("^I want to register for a House Party account$")
     public void i_want_to_register_for_a_House_Party_account() {
         assert( (loginActivity = new LoginActivity()) != null );
-        //throw new PendingException();
     }
 
     @When("^I sign up with valid information$")
     public void i_sign_up_with_valid_information() {
         assert( loginActivity.registerUser("aaa@gmail.com", "123456", "123456") );
-        //loginActivity.onCreate(null);
-        //throw new PendingException();
     }
 
     @Then("^the account should be added to the Firebase server$")
     public void the_account_should_be_added_to_the_Firebase_server() {
         assert( loginActivity.userLogin( "aaa@gmail.com", "123456") );
-        //throw new PendingException();
     }
-    /*
+
     @Then("^the display will be updated to show the playlist page$")
     public void the_display_will_be_updated_to_show_the_playlist_page() {
         // Write code here that turns the phrase above into concrete actions
@@ -106,5 +100,4 @@ public class Register {
         // Write code here that turns the phrase above into concrete actions
         throw new PendingException();
     }
-    */
 }
